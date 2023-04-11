@@ -1,3 +1,5 @@
+import type { COORDS } from '~/core/constants'
+
 export interface IGame {
   board: IBoard
   currentPlayer: IPlayer
@@ -27,6 +29,8 @@ export interface IBoard {
   getAllPieces(color: Color): Array<IPiece>
 
   isEmptySquare(position: Position): boolean
+
+  isOutOfBounds(position: Position): boolean
   isEnemyPieceAt(position: Position, color: Color): boolean
 }
 
@@ -55,13 +59,18 @@ export interface IMove {
   isValid(board: IBoard): boolean
 }
 
-export type GameStatus = 'ongoing' | 'check' | 'checkmate' | 'stalemate' | 'draw'
+export type GameStatus =
+  | 'ongoing'
+  | 'check'
+  | 'checkmate'
+  | 'stalemate'
+  | 'draw'
 
 export type Color = 'white' | 'black'
 
 export interface Position {
-  x: number
-  y: number
+  x: XYValue
+  y: XYValue
 }
 
 // MoveHistory interface
@@ -78,4 +87,4 @@ export type PieceType = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'
 
 export type SpecialMoveType = 'castling' | 'en_passant' | 'promotion'
 
-export const BOARD_SIZE = 8
+export type XYValue = (typeof COORDS)[number]

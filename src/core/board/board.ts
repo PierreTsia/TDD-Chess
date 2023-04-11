@@ -1,49 +1,11 @@
+import { COORDS, INIT_PIECES_COORDS } from '~/core/constants'
 import { Bishop } from '~/core/pieces/bishop'
 import { King } from '~/core/pieces/king'
 import { Knight } from '~/core/pieces/knight'
 import { Pawn } from '~/core/pieces/pawn'
 import { Queen } from '~/core/pieces/queen'
 import { Rook } from '~/core/pieces/rook'
-import type {
-  Color,
-  IBoard,
-  IMove,
-  IPiece,
-  PieceType,
-  Position,
-} from '~/core/types'
-
-const InitialPiecesSquares: Record<
-  Exclude<PieceType, 'pawn'>,
-  Array<[number, number]>
-> = {
-  rook: [
-    [0, 0],
-    [7, 0],
-    [0, 7],
-    [7, 7],
-  ],
-  bishop: [
-    [2, 0],
-    [5, 0],
-    [2, 7],
-    [5, 7],
-  ],
-  knight: [
-    [1, 0],
-    [6, 0],
-    [1, 7],
-    [6, 7],
-  ],
-  queen: [
-    [3, 0],
-    [3, 7],
-  ],
-  king: [
-    [4, 0],
-    [4, 7],
-  ],
-}
+import type { Color, IBoard, IMove, IPiece, Position } from '~/core/types'
 
 export class Board implements IBoard {
   squares: Array<Array<IPiece | null>>
@@ -64,13 +26,13 @@ export class Board implements IBoard {
   }
 
   private placeRooks() {
-    InitialPiecesSquares.rook.forEach(([x, y], i) => {
+    INIT_PIECES_COORDS.rook.forEach(([x, y], i) => {
       this.setPieceAt({ x, y }, new Rook(this.getPieceColor(i), { x, y }))
     })
   }
 
   private placeKnights() {
-    InitialPiecesSquares.knight.forEach(([x, y], i) => {
+    INIT_PIECES_COORDS.knight.forEach(([x, y], i) => {
       this.setPieceAt({ x, y }, new Knight(this.getPieceColor(i), { x, y }))
     })
   }
@@ -80,13 +42,13 @@ export class Board implements IBoard {
   }
 
   private placeBishops() {
-    InitialPiecesSquares.bishop.forEach(([x, y], i) => {
+    INIT_PIECES_COORDS.bishop.forEach(([x, y], i) => {
       this.setPieceAt({ x, y }, new Bishop(this.getPieceColor(i), { x, y }))
     })
   }
 
   private placeQueens() {
-    InitialPiecesSquares.queen.forEach(([x, y], i) => {
+    INIT_PIECES_COORDS.queen.forEach(([x, y], i) => {
       this.setPieceAt(
         { x, y },
         new Queen(i === 0 ? 'white' : 'black', { x, y })
@@ -95,7 +57,7 @@ export class Board implements IBoard {
   }
 
   private placeKings() {
-    InitialPiecesSquares.king.forEach(([x, y], i) => {
+    INIT_PIECES_COORDS.king.forEach(([x, y], i) => {
       this.setPieceAt({ x, y }, new King(i === 0 ? 'white' : 'black', { x, y }))
     })
   }
@@ -109,7 +71,15 @@ export class Board implements IBoard {
     this.placeKings()
   }
 
+  isOutOfBounds(position: Position): boolean {
+    const { x, y } = position
+    return !COORDS.includes(x) || !COORDS.includes(y)
+  }
+
   getPieceAt(position: Position): IPiece | null {
+    if (this.isOutOfBounds(position)) {
+      return null
+    }
     const { x, y } = position
     return this.squares[y][x]
   }

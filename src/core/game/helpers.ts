@@ -1,5 +1,5 @@
+import {BOARD_SIZE} from "~/core/constants";
 import type { IBoard, IPiece, PieceType } from '~/core/types'
-import { BOARD_SIZE } from '~/core/types'
 
 const doesPieceExist = (
   pieceType: PieceType,

@@ -21,24 +21,32 @@ export class Pawn implements IPiece {
     return this.color === 'white' ? 1 : -1
   }
 
-  getPossibleMoves(board: IBoard): Array<IMove> {
+  private getAttackSquares(board: IBoard): Array<Position> {
+    const { x, y } = this.position
+    const diagonalLeft = { x: x - 1, y: y + this.modifier }
+    const diagonalRight = { x: x + 1, y: y + this.modifier }
+    return [diagonalRight, diagonalLeft].filter((p) =>
+      board.isEnemyPieceAt(p, this.color)
+    )
+  }
+
+  private getMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
 
     const possibleSquares = [{ x, y: y + this.modifier }]
     if (!this.hasMoved) {
       possibleSquares.push({ x, y: y + this.modifier * 2 })
     }
+    return possibleSquares.filter((p) => board.isEmptySquare(p))
+  }
 
-    const diagonalLeft = { x: x - 1, y: y + this.modifier }
-    const diagonalRight = { x: x + 1, y: y + this.modifier }
-    const attackSquares = [diagonalRight, diagonalLeft].filter((p) =>
-      board.isEnemyPieceAt(p, this.color)
+  getPossibleMoves(board: IBoard): Array<IMove> {
+    const moveSquares = this.getMoveSquares(board)
+    const attackSquares = this.getAttackSquares(board)
+
+    return [...moveSquares, ...attackSquares].map(
+      (position) => new Move(this, this.position, position)
     )
-
-    return possibleSquares
-      .filter((p) => board.isEmptySquare(p))
-      .concat(attackSquares)
-      .map((position) => new Move(this, this.position, position))
   }
 
   canMoveTo(position: Position, board: IBoard): boolean {
