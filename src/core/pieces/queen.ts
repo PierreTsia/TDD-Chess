@@ -1,26 +1,35 @@
-import type {Color, IBoard, IMove, IPiece, Modifier, PieceType, Position } from "~/core/types";
+import { Bishop } from '~/core/pieces/bishop'
+import { Rook } from '~/core/pieces/rook'
+import type {
+  Color,
+  IBoard,
+  IMove,
+  Modifier,
+  PieceType,
+  Position,
+} from '~/core/types'
+import { Piece } from '~/core/pieces/piece'
 
-export class Queen implements IPiece {
-  color: Color
+export class Queen extends Piece {
   type: PieceType
-
-  position: Position
 
   hasMoved = false
 
   readonly directionOffsets: Array<{ x: Modifier; y: Modifier }> = []
 
   constructor(color: Color, position: Position) {
-    this.color = color
+    super(color, position)
     this.type = 'queen'
-    this.position = position
   }
 
   getPossibleMoves(board: IBoard): Array<IMove> {
-    return []
-  }
+    const bishopMoves = new Bishop(this.color, this.position).getPossibleMoves(
+      board
+    )
+    const rookMoves = new Rook(this.color, this.position).getPossibleMoves(
+      board
+    )
 
-  canMoveTo(position: Position, board: IBoard): boolean {
-    return false
+    return [...bishopMoves, ...rookMoves]
   }
 }

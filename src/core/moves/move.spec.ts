@@ -4,6 +4,7 @@ import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
 import { Knight } from '~/core/pieces/knight'
+import {Queen} from "~/core/pieces/queen";
 import { Rook } from '~/core/pieces/rook'
 import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
 
@@ -458,6 +459,75 @@ describe('Moves', () => {
       board.setPieceAt({ x: 4, y: 6 }, enemyPiece)
 
       const possibleMoves = rook.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 7 }))
+      ).toBe(false)
+    })
+  })
+  describe('Queen', () => {
+    beforeEach(() => {
+      game = new Game()
+      board = game.board
+      player1 = game.players[0]
+      player2 = game.players[1]
+    })
+
+    it('getPossibleMoves should return valid moves for a queen', () => {
+      const queen = new Queen('white', { x: 4, y: 4 })
+      board.setPieceAt({ x: 4, y: 4 }, queen)
+      const possibleMoves = queen.getPossibleMoves(board)
+      expect(possibleMoves.length).toBe(27)
+    })
+
+    it('should not be able to move to a square occupied by a friendly piece', () => {
+      const queen = new Queen('white', { x: 4, y: 4 })
+      const friendlyPiece = new Knight('white', { x: 4, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, queen)
+      board.setPieceAt({ x: 4, y: 6 }, friendlyPiece)
+
+      const possibleMoves = queen.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 6 }))
+      ).toBe(false)
+    })
+
+    it('should be able to capture an enemy piece', () => {
+      const queen = new Queen('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 4, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, queen)
+      board.setPieceAt({ x: 4, y: 6 }, enemyPiece)
+
+      const possibleMoves = queen.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 6 }))
+      ).toBe(true)
+    })
+
+    it('should not be able to moveoff the board', () => {
+      const queen = new Queen('white', { x: 0, y: 0 })
+      board.setPieceAt({ x: 0, y: 0 }, queen)
+
+      const possibleMoves = queen.getPossibleMoves(board)
+      const offBoardPositions = [
+        { x: -1, y: 0 },
+        { x: 0, y: -1 },
+        { x: -1, y: -1 },
+      ]
+
+      offBoardPositions.forEach((position) => {
+        expect(
+          possibleMoves.some((move) => isEqual(move.endPosition, position))
+        ).toBe(false)
+      })
+    })
+
+    it('should stop moving when an enemy piece is captured', () => {
+      const queen = new Queen('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 4, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, queen)
+      board.setPieceAt({ x: 4, y: 6 }, enemyPiece)
+
+      const possibleMoves = queen.getPossibleMoves(board)
       expect(
         possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 7 }))
       ).toBe(false)
