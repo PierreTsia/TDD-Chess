@@ -6,6 +6,7 @@ import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
 import { King } from '~/core/pieces/king'
 import { Knight } from '~/core/pieces/knight'
+import { Pawn } from '~/core/pieces/pawn'
 import { Queen } from '~/core/pieces/queen'
 import { Rook } from '~/core/pieces/rook'
 import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
@@ -908,6 +909,34 @@ describe('Pieces Base Moves', () => {
       ]
       EXPECTED_POSITIONS.forEach((position) => {
         expect(movePositions).toContainEqual(position)
+      })
+    })
+
+    it('returns the correct moves when a friendly pieces is blocking', () => {
+      const board = new Board()
+      const king = new King('white', { x: 4, y: 4 })
+
+      // Add a white pawn in front of the king
+      const pawn = new Pawn('white', { x: 4, y: 3 })
+      board.setPieceAt(pawn.position, pawn)
+
+      const moves = king.getPossibleMoves(board).map((move) => move.endPosition)
+
+      // The king should only be able to move to the squares that are not occupied by a white piece
+      expect(moves).toHaveLength(7)
+      expect(moves).not.toContainEqual({ x: 4, y: 3 })
+      const expectedMoves = [
+        { x: 3, y: 3 },
+        { x: 3, y: 4 },
+        { x: 3, y: 5 },
+        { x: 4, y: 5 },
+        { x: 5, y: 3 },
+        { x: 5, y: 4 },
+        { x: 5, y: 5 },
+      ]
+
+      expectedMoves.forEach((position) => {
+        expect(moves).toContainEqual(position)
       })
     })
   })
