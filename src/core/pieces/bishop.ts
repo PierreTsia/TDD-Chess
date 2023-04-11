@@ -1,5 +1,4 @@
-import type { Position } from '@vueuse/core'
-import type { Color, IBoard, IMove, IPiece, PieceType } from '~/core/types'
+import type { Color, IBoard, IMove, IPiece, PieceType, Position } from '~/core/types'
 
 export class Bishop implements IPiece {
   color: Color

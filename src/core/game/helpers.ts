@@ -1,5 +1,5 @@
-import {BOARD_SIZE} from "~/core/constants";
-import type { IBoard, IPiece, PieceType } from '~/core/types'
+import { BOARD_SIZE } from '~/core/constants'
+import type { IBoard, IPiece, PieceType, Position } from '~/core/types'
 
 const doesPieceExist = (
   pieceType: PieceType,
@@ -21,8 +21,8 @@ const arePawnsInStartingPosition = (board: IBoard): boolean => {
 
   // Implement the logic to check if pawns are in their correct starting positions
   for (let x = 0; x < BOARD_SIZE; x++) {
-    const whitePawn = board.getPieceAt({ x, y: 1 })
-    const blackPawn = board.getPieceAt({ x, y: 6 })
+    const whitePawn = board.getPieceAt({ x, y: 1 } as Position)
+    const blackPawn = board.getPieceAt({ x, y: 6 } as Position)
 
     if (!doesPieceExist('pawn', whitePawn, blackPawn)) {
       return false
@@ -34,8 +34,8 @@ const arePawnsInStartingPosition = (board: IBoard): boolean => {
 
 const areRooksInStartingPosition = (board: IBoard): boolean => {
   for (let x = 0; x < BOARD_SIZE; x += 7) {
-    const whiteRook = board.getPieceAt({ x, y: 0 })
-    const blackRook = board.getPieceAt({ x, y: 7 })
+    const whiteRook = board.getPieceAt({ x, y: 0 } as Position)
+    const blackRook = board.getPieceAt({ x, y: 7 } as Position)
 
     if (!doesPieceExist('rook', whiteRook, blackRook)) {
       return false
@@ -47,8 +47,8 @@ const areRooksInStartingPosition = (board: IBoard): boolean => {
 const areKnightsInStartingPosition = (board: IBoard): boolean => {
   // Implement the helper function to check the starting position of knights
   for (let x = 1; x < BOARD_SIZE; x += 5) {
-    const whiteKnight = board.getPieceAt({ x, y: 0 })
-    const blackKnight = board.getPieceAt({ x, y: 7 })
+    const whiteKnight = board.getPieceAt({ x, y: 0 } as Position)
+    const blackKnight = board.getPieceAt({ x, y: 7 } as Position)
 
     if (!doesPieceExist('knight', whiteKnight, blackKnight)) {
       return false
@@ -59,8 +59,8 @@ const areKnightsInStartingPosition = (board: IBoard): boolean => {
 
 const areBishopsInStartingPosition = (board: IBoard): boolean => {
   for (let x = 2; x < BOARD_SIZE; x += 3) {
-    const whiteBishop = board.getPieceAt({ x, y: 0 })
-    const blackBishop = board.getPieceAt({ x, y: 7 })
+    const whiteBishop = board.getPieceAt({ x, y: 0 } as Position)
+    const blackBishop = board.getPieceAt({ x, y: 7 } as Position)
 
     if (!doesPieceExist('bishop', whiteBishop, blackBishop)) {
       return false

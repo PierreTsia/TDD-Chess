@@ -1,5 +1,10 @@
-import type { Position } from '@vueuse/core'
-import type { IBoard, IMove, IPiece, SpecialMoveType } from '~/core/types'
+import type {
+  IBoard,
+  IMove,
+  IPiece,
+  Position,
+  SpecialMoveType,
+} from '~/core/types'
 
 export class Move implements IMove {
   piece: IPiece

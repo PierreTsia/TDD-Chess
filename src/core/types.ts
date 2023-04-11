@@ -1,4 +1,4 @@
-import type { COORDS } from '~/core/constants'
+import { COORDS } from '~/core/constants'
 
 export interface IGame {
   board: IBoard
@@ -88,3 +88,7 @@ export type PieceType = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'
 export type SpecialMoveType = 'castling' | 'en_passant' | 'promotion'
 
 export type XYValue = (typeof COORDS)[number]
+
+export const isValidXY = (n: any): n is XYValue => {
+  return COORDS.includes(n)
+}

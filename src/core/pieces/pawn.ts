@@ -1,7 +1,13 @@
-import type { Position } from '@vueuse/core'
 import { isEqual } from 'lodash'
 import { Move } from '~/core/moves/move'
-import type { Color, IBoard, IMove, IPiece, PieceType } from '~/core/types'
+import type {
+  Color,
+  IBoard,
+  IMove,
+  IPiece,
+  PieceType,
+  Position,
+} from '~/core/types'
 
 export class Pawn implements IPiece {
   color: Color
@@ -23,8 +29,8 @@ export class Pawn implements IPiece {
 
   private getAttackSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
-    const diagonalLeft = { x: x - 1, y: y + this.modifier }
-    const diagonalRight = { x: x + 1, y: y + this.modifier }
+    const diagonalLeft = { x: x - 1, y: y + this.modifier } as Position
+    const diagonalRight = { x: x + 1, y: y + this.modifier } as Position
     return [diagonalRight, diagonalLeft].filter((p) =>
       board.isEnemyPieceAt(p, this.color)
     )
@@ -33,9 +39,9 @@ export class Pawn implements IPiece {
   private getMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
 
-    const possibleSquares = [{ x, y: y + this.modifier }]
+    const possibleSquares = [{ x, y: y + this.modifier } as Position]
     if (!this.hasMoved) {
-      possibleSquares.push({ x, y: y + this.modifier * 2 })
+      possibleSquares.push({ x, y: y + this.modifier * 2 } as Position)
     }
     return possibleSquares.filter((p) => board.isEmptySquare(p))
   }

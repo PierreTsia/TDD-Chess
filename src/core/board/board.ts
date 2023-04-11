@@ -20,8 +20,10 @@ export class Board implements IBoard {
 
   private placePawns() {
     for (let i = 0; i < 8; i++) {
-      this.setPieceAt({ x: i, y: 1 }, new Pawn('white', { x: i, y: 1 }))
-      this.setPieceAt({ x: i, y: 6 }, new Pawn('black', { x: i, y: 6 }))
+      const whitePawnPos = { x: i, y: 1 } as Position
+      const blackPawnPos = { x: i, y: 6 } as Position
+      this.setPieceAt(whitePawnPos, new Pawn('white', whitePawnPos))
+      this.setPieceAt(blackPawnPos, new Pawn('black', blackPawnPos))
     }
   }
 

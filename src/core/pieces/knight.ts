@@ -1,7 +1,13 @@
-import type { Position } from '@vueuse/core'
 import { isEqual } from 'lodash'
 import { Move } from '~/core/moves/move'
-import type { Color, IBoard, IMove, IPiece, PieceType } from '~/core/types'
+import type {
+  Color,
+  IBoard,
+  IMove,
+  IPiece,
+  PieceType,
+  Position,
+} from '~/core/types'
 
 export class Knight implements IPiece {
   color: Color
@@ -32,9 +38,9 @@ export class Knight implements IPiece {
 
   private getMoveSquares(): Array<Position> {
     const { x, y } = this.position
-    return this.getMoveOffsets().map(([dx, dy]) => {
-      return { x: x + dx, y: y + dy }
-    })
+    return this.getMoveOffsets().map(
+      ([dx, dy]) => ({ x: x + dx, y: y + dy } as Position)
+    )
   }
 
   getPossibleMoves(board: IBoard): Array<IMove> {

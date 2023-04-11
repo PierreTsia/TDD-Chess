@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { isEqual } from 'lodash'
 import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
+import { Bishop } from '~/core/pieces/bishop'
 import { Knight } from '~/core/pieces/knight'
 import type { IBoard, IPiece, IPlayer } from '~/core/types'
 
@@ -326,6 +327,21 @@ describe('Moves', () => {
           possibleMoves.some((move) => isEqual(move.endPosition, position))
         ).toBe(false)
       })
+    })
+  })
+  describe('Bishop', () => {
+    beforeEach(() => {
+      game = new Game()
+      game.initializeGame()
+      board = game.board
+      player1 = game.players[0]
+      player2 = game.players[1]
+    })
+    it('getPossibleMoves should return valid moves for a bishop', () => {
+      const bishop = new Bishop('white', { x: 4, y: 4 })
+      board.setPieceAt({ x: 4, y: 4 }, bishop)
+      const possibleMoves = bishop.getPossibleMoves(board)
+      expect(possibleMoves.length).toBe(13)
     })
   })
 })

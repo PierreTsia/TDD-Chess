@@ -1,11 +1,11 @@
-import type {PieceType} from "~/core/types";
+import type { PieceType, XYValue } from '~/core/types'
 
 export const BOARD_SIZE = 8
 
-export const COORDS = [...Array(BOARD_SIZE).keys()] as const
+export const COORDS = [0, 1, 2, 3, 4, 5, 6, 7] as const
 export const INIT_PIECES_COORDS: Record<
   Exclude<PieceType, 'pawn'>,
-  Array<[number, number]>
+  Array<[XYValue, XYValue]>
 > = {
   rook: [
     [0, 0],
