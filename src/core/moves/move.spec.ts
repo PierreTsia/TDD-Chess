@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { isEqual } from 'lodash'
 import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
 import { Knight } from '~/core/pieces/knight'
@@ -265,6 +266,66 @@ describe('Moves', () => {
       expect(knightMoves?.length).toBe(2)
       expect(knightMoves?.[0].endPosition).toEqual({ x: 2, y: 2 })
       expect(knightMoves?.[1].endPosition).toEqual({ x: 0, y: 2 })
+    })
+
+    it('should not be able to move to a square occupied by a friendly piece', () => {
+      const knight = new Knight('white', { x: 4, y: 4 })
+      const friendlyPiece = new Knight('white', { x: 2, y: 3 })
+      board.setPieceAt({ x: 4, y: 4 }, knight)
+      board.setPieceAt({ x: 2, y: 3 }, friendlyPiece)
+
+      const possibleMoves = knight.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 2, y: 3 }))
+      ).toBe(false)
+    })
+
+    it('should be able to capture an enemy piece', () => {
+      const knight = new Knight('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 2, y: 3 })
+      board.setPieceAt({ x: 4, y: 4 }, knight)
+      board.setPieceAt({ x: 2, y: 3 }, enemyPiece)
+
+      const possibleMoves = knight.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 2, y: 3 }))
+      ).toBe(true)
+    })
+
+    it('should not be able to move off the board', () => {
+      const knight = new Knight('white', {
+        x: 0,
+        y: 0,
+      })
+      board.setPieceAt(
+        {
+          x: 0,
+          y: 0,
+        },
+        knight
+      )
+
+      const possibleMoves = knight.getPossibleMoves(board)
+      const offBoardPositions = [
+        {
+          x: -1,
+          y: -2,
+        },
+        {
+          x: -1,
+          y: 2,
+        },
+        {
+          x: 1,
+          y: -2,
+        },
+      ]
+
+      offBoardPositions.forEach((position) => {
+        expect(
+          possibleMoves.some((move) => isEqual(move.endPosition, position))
+        ).toBe(false)
+      })
     })
   })
 })
