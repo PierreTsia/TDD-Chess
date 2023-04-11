@@ -1,5 +1,8 @@
 import { ViteSSG } from 'vite-ssg'
 import { setupLayouts } from 'virtual:generated-layouts'
+import OnuUI from 'onu-ui'
+import 'uno.css'
+import 'onu-ui/dist/style.css'
 // import Previewer from 'virtual:vue-component-preview'
 import App from './App.vue'
 import type { UserModule } from './types'
@@ -7,7 +10,7 @@ import generatedRoutes from '~pages'
 
 import '@unocss/reset/tailwind.css'
 import './styles/main.css'
-import 'uno.css'
+
 
 const routes = setupLayouts(generatedRoutes)
 
@@ -19,6 +22,6 @@ export const createApp = ViteSSG(
     // install all modules under `modules/`
     Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true }))
       .forEach(i => i.install?.(ctx))
-    // ctx.app.use(Previewer)
+    ctx.app.use(OnuUI)
   },
 )
