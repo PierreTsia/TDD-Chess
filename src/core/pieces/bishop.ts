@@ -18,6 +18,13 @@ export class Bishop implements IPiece {
 
   hasMoved = false
 
+  private directionOffsets = [
+    { x: 1, y: 1 },
+    { x: 1, y: -1 },
+    { x: -1, y: 1 },
+    { x: -1, y: -1 },
+  ]
+
   constructor(color: Color, position: Position) {
     this.color = color
     this.type = 'bishop'
@@ -26,14 +33,8 @@ export class Bishop implements IPiece {
 
   private getDiagonalMoves(board: IBoard): Array<Position> {
     const moves: Array<Position> = []
-    const directions = [
-      { x: 1, y: 1 },
-      { x: 1, y: -1 },
-      { x: -1, y: 1 },
-      { x: -1, y: -1 },
-    ]
 
-    for (const direction of directions) {
+    for (const direction of this.directionOffsets) {
       let currentX = this.position.x + direction.x
       let currentY = this.position.y + direction.y
 
