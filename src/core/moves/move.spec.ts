@@ -4,7 +4,7 @@ import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
 import { Knight } from '~/core/pieces/knight'
-import type { IBoard, IPiece, IPlayer } from '~/core/types'
+import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
 
 describe('Moves', () => {
   let game: Game
@@ -24,11 +24,11 @@ describe('Moves', () => {
         x: 0,
         y: 1,
       })! // Assuming this is a white pawn
-      const startPosition = {
+      const startPosition: Position = {
         x: 0,
         y: 1,
       }
-      const endPosition = {
+      const endPosition: Position = {
         x: 0,
         y: 2,
       }
@@ -43,11 +43,11 @@ describe('Moves', () => {
         x: 0,
         y: 1,
       })! // Assuming this is a white pawn
-      const startPosition = {
+      const startPosition: Position = {
         x: 0,
         y: 1,
       }
-      const endPosition = {
+      const endPosition: Position = {
         x: 0,
         y: 3,
       }
@@ -61,7 +61,7 @@ describe('Moves', () => {
         x: 0,
         y: 6,
       })! // Assuming this is a black pawn
-      const endPosition = {
+      const endPosition: Position = {
         x: 0,
         y: 5,
       }
@@ -332,9 +332,7 @@ describe('Moves', () => {
   describe('Bishop', () => {
     beforeEach(() => {
       game = new Game()
-      game.initializeGame()
       board = game.board
-      player1 = game.players[0]
       player2 = game.players[1]
     })
     it('getPossibleMoves should return valid moves for a bishop', () => {
@@ -342,6 +340,59 @@ describe('Moves', () => {
       board.setPieceAt({ x: 4, y: 4 }, bishop)
       const possibleMoves = bishop.getPossibleMoves(board)
       expect(possibleMoves.length).toBe(13)
+    })
+
+    it('should not be able to move to a square occupied by a friendly piece', () => {
+      const bishop = new Bishop('white', { x: 4, y: 4 })
+      const friendlyPiece = new Knight('white', { x: 6, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, bishop)
+      board.setPieceAt({ x: 6, y: 6 }, friendlyPiece)
+
+      const possibleMoves = bishop.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 6, y: 6 }))
+      ).toBe(false)
+    })
+
+    it('should be able to capture an enemy piece', () => {
+      const bishop = new Bishop('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 6, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, bishop)
+      board.setPieceAt({ x: 6, y: 6 }, enemyPiece)
+
+      const possibleMoves = bishop.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 6, y: 6 }))
+      ).toBe(true)
+    })
+
+    it('should not be able to move off the board', () => {
+      const bishop = new Bishop('white', { x: 0, y: 0 })
+      board.setPieceAt({ x: 0, y: 0 }, bishop)
+
+      const possibleMoves = bishop.getPossibleMoves(board)
+      const offBoardPositions = [
+        { x: -1, y: -1 },
+        { x: 1, y: -1 },
+      ]
+
+      offBoardPositions.forEach((position) => {
+        expect(
+          possibleMoves.some((move) => isEqual(move.endPosition, position))
+        ).toBe(false)
+      })
+    })
+
+    it('should stop moving when an enemy piece is captured', () => {
+      const bishop = new Bishop('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 6, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, bishop)
+      board.setPieceAt({ x: 6, y: 6 }, enemyPiece)
+
+      const possibleMoves = bishop.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 7, y: 7 }))
+      ).toBe(false)
     })
   })
 })

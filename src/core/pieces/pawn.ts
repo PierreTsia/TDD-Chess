@@ -31,8 +31,8 @@ export class Pawn implements IPiece {
     const { x, y } = this.position
     const diagonalLeft = { x: x - 1, y: y + this.modifier } as Position
     const diagonalRight = { x: x + 1, y: y + this.modifier } as Position
-    return [diagonalRight, diagonalLeft].filter((p) =>
-      board.isEnemyPieceAt(p, this.color)
+    return [diagonalRight, diagonalLeft].filter(
+      (p) => board.isEnemyPieceAt(p, this.color) && !board.isOutOfBounds(p)
     )
   }
 
@@ -43,7 +43,9 @@ export class Pawn implements IPiece {
     if (!this.hasMoved) {
       possibleSquares.push({ x, y: y + this.modifier * 2 } as Position)
     }
-    return possibleSquares.filter((p) => board.isEmptySquare(p))
+    return possibleSquares.filter(
+      (p) => board.isEmptySquare(p) && !board.isOutOfBounds(p)
+    )
   }
 
   getPossibleMoves(board: IBoard): Array<IMove> {
