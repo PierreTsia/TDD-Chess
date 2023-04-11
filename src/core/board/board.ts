@@ -122,11 +122,18 @@ export class Board implements IBoard {
   }
 
   isPositionUnderAttack(position: Position, attackingColor: Color): boolean {
-    return false
+    const enemyPieces = this.getAllPieces(attackingColor)
+    return enemyPieces.some((piece) =>
+      piece
+        .getMoveSquares(this)
+        .some((square) => square.x === position.x && square.y === position.y)
+    )
   }
 
   getAllPieces(color: Color): Array<IPiece> {
-    return []
+    return this.squares
+      .flat()
+      .filter((piece) => piece?.color === color) as Array<IPiece>
   }
 }
 // Later, you will implement this method to create pieces and place them

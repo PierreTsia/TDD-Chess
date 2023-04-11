@@ -26,6 +26,10 @@ export class Piece implements IPiece {
     this.position = position
   }
 
+  getOppositeColor(color: Color) {
+    return color === 'white' ? 'black' : 'white'
+  }
+
   getMoveSquares(board: IBoard): Array<Position> {
     const moves: Array<Position> = []
 

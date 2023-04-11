@@ -32,5 +32,12 @@ export class King extends Piece {
           (board.isEmptySquare(position) ||
             board.isEnemyPieceAt(position, this.color))
       )
+      .filter(
+        (position) =>
+          !board.isPositionUnderAttack(
+            position,
+            this.getOppositeColor(this.color)
+          )
+      )
   }
 }

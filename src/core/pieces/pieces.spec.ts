@@ -939,5 +939,40 @@ describe('Pieces Base Moves', () => {
         expect(moves).toContainEqual(position)
       })
     })
+
+    it('returns correct moves when enemy piece is threatening some squares', () => {
+      const board = new Board()
+      const king = new King('white', {
+        x: 4,
+        y: 4,
+      })
+      // Add a black rook threatening the king's position
+      const rook = new Rook('black', {
+        x: 4,
+        y: 7,
+      })
+      board.setPieceAt(rook.position, rook)
+      const moves = king.getPossibleMoves(board).map((move) => move.endPosition)
+
+      // The king should not be able to move to the square threatened by the black rook
+      expect(moves).toHaveLength(6)
+
+      expect(moves).not.toContainEqual({
+        x: 4,
+        y: 7,
+      })
+      const expectedMoves = [
+        { x: 5, y: 4 },
+        { x: 3, y: 4 },
+        { x: 5, y: 5 },
+        { x: 5, y: 3 },
+        { x: 3, y: 5 },
+        { x: 3, y: 3 },
+      ]
+
+      expectedMoves.forEach((position) => {
+        expect(moves).toContainEqual(position)
+      })
+    })
   })
 })

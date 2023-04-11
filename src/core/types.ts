@@ -43,6 +43,8 @@ export interface IPiece {
 
   directionOffsets: Array<{ x: Modifier; y: Modifier }>
 
+
+  getMoveSquares(board: IBoard): Array<Position>
   getPossibleMoves(board: IBoard): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
 }
