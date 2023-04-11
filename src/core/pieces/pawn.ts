@@ -5,6 +5,7 @@ import type {
   IBoard,
   IMove,
   IPiece,
+  Modifier,
   PieceType,
   Position,
 } from '~/core/types'
@@ -16,6 +17,7 @@ export class Pawn implements IPiece {
   position: Position
 
   hasMoved = false
+  directionOffsets: Array<{ x: Modifier; y: Modifier }> = []
 
   constructor(color: Color, position: Position) {
     this.color = color
@@ -36,7 +38,7 @@ export class Pawn implements IPiece {
     )
   }
 
-  private getMoveSquares(board: IBoard): Array<Position> {
+  getMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
 
     const possibleSquares = [{ x, y: y + this.modifier } as Position]

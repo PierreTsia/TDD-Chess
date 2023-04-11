@@ -1,4 +1,11 @@
-import type { Color, IBoard, IMove, IPiece, PieceType, Position } from '~/core/types'
+import type { Color ,
+  IBoard,
+  IMove,
+  IPiece,
+  Modifier,
+  PieceType,
+  Position,
+} from '~/core/types'
 
 export class King implements IPiece {
   color: Color
@@ -7,6 +14,8 @@ export class King implements IPiece {
   position: Position
 
   hasMoved = false
+
+  readonly directionOffsets: Array<{ x: Modifier; y: Modifier }> = []
 
   constructor(color: Color, position: Position) {
     this.color = color

@@ -1,63 +1,52 @@
-import { isEqual } from 'lodash'
 import { Move } from '~/core/moves/move'
+import { Piece } from '~/core/pieces/piece'
 import type {
   Color,
   IBoard,
   IMove,
-  IPiece,
+  Modifier,
   PieceType,
   Position,
 } from '~/core/types'
 
-export class Knight implements IPiece {
-  color: Color
+export class Knight extends Piece {
   type: PieceType
-
-  position: Position
 
   hasMoved = false
 
+  readonly directionOffsets: Array<{ x: Modifier; y: Modifier }> = [
+    { x: 2, y: 1 },
+    { x: 2, y: -1 },
+    { x: -2, y: 1 },
+    { x: -2, y: -1 },
+    { x: 1, y: 2 },
+    { x: 1, y: -2 },
+    { x: -1, y: 2 },
+    { x: -1, y: -2 },
+  ]
+
   constructor(color: Color, position: Position) {
-    this.color = color
+    super(color, position)
     this.type = 'knight'
-    this.position = position
   }
 
-  private getMoveOffsets(): Array<[number, number]> {
-    return [
-      [2, 1],
-      [2, -1],
-      [-2, 1],
-      [-2, -1],
-      [1, 2],
-      [1, -2],
-      [-1, 2],
-      [-1, -2],
-    ]
-  }
-
-  private getMoveSquares(): Array<Position> {
+  getMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
-    return this.getMoveOffsets().map(
-      ([dx, dy]) => ({ x: x + dx, y: y + dy } as Position)
-    )
-  }
-
-  getPossibleMoves(board: IBoard): Array<IMove> {
-    const moveSquares = this.getMoveSquares()
-
-    return moveSquares
+    return this.directionOffsets
+      .map(({ x: dx, y: dy }) => ({ x: x + dx, y: y + dy } as Position))
       .filter(
         (position) =>
           !board.isOutOfBounds(position) &&
           (board.isEmptySquare(position) ||
             board.isEnemyPieceAt(position, this.color))
       )
-      .map((position) => new Move(this, this.position, position))
   }
 
-  canMoveTo(position: Position, board: IBoard): boolean {
-    const possibleMoves = this.getPossibleMoves(board)
-    return possibleMoves.some((move) => isEqual(move.endPosition, position))
+  getPossibleMoves(board: IBoard): Array<IMove> {
+    const moveSquares = this.getMoveSquares(board)
+
+    return moveSquares.map(
+      (position) => new Move(this, this.position, position)
+    )
   }
 }

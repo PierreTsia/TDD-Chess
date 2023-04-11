@@ -41,6 +41,8 @@ export interface IPiece {
 
   hasMoved: boolean
 
+  directionOffsets: Array<{ x: Modifier; y: Modifier }>
+
   getPossibleMoves(board: IBoard): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
 }
@@ -88,6 +90,8 @@ export type PieceType = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'
 export type SpecialMoveType = 'castling' | 'en_passant' | 'promotion'
 
 export type XYValue = (typeof COORDS)[number]
+
+export type Modifier = -1 | 1 | 0 | -2 | 2
 
 export const isValidXY = (n: any): n is XYValue => {
   return COORDS.includes(n)

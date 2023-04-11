@@ -4,6 +4,7 @@ import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
 import { Knight } from '~/core/pieces/knight'
+import { Rook } from '~/core/pieces/rook'
 import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
 
 describe('Moves', () => {
@@ -392,6 +393,73 @@ describe('Moves', () => {
       const possibleMoves = bishop.getPossibleMoves(board)
       expect(
         possibleMoves.some((move) => isEqual(move.endPosition, { x: 7, y: 7 }))
+      ).toBe(false)
+    })
+  })
+  describe('Rook', () => {
+    beforeEach(() => {
+      game = new Game()
+      board = game.board
+      player2 = game.players[1]
+    })
+
+    it('getPossibleMoves should return valid moves for a rook', () => {
+      const rook = new Rook('white', { x: 4, y: 4 })
+      board.setPieceAt({ x: 4, y: 4 }, rook)
+      const possibleMoves = rook.getPossibleMoves(board)
+      expect(possibleMoves.length).toBe(14)
+    })
+
+    it('should not be able to move to a square occupied by a friendly piece', () => {
+      const rook = new Rook('white', { x: 4, y: 4 })
+      const friendlyPiece = new Knight('white', { x: 4, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, rook)
+      board.setPieceAt({ x: 4, y: 6 }, friendlyPiece)
+
+      const possibleMoves = rook.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 6 }))
+      ).toBe(false)
+    })
+
+    it('should be able to capture an enemy piece', () => {
+      const rook = new Rook('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 4, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, rook)
+      board.setPieceAt({ x: 4, y: 6 }, enemyPiece)
+
+      const possibleMoves = rook.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 6 }))
+      ).toBe(true)
+    })
+
+    it('should not be able to move off the board', () => {
+      const rook = new Rook('white', { x: 0, y: 0 })
+      board.setPieceAt({ x: 0, y: 0 }, rook)
+
+      const possibleMoves = rook.getPossibleMoves(board)
+      const offBoardPositions = [
+        { x: -1, y: 0 },
+        { x: 0, y: -1 },
+      ]
+
+      offBoardPositions.forEach((position) => {
+        expect(
+          possibleMoves.some((move) => isEqual(move.endPosition, position))
+        ).toBe(false)
+      })
+    })
+
+    it('should stop moving when an enemy piece is captured', () => {
+      const rook = new Rook('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 4, y: 6 })
+      board.setPieceAt({ x: 4, y: 4 }, rook)
+      board.setPieceAt({ x: 4, y: 6 }, enemyPiece)
+
+      const possibleMoves = rook.getPossibleMoves(board)
+      expect(
+        possibleMoves.some((move) => isEqual(move.endPosition, { x: 4, y: 7 }))
       ).toBe(false)
     })
   })

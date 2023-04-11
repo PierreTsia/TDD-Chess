@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
-import type { IBoard, IPiece, IPlayer } from '~/core/types'
+import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
 
 describe('Player', () => {
   let game: Game
@@ -23,8 +23,8 @@ describe('Player', () => {
     const switchPlayerSpy = vi.spyOn(game, 'switchPlayer')
     const moveHistorySpy = vi.spyOn(game.moveHistory, 'addMove')
     const piece: IPiece = board.getPieceAt({ x: 0, y: 1 })! // Assuming this is a white pawn
-    const startPosition = { x: 0, y: 1 }
-    const endPosition = { x: 0, y: 2 }
+    const startPosition: Position = { x: 0, y: 1 }
+    const endPosition: Position = { x: 0, y: 2 }
 
     expect(game.currentPlayer).toBe(player1)
 
@@ -41,6 +41,4 @@ describe('Player', () => {
     expect(game.currentPlayer).not.toBe(player1)
     expect(game.currentPlayer).toBe(player2)
   })
-
-
 })
