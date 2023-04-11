@@ -8,7 +8,7 @@ import {Queen} from "~/core/pieces/queen";
 import { Rook } from '~/core/pieces/rook'
 import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
 
-describe('Moves', () => {
+describe('Pieces Base Moves', () => {
   let game: Game
   let board: IBoard
   let player1: IPlayer

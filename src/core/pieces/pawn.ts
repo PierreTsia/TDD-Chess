@@ -1,28 +1,23 @@
-import { isEqual } from 'lodash'
 import { Move } from '~/core/moves/move'
+import { Piece } from '~/core/pieces/piece'
 import type {
   Color,
   IBoard,
   IMove,
-  IPiece,
   Modifier,
   PieceType,
   Position,
 } from '~/core/types'
 
-export class Pawn implements IPiece {
-  color: Color
+export class Pawn extends Piece {
   type: PieceType
-
-  position: Position
 
   hasMoved = false
   directionOffsets: Array<{ x: Modifier; y: Modifier }> = []
 
   constructor(color: Color, position: Position) {
-    this.color = color
+    super(color, position)
     this.type = 'pawn'
-    this.position = position
   }
 
   get modifier() {
@@ -57,10 +52,5 @@ export class Pawn implements IPiece {
     return [...moveSquares, ...attackSquares].map(
       (position) => new Move(this, this.position, position)
     )
-  }
-
-  canMoveTo(position: Position, board: IBoard): boolean {
-    const possibleMoves = this.getPossibleMoves(board)
-    return possibleMoves.some((move) => isEqual(move.endPosition, position))
   }
 }
