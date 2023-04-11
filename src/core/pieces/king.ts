@@ -1,33 +1,36 @@
-import type { Color ,
-  IBoard,
-  IMove,
-  IPiece,
-  Modifier,
-  PieceType,
-  Position,
-} from '~/core/types'
+import { Piece } from '~/core/pieces/piece'
+import type { Color, IBoard, Modifier, PieceType, Position } from '~/core/types'
 
-export class King implements IPiece {
-  color: Color
+export class King extends Piece {
   type: PieceType
-
-  position: Position
 
   hasMoved = false
 
-  readonly directionOffsets: Array<{ x: Modifier; y: Modifier }> = []
+  readonly directionOffsets: Array<{ x: Modifier; y: Modifier }> = [
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0, y: -1 },
+    { x: 1, y: 1 },
+    { x: 1, y: -1 },
+    { x: -1, y: 1 },
+    { x: -1, y: -1 },
+  ]
 
   constructor(color: Color, position: Position) {
-    this.color = color
+    super(color, position)
     this.type = 'king'
-    this.position = position
   }
 
-  getPossibleMoves(board: IBoard): Array<IMove> {
-    return []
-  }
-
-  canMoveTo(position: Position, board: IBoard): boolean {
-    return false
+  getMoveSquares(board: IBoard): Array<Position> {
+    const { x, y } = this.position
+    return this.directionOffsets
+      .map(({ x: dx, y: dy }) => ({ x: x + dx, y: y + dy } as Position))
+      .filter(
+        (position) =>
+          !board.isOutOfBounds(position) &&
+          (board.isEmptySquare(position) ||
+            board.isEnemyPieceAt(position, this.color))
+      )
   }
 }
