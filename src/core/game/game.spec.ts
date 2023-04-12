@@ -366,9 +366,13 @@ describe('Chess Game', () => {
 
   describe('Castling', () => {
     let game: Game
+    let player1: IPlayer
+    let player2: IPlayer
 
     beforeEach(() => {
       game = new Game()
+      player1 = game.players[0]
+      player2 = game.players[1]
     })
 
     it('should allow simple kingside castling for boths kings', () => {
@@ -467,6 +471,71 @@ describe('Chess Game', () => {
         type: 'rook',
         color: 'black',
       })
+    })
+
+    it('should not allow castling if the king has moved', () => {
+      game.board.setPieceAt({ x: 4, y: 7 }, new King('white', { x: 4, y: 7 }))
+      game.board.setPieceAt({ x: 0, y: 7 }, new Rook('white', { x: 7, y: 7 }))
+      expect(game.board.getPieceAt({ x: 4, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 0, y: 7 })!.type).toBe('rook')
+
+      // black
+      game.board.setPieceAt({ x: 4, y: 0 }, new King('black', { x: 4, y: 0 }))
+      game.board.setPieceAt({ x: 0, y: 0 }, new Rook('black', { x: 7, y: 0 }))
+      expect(game.board.getPieceAt({ x: 4, y: 0 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 0, y: 0 })!.type).toBe('rook')
+
+      const whiteKingMove = new Move(
+        game.board.getPieceAt({ x: 4, y: 7 })!,
+        { x: 4, y: 7 },
+        { x: 5, y: 7 }
+      )
+
+      const blackKingMove = new Move(
+        game.board.getPieceAt({ x: 4, y: 0 })!,
+        { x: 4, y: 0 },
+        { x: 5, y: 0 }
+      )
+
+      player1.makeMove(whiteKingMove, game)
+      player2.makeMove(blackKingMove, game)
+
+      const whiteMoveBack = new Move(
+        game.board.getPieceAt({ x: 5, y: 7 })!,
+        { x: 5, y: 7 },
+        { x: 4, y: 7 }
+      )
+
+      const blackMoveBack = new Move(
+        game.board.getPieceAt({ x: 5, y: 0 })!,
+        { x: 5, y: 0 },
+        { x: 4, y: 0 }
+      )
+
+      player1.makeMove(whiteMoveBack, game)
+      player2.makeMove(blackMoveBack, game)
+
+      expect(game.board.getPieceAt({ x: 4, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 0, y: 7 })!.type).toBe('rook')
+      expect(game.board.getPieceAt({ x: 4, y: 0 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 0, y: 0 })!.type).toBe('rook')
+
+      const whiteCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 7 })!,
+        { x: 4, y: 7 },
+        { x: 2, y: 7 },
+        'castling'
+      )
+
+      const blackCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 0 })!,
+        { x: 4, y: 0 },
+        { x: 2, y: 0 },
+        'castling'
+      )
+
+      expect(game.makeMove(whiteCastle)).toBe(false)
+      expect(game.makeMove(blackCastle)).toBe(false)
     })
   })
 })

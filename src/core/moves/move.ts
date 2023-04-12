@@ -45,6 +45,7 @@ export class Move implements IMove {
     const isOccupied = !!board.getPieceAt(this.endPosition)?.type
     return (
       this.piece.type === 'king' &&
+      !this.piece.hasMoved &&
       !isOccupied &&
       this.isRookCastlingValid(board, this.piece?.color)
     )
