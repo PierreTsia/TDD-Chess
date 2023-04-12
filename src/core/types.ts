@@ -6,7 +6,6 @@ export interface IGame {
   players: [IPlayer, IPlayer]
   status: GameStatus
   moveHistory: IMoveHistory
-
   initializeGame(): void
   startGame(): void
   makeMove(move: IMove): boolean
@@ -18,7 +17,6 @@ export interface IGame {
 
 export interface IBoard {
   squares: Array<Array<IPiece | null>>
-
   initializeBoard(): void
   setStartingPosition(): void
   getPieceAt(position: Position): IPiece | null
@@ -27,23 +25,18 @@ export interface IBoard {
   applyMove(move: IMove): void
   isPositionUnderAttack(position: Position, attackingColor: Color): boolean
   getAllPieces(color: Color): Array<IPiece>
-
   isEmptySquare(position: Position): boolean
-
   isOutOfBounds(position: Position): boolean
   isEnemyPieceAt(position: Position, color: Color): boolean
+  isKingInCheck(color: Color): boolean
 }
 
 export interface IPiece {
   type: PieceType
   color: Color
   position: Position
-
   hasMoved: boolean
-
   directionOffsets: Array<{ x: Modifier; y: Modifier }>
-
-
   getMoveSquares(board: IBoard): Array<Position>
   getPossibleMoves(board: IBoard): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
@@ -80,7 +73,6 @@ export interface Position {
 // MoveHistory interface
 export interface IMoveHistory {
   moves: Array<IMove>
-
   addMove(move: IMove): void
   undoMove(game: IGame): boolean
   redoMove(game: IGame): boolean

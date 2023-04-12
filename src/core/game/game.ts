@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash'
+
 import { Board } from '~/core/board/board'
 import { MoveHistory } from '~/core/moves/move-history'
 import { Player } from '~/core/player/player'
@@ -44,17 +46,28 @@ export class Game implements IGame {
     if (!this.isCurrentPlayerTurn(move.piece.color)) {
       return false
     }
-    const isValidMove = move.isValid(this.board)
-    if (isValidMove) {
-      this.board.applyMove(move)
-      this.moveHistory.addMove(move)
-      this.switchPlayer()
-      if(this.isKingInCheck(this.currentPlayer.color)) {
-        this.status = 'check'
+    const isValidPieceMove = move.isValid(this.board)
+    if (!isValidPieceMove) {
+      return false
+    }
+    if (this.status === 'check') {
+      const tempBoard = cloneDeep(this.board)
+      tempBoard.applyMove(move)
+      if (tempBoard.isKingInCheck(move.piece.color)) {
+        return false
       }
     }
 
-    return isValidMove
+    this.board.applyMove(move)
+    this.moveHistory.addMove(move)
+    this.switchPlayer()
+    if (this.board.isKingInCheck(this.currentPlayer.color)) {
+      this.status = 'check'
+    } else {
+      this.status = 'ongoing'
+    }
+
+    return true
   }
 
   isGameOver(): boolean {
@@ -72,10 +85,5 @@ export class Game implements IGame {
   switchPlayer(): void {
     this.currentPlayer =
       this.currentPlayer === this.players[0] ? this.players[1] : this.players[0]
-  }
-
-  private isKingInCheck(kingColor: Color): boolean {
-    const kingPosition = this.board.getAllPieces(kingColor).find(p => p.type === 'king')!.position
-    return this.board.isPositionUnderAttack(kingPosition, kingColor === 'white' ? 'black' : 'white')
   }
 }

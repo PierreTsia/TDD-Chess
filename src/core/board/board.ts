@@ -133,10 +133,19 @@ export class Board implements IBoard {
     )
   }
 
+  isKingInCheck(kingColor: Color): boolean {
+    const kingPosition = this.getAllPieces(kingColor).find(
+      (p) => p.type === 'king'
+    )!.position
+    return this.isPositionUnderAttack(
+      kingPosition,
+      kingColor === 'white' ? 'black' : 'white'
+    )
+  }
+
   getAllPieces(color: Color): Array<IPiece> {
     return this.squares
       .flat()
       .filter((piece) => piece?.color === color) as Array<IPiece>
   }
 }
-// Later, you will implement this method to create pieces and place them
