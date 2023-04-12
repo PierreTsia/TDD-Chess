@@ -1,5 +1,13 @@
 import { Piece } from '~/core/pieces/piece'
-import type { Color, IBoard, Modifier, PieceType, Position } from '~/core/types'
+
+import type {
+  Color,
+  IBoard,
+  IMove,
+  Modifier,
+  PieceType,
+  Position,
+} from '~/core/types'
 
 export class King extends Piece {
   type: PieceType
@@ -22,6 +30,8 @@ export class King extends Piece {
     this.type = 'king'
   }
 
+
+
   getMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
     return this.directionOffsets
@@ -32,10 +42,17 @@ export class King extends Piece {
           (board.isEmptySquare(position) ||
             board.isEnemyPieceAt(position, this.color))
       )
+  }
+
+  // try to avoid using isPositionUnderAttack inside getMovesSquares
+  // because it's calling itself recursively
+  getPossibleMoves(board: IBoard): Array<IMove> {
+    return super
+      .getPossibleMoves(board)
       .filter(
-        (position) =>
+        (move) =>
           !board.isPositionUnderAttack(
-            position,
+            move.endPosition,
             this.getOppositeColor(this.color)
           )
       )

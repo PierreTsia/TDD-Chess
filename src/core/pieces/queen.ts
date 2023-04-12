@@ -3,7 +3,6 @@ import { Rook } from '~/core/pieces/rook'
 import type {
   Color,
   IBoard,
-  IMove,
   Modifier,
   PieceType,
   Position,
@@ -22,13 +21,11 @@ export class Queen extends Piece {
     this.type = 'queen'
   }
 
-  getPossibleMoves(board: IBoard): Array<IMove> {
-    const bishopMoves = new Bishop(this.color, this.position).getPossibleMoves(
+  getMoveSquares(board: IBoard): Array<Position> {
+    const bishopMoves = new Bishop(this.color, this.position).getMoveSquares(
       board
     )
-    const rookMoves = new Rook(this.color, this.position).getPossibleMoves(
-      board
-    )
+    const rookMoves = new Rook(this.color, this.position).getMoveSquares(board)
 
     return [...bishopMoves, ...rookMoves]
   }

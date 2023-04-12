@@ -117,16 +117,19 @@ export class Board implements IBoard {
       this.setPieceAt(move.endPosition, piece)
       piece.hasMoved = true
     }
+  }
 
-    // place piece on destination square
+  private isEqualPosition(position1: Position, position2: Position): boolean {
+    return position1.x === position2.x && position1.y === position2.y
   }
 
   isPositionUnderAttack(position: Position, attackingColor: Color): boolean {
     const enemyPieces = this.getAllPieces(attackingColor)
-    return enemyPieces.some((piece) =>
-      piece
-        .getMoveSquares(this)
-        .some((square) => square.x === position.x && square.y === position.y)
+    const attackedSquares = enemyPieces.flatMap((piece) =>
+      piece.getMoveSquares(this)
+    )
+    return attackedSquares.some((square) =>
+      this.isEqualPosition(square, position)
     )
   }
 

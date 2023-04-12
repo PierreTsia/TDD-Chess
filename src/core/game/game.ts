@@ -49,6 +49,9 @@ export class Game implements IGame {
       this.board.applyMove(move)
       this.moveHistory.addMove(move)
       this.switchPlayer()
+      if(this.isKingInCheck(this.currentPlayer.color)) {
+        this.status = 'check'
+      }
     }
 
     return isValidMove
@@ -69,5 +72,10 @@ export class Game implements IGame {
   switchPlayer(): void {
     this.currentPlayer =
       this.currentPlayer === this.players[0] ? this.players[1] : this.players[0]
+  }
+
+  private isKingInCheck(kingColor: Color): boolean {
+    const kingPosition = this.board.getAllPieces(kingColor).find(p => p.type === 'king')!.position
+    return this.board.isPositionUnderAttack(kingPosition, kingColor === 'white' ? 'black' : 'white')
   }
 }
