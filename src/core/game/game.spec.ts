@@ -11,7 +11,8 @@ import {
   Nc6,
   Nf6,
   Qh5,
-  Qxf7, e4,
+  Qxf7,
+  e4,
   e5,
   e6,
   f3,
@@ -359,6 +360,112 @@ describe('Chess Game', () => {
 
         // Check if the game status is checkmate
         expect(game.status).toBe('checkmate')
+      })
+    })
+  })
+
+  describe('Castling', () => {
+    let game: Game
+
+    beforeEach(() => {
+      game = new Game()
+    })
+
+    it('should allow simple kingside castling for boths kings', () => {
+      // white
+      game.board.setPieceAt({ x: 4, y: 7 }, new King('white', { x: 4, y: 7 }))
+      game.board.setPieceAt({ x: 7, y: 7 }, new Rook('white', { x: 7, y: 7 }))
+
+      // black
+      game.board.setPieceAt({ x: 4, y: 0 }, new King('black', { x: 4, y: 0 }))
+      game.board.setPieceAt({ x: 7, y: 0 }, new Rook('black', { x: 7, y: 0 }))
+
+      expect(game.board.getPieceAt({ x: 4, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 7, y: 7 })!.type).toBe('rook')
+
+      expect(game.board.getPieceAt({ x: 4, y: 0 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 7, y: 0 })!.type).toBe('rook')
+
+      const whiteCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 7 })!,
+        { x: 4, y: 7 },
+        { x: 6, y: 7 },
+        'castling'
+      )
+
+      expect(game.makeMove(whiteCastle)).toBe(true)
+      expect(game.board.getPieceAt({ x: 6, y: 7 })).toMatchObject({
+        type: 'king',
+        color: 'white',
+      })
+
+      expect(game.board.getPieceAt({ x: 5, y: 7 })).toMatchObject({
+        type: 'rook',
+        color: 'white',
+      })
+
+      const blackCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 0 })!,
+        { x: 4, y: 0 },
+        { x: 6, y: 0 },
+        'castling'
+      )
+
+      expect(game.makeMove(blackCastle)).toBe(true)
+      expect(game.board.getPieceAt({ x: 6, y: 0 })).toMatchObject({
+        type: 'king',
+        color: 'black',
+      })
+      expect(game.board.getPieceAt({ x: 5, y: 0 })).toMatchObject({
+        type: 'rook',
+        color: 'black',
+      })
+    })
+    it('should allow simple queenside castling for both kings', () => {
+      // white
+      game.board.setPieceAt({ x: 4, y: 7 }, new King('white', { x: 4, y: 7 }))
+      game.board.setPieceAt({ x: 0, y: 7 }, new Rook('white', { x: 7, y: 7 }))
+      expect(game.board.getPieceAt({ x: 4, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 0, y: 7 })!.type).toBe('rook')
+
+      // black
+      game.board.setPieceAt({ x: 4, y: 0 }, new King('black', { x: 4, y: 0 }))
+      game.board.setPieceAt({ x: 0, y: 0 }, new Rook('black', { x: 7, y: 0 }))
+      expect(game.board.getPieceAt({ x: 4, y: 0 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 0, y: 0 })!.type).toBe('rook')
+
+      const whiteCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 7 })!,
+        { x: 4, y: 7 },
+        { x: 2, y: 7 },
+        'castling'
+      )
+
+      const blackCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 0 })!,
+        { x: 4, y: 0 },
+        { x: 2, y: 0 },
+        'castling'
+      )
+
+      expect(game.makeMove(whiteCastle)).toBe(true)
+      expect(game.board.getPieceAt({ x: 2, y: 7 })).toMatchObject({
+        type: 'king',
+        color: 'white',
+      })
+      expect(game.board.getPieceAt({ x: 3, y: 7 })).toMatchObject({
+        type: 'rook',
+        color: 'white',
+      })
+
+      expect(game.makeMove(blackCastle)).toBe(true)
+      expect(game.board.getPieceAt({ x: 2, y: 0 })).toMatchObject({
+        type: 'king',
+        color: 'black',
+      })
+      expect(game.board.getPieceAt({ x: 3, y: 0 })).toMatchObject({
+        type: 'rook',
+        color: 'black',
       })
     })
   })

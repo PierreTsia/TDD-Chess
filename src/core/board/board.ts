@@ -121,8 +121,25 @@ export class Board implements IBoard {
     } else {
       this.setPieceAt(move.startPosition, null)
       this.setPieceAt(move.endPosition, piece)
+      if (move.specialMoveType === 'castling') {
+        this.applyCastling(move)
+      }
       piece.hasMoved = true
     }
+  }
+
+  private applyCastling(move: IMove) {
+    const rook = this.getPieceAt({
+      x: move.endPosition.x === 6 ? 7 : 0,
+      y: move.endPosition.y,
+    } as Position)!
+
+    const newRookPosition: Position = {
+      x: move.endPosition.x === 6 ? 5 : 3,
+      y: move.endPosition.y,
+    }
+    this.setPieceAt(rook?.position, null)
+    this.setPieceAt(newRookPosition, rook)
   }
 
   private isEqualPosition(position1: Position, position2: Position): boolean {
@@ -142,7 +159,10 @@ export class Board implements IBoard {
   isKingInCheck(kingColor: Color): boolean {
     const kingPosition = this.getAllPieces(kingColor).find(
       (p) => p.type === 'king'
-    )!.position
+    )?.position
+    if (!kingPosition) {
+      return false
+    }
     return this.isPositionUnderAttack(
       kingPosition,
       kingColor === 'white' ? 'black' : 'white'
@@ -172,6 +192,9 @@ export class Board implements IBoard {
   private kingIsTrapped(kingColor: Color): boolean {
     const king = this.getAllPieces(kingColor).find((p) => p.type === 'king')!
 
+    if (!king) {
+      return false
+    }
     const kingMoves = king.getMoveSquares(this)
     const kingCanMove = kingMoves.some((position: Position) => {
       const boardCopy = cloneDeep(this)
