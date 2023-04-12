@@ -1,4 +1,6 @@
+import { cloneDeep } from 'lodash'
 import { COORDS, INIT_PIECES_COORDS } from '~/core/constants'
+import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
 import { King } from '~/core/pieces/king'
 import { Knight } from '~/core/pieces/knight'
@@ -110,8 +112,12 @@ export class Board implements IBoard {
   applyMove(move: IMove): void {
     // remove piece from source square
     const piece: IPiece | null = this.getPieceAt(move.startPosition)
-    if (!piece || piece.type !== move.piece.type) {
-      throw new Error('Invalid move')
+    if (!piece || piece.type !== move.piece?.type) {
+      throw new Error(
+        `Invalid move ${JSON.stringify(move)} with piece ${JSON.stringify(
+          piece
+        )}`
+      )
     } else {
       this.setPieceAt(move.startPosition, null)
       this.setPieceAt(move.endPosition, piece)
@@ -141,6 +147,39 @@ export class Board implements IBoard {
       kingPosition,
       kingColor === 'white' ? 'black' : 'white'
     )
+  }
+
+  isCheckMate(kingColor: Color): boolean {
+    return this.kingIsTrapped(kingColor) && this.noPieceCanDefend(kingColor)
+  }
+
+  private noPieceCanDefend(kingColor: Color): boolean {
+    const pieces: IPiece[] = this.getAllPieces(kingColor)
+      .filter((p) => p.type !== 'king')
+      .flat()
+    const piecesCanDefend = pieces.some((piece: IPiece) => {
+      const moves = piece.getMoveSquares(this)
+      return moves.some((position: Position) => {
+        const boardCopy = cloneDeep(this)
+        const possibleMove = new Move(piece, piece.position, position)
+        boardCopy.applyMove(possibleMove)
+        return !boardCopy.isKingInCheck(kingColor)
+      })
+    })
+    return !piecesCanDefend
+  }
+
+  private kingIsTrapped(kingColor: Color): boolean {
+    const king = this.getAllPieces(kingColor).find((p) => p.type === 'king')!
+
+    const kingMoves = king.getMoveSquares(this)
+    const kingCanMove = kingMoves.some((position: Position) => {
+      const boardCopy = cloneDeep(this)
+      const possibleMove = new Move(king, king.position, position)
+      boardCopy.applyMove(possibleMove)
+      return !boardCopy.isKingInCheck(kingColor)
+    })
+    return !kingCanMove
   }
 
   getAllPieces(color: Color): Array<IPiece> {

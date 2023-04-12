@@ -29,6 +29,7 @@ export interface IBoard {
   isOutOfBounds(position: Position): boolean
   isEnemyPieceAt(position: Position, color: Color): boolean
   isKingInCheck(color: Color): boolean
+  isCheckMate(color: Color): boolean
 }
 
 export interface IPiece {

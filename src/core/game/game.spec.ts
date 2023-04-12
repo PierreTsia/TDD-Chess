@@ -5,7 +5,7 @@ import { Bishop } from '~/core/pieces/bishop'
 import { King } from '~/core/pieces/king'
 import { Queen } from '~/core/pieces/queen'
 import { Rook } from '~/core/pieces/rook'
-import type { IGame, IPlayer } from '~/core/types'
+import type { IGame, IPlayer, Position } from '~/core/types'
 import { isStartingPositionCorrect } from '~/core/game/helpers'
 
 describe('Chess Game', () => {
@@ -131,8 +131,6 @@ describe('Chess Game', () => {
     })
 
     it('should allow a player to capture the attacking piece to get out of check', () => {
-      const game = new Game()
-      const [player1, player2] = game.players
       game.board.setPieceAt({ x: 0, y: 0 }, new King('white', { x: 0, y: 0 }))
       game.board.setPieceAt({ x: 4, y: 7 }, new King('black', { x: 4, y: 7 }))
       game.board.setPieceAt({ x: 4, y: 2 }, new Bishop('black', { x: 4, y: 2 }))
@@ -190,6 +188,96 @@ describe('Chess Game', () => {
       )
       expect(player1.makeMove(validMove, game)).toBe(true)
       expect(game.status).toBe('ongoing')
+    })
+  })
+
+  describe('Checkmate', () => {
+    let game: IGame
+    // @ts-expect-error blabla
+    let player1: IPlayer
+    let player2: IPlayer
+    beforeEach(() => {
+      game = new Game()
+      player1 = game.players[0]
+      player2 = game.players[1]
+    })
+
+    it('should detect simple checkmate when attacked King has no possible moves', () => {
+      const whiteKingPosition: Position = { x: 0, y: 0 } // a8
+      const blackKingPosition: Position = { x: 2, y: 1 } // c7
+      const blackRookPosition: Position = { x: 2, y: 7 } // c1
+
+      game.board.setPieceAt(
+        whiteKingPosition,
+        new King('white', whiteKingPosition)
+      )
+
+      game.board.setPieceAt(
+        blackKingPosition,
+        new King('black', blackKingPosition)
+      )
+      game.board.setPieceAt(
+        blackRookPosition,
+        new Rook('black', blackRookPosition)
+      )
+
+      game.currentPlayer = game.players[1]
+      expect(game.status).toBe('ongoing')
+
+      // move rook to c1 to checkmate
+
+      const checkmateMove = new Move(
+        game.board.getPieceAt(blackRookPosition)!,
+        blackRookPosition,
+        { x: 0, y: 7 }
+      )
+
+      player2.makeMove(checkmateMove, game)
+      expect(game.status).toBe('checkmate')
+    })
+
+    it('should not call checkmate when the attacking piece can be captured', () => {
+      // setup check scenario with rook and the king attacking the white king but with white queen able to capture the rook
+
+      const whiteKingPosition: Position = { x: 0, y: 0 } // a8
+      const whiteQueenPosition: Position = { x: 1, y: 6 } // b2
+
+      const blackKingPosition: Position = { x: 2, y: 1 } // c7
+      const blackRookPosition: Position = { x: 3, y: 7 } // d1
+
+      game.board.setPieceAt(
+        whiteKingPosition,
+        new King('white', whiteKingPosition)
+      )
+      game.board.setPieceAt(
+        whiteQueenPosition,
+        new Queen('white', whiteQueenPosition)
+      )
+
+      game.board.setPieceAt(
+        blackKingPosition,
+        new King('black', blackKingPosition)
+      )
+
+      game.board.setPieceAt(
+        blackRookPosition,
+        new Rook('black', blackRookPosition)
+      )
+
+      game.currentPlayer = game.players[1]
+      expect(game.status).toBe('ongoing')
+
+
+      // move rook to a1 to check but not mate
+      const checkMove = new Move(
+        game.board.getPieceAt(blackRookPosition)!,
+        blackRookPosition,
+        { x: 0, y: 7 }
+      )
+
+
+      player2.makeMove(checkMove, game)
+      expect(game.status).toBe('check')
     })
   })
 })

@@ -9,7 +9,7 @@ import { Knight } from '~/core/pieces/knight'
 import { Pawn } from '~/core/pieces/pawn'
 import { Queen } from '~/core/pieces/queen'
 import { Rook } from '~/core/pieces/rook'
-import type { IBoard, IPiece, IPlayer, Position } from '~/core/types'
+import type {IBoard, IMove, IPiece, IPlayer, Position} from '~/core/types'
 
 describe('Pieces Base Moves', () => {
   let game: Game
@@ -318,7 +318,7 @@ describe('Pieces Base Moves', () => {
 
       const possibleMoves = knight.getPossibleMoves(board)
       expect(
-        possibleMoves.some((move) =>
+        possibleMoves.some((move:IMove) =>
           isEqual(move.endPosition, {
             x: 2,
             y: 3,
@@ -353,7 +353,7 @@ describe('Pieces Base Moves', () => {
 
       const possibleMoves = knight.getPossibleMoves(board)
       expect(
-        possibleMoves.some((move) =>
+        possibleMoves.some((move:IMove) =>
           isEqual(move.endPosition, {
             x: 2,
             y: 3,

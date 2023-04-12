@@ -43,13 +43,15 @@ export class Game implements IGame {
   }
 
   makeMove(move: IMove): boolean {
-    if (!this.isCurrentPlayerTurn(move.piece.color)) {
+    if (!this.isCurrentPlayerTurn(move.piece.color) || this.isGameOver()) {
       return false
     }
+
     const isValidPieceMove = move.isValid(this.board)
     if (!isValidPieceMove) {
       return false
     }
+
     if (this.status === 'check') {
       const tempBoard = cloneDeep(this.board)
       tempBoard.applyMove(move)
@@ -59,9 +61,12 @@ export class Game implements IGame {
     }
 
     this.board.applyMove(move)
+
     this.moveHistory.addMove(move)
     this.switchPlayer()
-    if (this.board.isKingInCheck(this.currentPlayer.color)) {
+    if (this.board.isCheckMate(this.currentPlayer.color)) {
+      this.status = 'checkmate'
+    } else if (this.board.isKingInCheck(this.currentPlayer.color)) {
       this.status = 'check'
     } else {
       this.status = 'ongoing'
@@ -71,7 +76,7 @@ export class Game implements IGame {
   }
 
   isGameOver(): boolean {
-    return false
+    return this.status === 'checkmate'
   }
 
   getWinner(): IPlayer | null {
