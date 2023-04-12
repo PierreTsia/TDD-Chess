@@ -6,7 +6,18 @@ import { King } from '~/core/pieces/king'
 import { Queen } from '~/core/pieces/queen'
 import { Rook } from '~/core/pieces/rook'
 import type { IGame, IPlayer, Position } from '~/core/types'
-import { isStartingPositionCorrect } from '~/core/game/helpers'
+import {
+  Bc4,
+  Nc6,
+  Nf6,
+  Qh5,
+  Qxf7, e4,
+  e5,
+  e6,
+  f3,
+  g4,
+  isStartingPositionCorrect,
+} from '~/core/game/helpers'
 
 describe('Chess Game', () => {
   describe('Game Initialization', () => {
@@ -267,7 +278,6 @@ describe('Chess Game', () => {
       game.currentPlayer = game.players[1]
       expect(game.status).toBe('ongoing')
 
-
       // move rook to a1 to check but not mate
       const checkMove = new Move(
         game.board.getPieceAt(blackRookPosition)!,
@@ -275,9 +285,81 @@ describe('Chess Game', () => {
         { x: 0, y: 7 }
       )
 
-
       player2.makeMove(checkMove, game)
       expect(game.status).toBe('check')
+    })
+
+    describe('Real Game Checkmates Scenarii', () => {
+      let game: IGame
+      let player1: IPlayer
+      let player2: IPlayer
+
+      beforeEach(() => {
+        game = new Game()
+        player1 = game.players[0]
+        player2 = game.players[1]
+        game.initializeGame()
+      })
+
+      it("should execute the fool's mate scenario successfully", () => {
+        // 1. f3
+        const move1 = f3(game.board)
+        expect(player1.makeMove(move1, game)).toBe(true)
+
+        // 1... e6
+        const move2 = e6(game.board)
+        expect(player2.makeMove(move2, game)).toBe(true)
+
+        // 2. g4
+        const move3 = g4(game.board)
+        expect(player1.makeMove(move3, game)).toBe(true)
+
+        // 2... Qh4#
+        const move4 = new Move(
+          game.board.getPieceAt({ x: 3, y: 0 })!,
+          { x: 3, y: 0 },
+          { x: 7, y: 4 }
+        )
+
+        expect(player2.makeMove(move4, game)).toBe(true)
+
+        // Check if the game status is checkmate
+        expect(game.status).toBe('checkmate')
+      })
+
+      it("should execute the scholar's mate scenario successfully", () => {
+        // 1. e4
+        const move1 = e4(game.board)
+
+        expect(player1.makeMove(move1, game)).toBe(true)
+
+        // 1... e5
+        const move2 = e5(game.board)
+        expect(player2.makeMove(move2, game)).toBe(true)
+
+        // 2. Bc4
+        const move3 = Bc4(game.board)
+        expect(player1.makeMove(move3, game)).toBe(true)
+
+        // 2... Nc6
+        const move4 = Nc6(game.board)
+        expect(player2.makeMove(move4, game)).toBe(true)
+
+        // 3. Qh5
+        const move5 = Qh5(game.board)
+        expect(player1.makeMove(move5, game)).toBe(true)
+
+        // 3... Nf6??
+        const move6 = Nf6(game.board)
+        expect(player2.makeMove(move6, game)).toBe(true)
+
+        // 4. Qxf7#
+        const move7 = Qxf7(game.board)
+        expect(player1.makeMove(move7, game)).toBe(true)
+
+        // Check if the game status is checkmate
+        expect(game.status).toBe('checkmate')
+      })
     })
   })
 })

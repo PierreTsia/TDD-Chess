@@ -21,7 +21,7 @@ export class Pawn extends Piece {
   }
 
   get modifier() {
-    return this.color === 'white' ? 1 : -1
+    return this.color === 'white' ? -1 : 1
   }
 
   private getAttackSquares(board: IBoard): Array<Position> {

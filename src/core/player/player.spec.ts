@@ -22,9 +22,9 @@ describe('Player', () => {
 
     const switchPlayerSpy = vi.spyOn(game, 'switchPlayer')
     const moveHistorySpy = vi.spyOn(game.moveHistory, 'addMove')
-    const piece: IPiece = board.getPieceAt({ x: 0, y: 1 })! // Assuming this is a white pawn
-    const startPosition: Position = { x: 0, y: 1 }
-    const endPosition: Position = { x: 0, y: 2 }
+    const piece: IPiece = board.getPieceAt({ x: 0, y: 6 })! // Assuming this is a white pawn
+    const startPosition: Position = { x: 0, y: 6 }
+    const endPosition: Position = { x: 0, y: 4 }
 
     expect(game.currentPlayer).toBe(player1)
 

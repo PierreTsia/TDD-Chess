@@ -22,8 +22,8 @@ export class Board implements IBoard {
 
   private placePawns() {
     for (let i = 0; i < 8; i++) {
-      const whitePawnPos = { x: i, y: 1 } as Position
-      const blackPawnPos = { x: i, y: 6 } as Position
+      const whitePawnPos = { x: i, y: 6 } as Position
+      const blackPawnPos = { x: i, y: 1 } as Position
       this.setPieceAt(whitePawnPos, new Pawn('white', whitePawnPos))
       this.setPieceAt(blackPawnPos, new Pawn('black', blackPawnPos))
     }
@@ -42,7 +42,7 @@ export class Board implements IBoard {
   }
 
   private getPieceColor(i: number) {
-    return i <= 1 ? 'white' : 'black'
+    return i <= 1 ? 'black' : 'white'
   }
 
   private placeBishops() {
@@ -55,14 +55,14 @@ export class Board implements IBoard {
     INIT_PIECES_COORDS.queen.forEach(([x, y], i) => {
       this.setPieceAt(
         { x, y },
-        new Queen(i === 0 ? 'white' : 'black', { x, y })
+        new Queen(i === 0 ? 'black' : 'white', { x, y })
       )
     })
   }
 
   private placeKings() {
     INIT_PIECES_COORDS.king.forEach(([x, y], i) => {
-      this.setPieceAt({ x, y }, new King(i === 0 ? 'white' : 'black', { x, y }))
+      this.setPieceAt({ x, y }, new King(i === 0 ? 'black' : 'white', { x, y }))
     })
   }
 
