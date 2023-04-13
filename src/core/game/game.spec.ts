@@ -410,6 +410,15 @@ describe('Chess Game', () => {
 
       const blackCastle = BlackQueenSideCastle(game.board)
 
+      const wrongCastle = new Move(
+        game.board.getPieceAt({ x: 4, y: 0 })!,
+        { x: 4, y: 0 },
+        { x: 1, y: 0 },
+        'castling'
+      )
+
+      expect(game.makeMove(wrongCastle)).toBe(false)
+
       expect(game.makeMove(blackCastle)).toBe(true)
       expect(game.board.getPieceAt({ x: 2, y: 0 })).toMatchObject({
         type: 'king',

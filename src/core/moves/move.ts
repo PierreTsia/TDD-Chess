@@ -65,7 +65,10 @@ export class Move implements IMove {
 
   private isCastlingValid(board: IBoard): boolean {
     const isOccupied = !!board.getPieceAt(this.endPosition)?.type
+    const isEndSquareCorrect =
+      this.endPosition.x === 6 || this.endPosition.x === 2
     return (
+      isEndSquareCorrect &&
       !isOccupied &&
       this.kingHasNotMoved() &&
       this.isRookCastlingValid(board, this.piece?.color) &&
