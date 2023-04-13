@@ -18,6 +18,8 @@ export interface IGame {
 export interface IBoard {
   squares: Array<Array<IPiece | null>>
   initializeBoard(): void
+
+  resetBoard(): void
   setStartingPosition(): void
   getPieceAt(position: Position): IPiece | null
   setPieceAt(position: Position, piece: IPiece | null): void
@@ -61,6 +63,7 @@ export interface IMove {
 }
 
 export type GameStatus =
+  | 'not_started'
   | 'ongoing'
   | 'check'
   | 'checkmate'

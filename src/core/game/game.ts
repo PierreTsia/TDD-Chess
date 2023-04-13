@@ -26,17 +26,23 @@ export class Game implements IGame {
     this.board = new Board()
     this.currentPlayer = whitePlayer
     this.players = [whitePlayer, blackPlayer]
-    this.status = 'ongoing'
+    this.status = 'not_started'
     this.moveHistory = new MoveHistory()
   }
 
   initializeGame(): void {
+    this.board.resetBoard()
     this.board.initializeBoard()
     this.board.setStartingPosition()
+
+    this.startGame()
   }
 
   // Implement other methods as required by the IGame interface
-  startGame() {}
+  startGame() {
+    this.currentPlayer = this.players[0]
+    this.status = 'ongoing'
+  }
 
   private isCurrentPlayerTurn(pieceColor: Color): boolean {
     return pieceColor === this.currentPlayer.color

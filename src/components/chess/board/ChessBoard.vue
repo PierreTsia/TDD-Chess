@@ -18,6 +18,8 @@ const onGoingMove = ref<{ from: Position | null; to: Position | null }>({
   to: null,
 })
 
+const status = computed(() => game.value.status)
+
 const selectedSquare = computed(() => {
   if (onGoingMove.value.from) {
     return onGoingMove.value.from
@@ -55,8 +57,6 @@ const handleSquareClick = ({ x, y }: Position) => {
     onGoingMove.value = { from: null, to: null }
   }
 }
-
-
 
 const start = () => {
   game.value.initializeGame()
@@ -99,5 +99,7 @@ const squareColor = (y: number, x: number) => {
       </span>
     </div>
   </div>
-  <o-button my-6 type="secondary" @click="start"> Start </o-button>
+  <o-button my-6 type="secondary" @click="start">
+    {{ status === 'not_started' ? 'Start' : 'Reset' }}
+  </o-button>
 </template>

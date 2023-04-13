@@ -47,7 +47,7 @@ describe('Chess Game', () => {
       game.board.setPieceAt({ x: 0, y: 0 }, new King('white', { x: 0, y: 0 }))
       game.board.setPieceAt({ x: 4, y: 7 }, new King('black', { x: 4, y: 7 }))
       game.board.setPieceAt({ x: 3, y: 2 }, new Queen('black', { x: 3, y: 2 }))
-
+      game.startGame()
       game.currentPlayer = game.players[1]
 
       expect(game.status).toBe('ongoing')
@@ -236,6 +236,7 @@ describe('Chess Game', () => {
         new Rook('black', blackRookPosition)
       )
 
+      game.startGame()
       game.currentPlayer = game.players[1]
       expect(game.status).toBe('ongoing')
 
@@ -278,6 +279,7 @@ describe('Chess Game', () => {
         blackRookPosition,
         new Rook('black', blackRookPosition)
       )
+      game.startGame()
 
       game.currentPlayer = game.players[1]
       expect(game.status).toBe('ongoing')

@@ -102,7 +102,6 @@ export class Piece implements IPiece {
   }
 
   isInDirectLineWithKing(board: IBoard): boolean {
-    // const attackingColor = this.getOppositeColor(this.color)
     const myKing = board.getAllPieces(this.color).find((p) => p.type === 'king')
     if (!myKing?.position) {
       return false
@@ -110,12 +109,7 @@ export class Piece implements IPiece {
 
     return (
       this.isAlignedWithKing(myKing.position, this.position) &&
-      this.noPieceBetweenKingAndPosition(
-        myKing.position,
-        this.position,
-        board
-      ) &&
-      this.isPinned(board)
+      this.noPieceBetweenKingAndPosition(myKing.position, this.position, board)
     )
   }
 

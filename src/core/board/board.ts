@@ -20,6 +20,10 @@ export class Board implements IBoard {
     this.setStartingPosition()
   }
 
+  resetBoard() {
+    this.squares = new Array(8).fill(null).map(() => new Array(8).fill(null))
+  }
+
   private placePawns() {
     for (let i = 0; i < 8; i++) {
       const whitePawnPos = { x: i, y: 6 } as Position
