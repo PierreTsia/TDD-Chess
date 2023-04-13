@@ -28,6 +28,7 @@ export interface IBoard {
   isEmptySquare(position: Position): boolean
   isOutOfBounds(position: Position): boolean
   isEnemyPieceAt(position: Position, color: Color): boolean
+  isAllyPieceAt(position: Position, color: Color): boolean
   isKingInCheck(color: Color): boolean
   isCheckMate(color: Color): boolean
 }
@@ -41,7 +42,7 @@ export interface IPiece {
 
   getPotentialReach(board: IBoard): Array<Position>
   getMoveSquares(board: IBoard): Array<Position>
-  getPossibleMoves(board: IBoard): Array<IMove>
+  getPossibleMoves(board: IBoard, arrivalPosition: Position): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
 }
 

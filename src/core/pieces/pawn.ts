@@ -16,6 +16,10 @@ export class Pawn extends Piece {
     return this.color === 'white' ? -1 : 1
   }
 
+  getPotentialReach(board: IBoard): Array<Position> {
+    return this.diagonalMoveSquares(board, true)
+  }
+
   getMoveSquares(board: IBoard): Array<Position> {
     return [
       ...this.verticalMoveSquares(board),
@@ -23,12 +27,14 @@ export class Pawn extends Piece {
     ]
   }
 
-  private diagonalMoveSquares(board: IBoard): Array<Position> {
+  private diagonalMoveSquares(board: IBoard, defends = false): Array<Position> {
     const { x, y } = this.position
     const diagonalLeft = { x: x - 1, y: y + this.modifier } as Position
     const diagonalRight = { x: x + 1, y: y + this.modifier } as Position
-    return [diagonalRight, diagonalLeft].filter(
-      (p) => board.isEnemyPieceAt(p, this.color) && !board.isOutOfBounds(p)
+    return [diagonalRight, diagonalLeft].filter((p) =>
+      !board.isOutOfBounds(p) && defends
+        ? board.isAllyPieceAt(p, this.color)
+        : board.isEnemyPieceAt(p, this.color)
     )
   }
 

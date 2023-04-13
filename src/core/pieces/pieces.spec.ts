@@ -899,5 +899,26 @@ describe('Pieces Base Moves', () => {
       )
       expect(player1.makeMove(kingTakesKnight, game)).toBe(false)
     })
+    it('should not be able to capture a piece that is protected by a Pawn', () => {
+      const game = new Game()
+      const player1 = game.players[0]
+      const king = new King('white', { x: 4, y: 4 })
+      const blackKnight = new Knight('black', { x: 3, y: 3 })
+      const blackPawn = new Pawn('black', { x: 2, y: 2 })
+
+      game.board.setPieceAt(king.position, king)
+      game.board.setPieceAt(blackKnight.position, blackKnight)
+      game.board.setPieceAt(blackPawn.position, blackPawn)
+
+      expect(game.board.getPieceAt({ x: 3, y: 3 })).toBe(blackKnight)
+      expect(game.board.getPieceAt({ x: 2, y: 2 })).toBe(blackPawn)
+
+      const kingTakesKnight = new Move(
+        king,
+        king.position,
+        blackKnight.position
+      )
+      expect(player1.makeMove(kingTakesKnight, game)).toBe(false)
+    })
   })
 })

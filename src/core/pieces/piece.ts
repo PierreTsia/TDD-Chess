@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import { BOARD_SIZE } from '~/core/constants'
 import { Move } from '~/core/moves/move'
@@ -69,7 +70,65 @@ export class Piece implements IPiece {
     return this.getMoveSquares(board, true)
   }
 
+  isAlignedWithKing(kingPosition: Position, position: Position): boolean {
+    const xDiff = Math.abs(kingPosition.x - position.x)
+    const yDiff = Math.abs(kingPosition.y - position.y)
+    return xDiff === 0 || yDiff === 0 || xDiff === yDiff
+  }
+
+  noPieceBetweenKingAndPosition(
+    kingPosition: Position,
+    position: Position,
+    board: IBoard
+  ): boolean {
+    const xDirection =
+      position.x > kingPosition.x ? 1 : position.x < kingPosition.x ? -1 : 0
+    const yDirection =
+      position.y > kingPosition.y ? 1 : position.y < kingPosition.y ? -1 : 0
+
+    let currentX = kingPosition.x + xDirection
+    let currentY = kingPosition.y + yDirection
+
+    while (currentX !== position.x || currentY !== position.y) {
+      if (board.getPieceAt({ x: currentX, y: currentY } as Position) !== null) {
+        return false
+      }
+
+      currentX += xDirection
+      currentY += yDirection
+    }
+
+    return true
+  }
+
+  isInDirectLineWithKing(board: IBoard): boolean {
+    // const attackingColor = this.getOppositeColor(this.color)
+    const myKing = board.getAllPieces(this.color).find((p) => p.type === 'king')
+    if (!myKing?.position) {
+      return false
+    }
+
+    return (
+      this.isAlignedWithKing(myKing.position, this.position) &&
+      this.noPieceBetweenKingAndPosition(
+        myKing.position,
+        this.position,
+        board
+      ) &&
+      this.isPinned(board)
+    )
+  }
+
+  isPinned(board: IBoard): boolean {
+    const boardCopy = cloneDeep(board)
+    boardCopy.setPieceAt(this.position, null)
+    return boardCopy.isKingInCheck(this.color)
+  }
+
   getPossibleMoves(board: IBoard): Array<IMove> {
+    if (this.isPinned(board) && this.isInDirectLineWithKing(board)) {
+      return []
+    }
     return this.getMoveSquares(board).map(
       (position) => new Move(this, this.position, position)
     )

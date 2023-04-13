@@ -505,4 +505,38 @@ describe('Chess Game', () => {
       expect(game.makeMove(whiteCastle)).toBe(true)
     })
   })
+
+  describe('Nailed piece', () => {
+    it('should not allow a piece that is nailed to move', () => {
+      const game = new Game()
+      const whiteKing = new King('white', { x: 4, y: 7 })
+      const whiteRook = new Rook('white', { x: 4, y: 6 })
+
+      const blackQueen = new Queen('black', { x: 4, y: 5 }) // nails white rook
+
+      game.board.setPieceAt({ x: 4, y: 7 }, whiteKing)
+      game.board.setPieceAt({ x: 4, y: 6 }, whiteRook)
+      game.board.setPieceAt({ x: 4, y: 5 }, blackQueen)
+
+      const whiteRookMove = new Move(whiteRook, { x: 4, y: 6 }, { x: 3, y: 6 })
+
+      expect(game.makeMove(whiteRookMove)).toBe(false)
+    })
+
+    it('should  allow a piece to move if not nailed', () => {
+      const game = new Game()
+      const whiteKing = new King('white', { x: 4, y: 7 })
+      const whiteRook = new Rook('white', { x: 4, y: 6 })
+
+      const blackQueen = new Queen('black', { x: 3, y: 5 }) // nails white rook
+
+      game.board.setPieceAt({ x: 4, y: 7 }, whiteKing)
+      game.board.setPieceAt({ x: 4, y: 6 }, whiteRook)
+      game.board.setPieceAt({ x: 3, y: 5 }, blackQueen)
+
+      const whiteRookMove = new Move(whiteRook, { x: 4, y: 6 }, { x: 3, y: 6 })
+
+      expect(game.makeMove(whiteRookMove)).toBe(true)
+    })
+  })
 })

@@ -1,4 +1,4 @@
-import  cloneDeep  from 'lodash/cloneDeep'
+import cloneDeep from 'lodash/cloneDeep'
 import { COORDS, INIT_PIECES_COORDS } from '~/core/constants'
 import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
@@ -107,6 +107,11 @@ export class Board implements IBoard {
   isEnemyPieceAt(position: Position, color: Color): boolean {
     const piece = this.getPieceAt(position)
     return piece !== null && piece.color !== color
+  }
+
+  isAllyPieceAt(position: Position, color: Color): boolean {
+    const piece = this.getPieceAt(position)
+    return piece !== null && piece.color === color
   }
 
   applyMove(move: IMove): void {
