@@ -120,7 +120,8 @@ export class Piece implements IPiece {
   }
 
   getPossibleMoves(board: IBoard): Array<IMove> {
-    if (this.isPinned(board) && this.isInDirectLineWithKing(board)) {
+    const isKing = board.getPieceAt(this.position)?.type === 'king'
+    if (!isKing && this.isPinned(board) && this.isInDirectLineWithKing(board)) {
       return []
     }
     return this.getMoveSquares(board).map(

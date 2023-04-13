@@ -13,9 +13,10 @@ export class Player implements IPlayer {
 
   private detectCastlingMove(move: IMove): boolean {
     return (
-      move.piece.type === 'king' &&
+      move.piece?.type === 'king' &&
       move.endPosition.x - move.startPosition.x !== -1 &&
-      move.endPosition.x - move.startPosition.x !== 1
+      move.endPosition.x - move.startPosition.x !== 1 &&
+      move.endPosition.y - move.startPosition.y === 0
     )
   }
 

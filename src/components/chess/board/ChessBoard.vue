@@ -79,7 +79,9 @@ const squareColor = (y: number, x: number) => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[480px]">
+  <div
+    class="mx-auto max-w-[480px]"
+    :class="{ 'outline outline-double outline-red-500': status === 'check' }">
     <div
       v-for="(row, y) in board.squares"
       :key="`row-${y}`"

@@ -541,4 +541,54 @@ describe('Chess Game', () => {
       expect(game.makeMove(whiteRookMove)).toBe(true)
     })
   })
+
+  describe('Edge Cases', () => {
+    it('should allow the king to run away from check', () => {
+      // bug scenario
+      // 1.e4 - e5
+      // 2- Qg4 - f6
+      // 3- Qg6 - Ke7 should be valid
+      // 4- Qxg6#
+
+      const game = new Game()
+      game.initializeGame()
+      const [player1, player2] = game.players
+
+      expect(player1.makeMove(e4(game.board), game)).toBe(true)
+      expect(player2.makeMove(e5(game.board), game)).toBe(true)
+
+      const Qg4 = new Move(
+        game.board.getPieceAt({ x: 3, y: 7 })!,
+        { x: 3, y: 7 },
+        { x: 6, y: 4 }
+      )
+      expect(player1.makeMove(Qg4, game)).toBe(true)
+      expect(game.board.getPieceAt({ x: 6, y: 4 })!.type).toBe('queen')
+
+      const f6 = new Move(
+        game.board.getPieceAt({ x: 5, y: 1 })!,
+        { x: 5, y: 1 },
+        { x: 5, y: 2 }
+      )
+      expect(player2.makeMove(f6, game)).toBe(true)
+
+      const Qg7 = new Move(
+        game.board.getPieceAt({ x: 6, y: 4 })!,
+        { x: 6, y: 4 },
+        { x: 6, y: 2 }
+      )
+
+      expect(player1.makeMove(Qg7, game)).toBe(true)
+      expect(game.status).toBe('check')
+
+      const Ke7 = new Move(
+        game.board.getPieceAt({ x: 4, y: 0 })!,
+        { x: 4, y: 0 },
+        { x: 4, y: 1 }
+      )
+
+      expect(player2.makeMove(Ke7, game)).toBe(true)
+      expect(game.status).toBe('ongoing')
+    })
+  })
 })
