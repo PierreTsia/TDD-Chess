@@ -42,7 +42,7 @@ export interface IPiece {
 
   getPotentialReach(board: IBoard): Array<Position>
   getMoveSquares(board: IBoard): Array<Position>
-  getPossibleMoves(board: IBoard, arrivalPosition: Position): Array<IMove>
+  getPossibleMoves(board: IBoard): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
 }
 
