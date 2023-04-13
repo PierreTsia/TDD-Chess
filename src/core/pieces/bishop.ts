@@ -16,7 +16,6 @@ export class Bishop extends Piece {
 
   constructor(color: Color, position: Position) {
     super(color, position)
-
     this.type = 'bishop'
   }
 

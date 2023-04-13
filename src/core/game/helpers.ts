@@ -183,14 +183,11 @@ export const Nc6 = (board: IBoard) =>
 export const Qh5 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 3, y: 7 })!, { x: 3, y: 7 }, { x: 7, y: 3 })
 
-
 export const Nf6 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 6, y: 0 })!, { x: 6, y: 0 }, { x: 5, y: 2 })
 
-
 export const Qxf7 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 7, y: 3 })!, { x: 7, y: 3 }, { x: 5, y: 1 })
-
 
 export const f3 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 5, y: 6 })!, { x: 5, y: 6 }, { x: 5, y: 5 })
@@ -200,3 +197,35 @@ export const e6 = (board: IBoard) =>
 
 export const g4 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 6, y: 6 })!, { x: 6, y: 6 }, { x: 6, y: 4 })
+
+export const WhiteKingSideCastle = (board: IBoard) =>
+  new Move(
+    board.getPieceAt({ x: 4, y: 7 })!,
+    { x: 4, y: 7 },
+    { x: 6, y: 7 },
+    'castling'
+  )
+
+export const WhiteQueenSideCastle = (board: IBoard) =>
+  new Move(
+    board.getPieceAt({ x: 4, y: 7 })!,
+    { x: 4, y: 7 },
+    { x: 2, y: 7 },
+    'castling'
+  )
+
+export const BlackKingSideCastle = (board: IBoard) =>
+  new Move(
+    board.getPieceAt({ x: 4, y: 0 })!,
+    { x: 4, y: 0 },
+    { x: 6, y: 0 },
+    'castling'
+  )
+
+export const BlackQueenSideCastle = (board: IBoard) =>
+  new Move(
+    board.getPieceAt({ x: 4, y: 0 })!,
+    { x: 4, y: 0 },
+    { x: 2, y: 0 },
+    'castling'
+  )

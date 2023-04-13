@@ -41,13 +41,35 @@ export class Move implements IMove {
     )
   }
 
+  private castlingPathIsClear(board: IBoard): boolean {
+    const { x, y } = this.endPosition
+    const isKingSide = x === 6
+
+    const [min, max] = isKingSide ? [5, 6] : [1, 3]
+    const opponentColor = this.piece.color === 'white' ? 'black' : 'white'
+    for (let i = min; i <= max; i++) {
+      const pos = { x: i, y } as Position
+      if (
+        !board.isEmptySquare(pos) ||
+        board.isPositionUnderAttack(pos, opponentColor)
+      ) {
+        return false
+      }
+    }
+    return true
+  }
+
+  private kingHasNotMoved(): boolean {
+    return this.piece.type === 'king' && !this.piece.hasMoved
+  }
+
   private isCastlingValid(board: IBoard): boolean {
     const isOccupied = !!board.getPieceAt(this.endPosition)?.type
     return (
-      this.piece.type === 'king' &&
-      !this.piece.hasMoved &&
       !isOccupied &&
-      this.isRookCastlingValid(board, this.piece?.color)
+      this.kingHasNotMoved() &&
+      this.isRookCastlingValid(board, this.piece?.color) &&
+      this.castlingPathIsClear(board)
     )
   }
 
