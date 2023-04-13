@@ -864,5 +864,26 @@ describe('Pieces Base Moves', () => {
         expect(moves).toContainEqual(position)
       })
     })
+
+    it('should be able to capture an enemy piece', () => {
+      const game = new Game()
+      const player1 = game.players[0]
+      const king = new King('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 3, y: 3 })
+      game.board.setPieceAt({ x: 4, y: 4 }, king)
+      game.board.setPieceAt({ x: 3, y: 3 }, enemyPiece)
+
+      const kingTakesKnight = new Move(king, king.position, enemyPiece.position)
+      expect(player1.makeMove(kingTakesKnight, game)).toBe(true)
+      expect(game.board.getPieceAt({ x: 3, y: 3 })).toBe(king)
+    })
+
+    it('should not be able to capture a piece that is protected', () => {
+      const game = new Game()
+      const player1 = game.players[0]
+      const king = new King('white', { x: 4, y: 4 })
+      const enemyPiece = new Knight('black', { x: 3, y: 3 })
+      const enemyPiece2 = new Knight('black', { x: 5, y: 5 })
+    })
   })
 })

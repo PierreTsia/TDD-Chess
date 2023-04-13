@@ -1,13 +1,5 @@
-import { Move } from '~/core/moves/move'
 import { Piece } from '~/core/pieces/piece'
-import type {
-  Color,
-  IBoard,
-  IMove,
-  Modifier,
-  PieceType,
-  Position,
-} from '~/core/types'
+import type { Color, IBoard, Modifier, PieceType, Position } from '~/core/types'
 
 export class Pawn extends Piece {
   type: PieceType
@@ -24,7 +16,14 @@ export class Pawn extends Piece {
     return this.color === 'white' ? -1 : 1
   }
 
-  private getAttackSquares(board: IBoard): Array<Position> {
+  getMoveSquares(board: IBoard): Array<Position> {
+    return [
+      ...this.verticalMoveSquares(board),
+      ...this.diagonalMoveSquares(board),
+    ]
+  }
+
+  private diagonalMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
     const diagonalLeft = { x: x - 1, y: y + this.modifier } as Position
     const diagonalRight = { x: x + 1, y: y + this.modifier } as Position
@@ -33,7 +32,7 @@ export class Pawn extends Piece {
     )
   }
 
-  getMoveSquares(board: IBoard): Array<Position> {
+  private verticalMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
 
     const possibleSquares = [{ x, y: y + this.modifier } as Position]
@@ -42,15 +41,6 @@ export class Pawn extends Piece {
     }
     return possibleSquares.filter(
       (p) => board.isEmptySquare(p) && !board.isOutOfBounds(p)
-    )
-  }
-
-  getPossibleMoves(board: IBoard): Array<IMove> {
-    const moveSquares = this.getMoveSquares(board)
-    const attackSquares = this.getAttackSquares(board)
-
-    return [...moveSquares, ...attackSquares].map(
-      (position) => new Move(this, this.position, position)
     )
   }
 }

@@ -30,8 +30,6 @@ export class King extends Piece {
     this.type = 'king'
   }
 
-
-
   getMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
     return this.directionOffsets
