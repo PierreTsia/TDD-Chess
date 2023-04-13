@@ -149,7 +149,7 @@ export class Board implements IBoard {
   isPositionUnderAttack(position: Position, attackingColor: Color): boolean {
     const enemyPieces = this.getAllPieces(attackingColor)
     const attackedSquares = enemyPieces.flatMap((piece) =>
-      piece.getMoveSquares(this)
+      piece.getPotentialReach(this)
     )
     return attackedSquares.some((square) =>
       this.isEqualPosition(square, position)

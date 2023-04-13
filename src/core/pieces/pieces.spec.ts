@@ -882,8 +882,22 @@ describe('Pieces Base Moves', () => {
       const game = new Game()
       const player1 = game.players[0]
       const king = new King('white', { x: 4, y: 4 })
-      const enemyPiece = new Knight('black', { x: 3, y: 3 })
-      const enemyPiece2 = new Knight('black', { x: 5, y: 5 })
+      const blackKnight = new Knight('black', { x: 3, y: 3 })
+      const blackPawn = new Queen('black', { x: 2, y: 2 })
+
+      game.board.setPieceAt(king.position, king)
+      game.board.setPieceAt(blackKnight.position, blackKnight)
+      game.board.setPieceAt(blackPawn.position, blackPawn)
+
+      expect(game.board.getPieceAt({ x: 3, y: 3 })).toBe(blackKnight)
+      expect(game.board.getPieceAt({ x: 2, y: 2 })).toBe(blackPawn)
+
+      const kingTakesKnight = new Move(
+        king,
+        king.position,
+        blackKnight.position
+      )
+      expect(player1.makeMove(kingTakesKnight, game)).toBe(false)
     })
   })
 })

@@ -30,7 +30,7 @@ export class Piece implements IPiece {
     return color === 'white' ? 'black' : 'white'
   }
 
-  getMoveSquares(board: IBoard): Array<Position> {
+  getMoveSquares(board: IBoard, includeAlly = false): Array<Position> {
     const moves: Array<Position> = []
 
     for (const direction of this.directionOffsets) {
@@ -53,6 +53,9 @@ export class Piece implements IPiece {
         } else if (pieceAtPosition.color !== this.color) {
           moves.push(currentPosition as Position)
           break
+        } else if (includeAlly) {
+          moves.push(currentPosition as Position)
+          break
         } else {
           break
         }
@@ -60,6 +63,10 @@ export class Piece implements IPiece {
     }
 
     return moves
+  }
+
+  getPotentialReach(board: IBoard): Array<Position> {
+    return this.getMoveSquares(board, true)
   }
 
   getPossibleMoves(board: IBoard): Array<IMove> {
