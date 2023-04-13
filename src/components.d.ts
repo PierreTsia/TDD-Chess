@@ -9,7 +9,20 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    BishopBlack: typeof import('./components/chess/pieces/Black/BishopBlack.vue')['default']
+    BishopWhite: typeof import('./components/chess/pieces/White/BishopWhite.vue')['default']
+    ChessBoard: typeof import('./components/chess/board/ChessBoard.vue')['default']
+    KingBlack: typeof import('./components/chess/pieces/Black/KingBlack.vue')['default']
+    KingWhite: typeof import('./components/chess/pieces/White/KingWhite.vue')['default']
+    KnightBlack: typeof import('./components/chess/pieces/Black/KnightBlack.vue')['default']
+    KnightWhite: typeof import('./components/chess/pieces/White/KnightWhite.vue')['default']
+    PawnBlack: typeof import('./components/chess/pieces/Black/PawnBlack.vue')['default']
+    PawnWhite: typeof import('./components/chess/pieces/White/PawnWhite.vue')['default']
+    QueenBlack: typeof import('./components/chess/pieces/Black/QueenBlack.vue')['default']
+    QueenWhite: typeof import('./components/chess/pieces/White/QueenWhite.vue')['default']
     README: typeof import('./components/README.md')['default']
+    RookBlack: typeof import('./components/chess/pieces/Black/RookBlack.vue')['default']
+    RookWhite: typeof import('./components/chess/pieces/White/RookWhite.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
