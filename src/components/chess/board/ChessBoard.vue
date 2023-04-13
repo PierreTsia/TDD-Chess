@@ -2,7 +2,8 @@
 import { useChessPieces } from '~/composables/chessPieces'
 
 import { Game } from '~/core/game/game'
-import type { XYValue } from '~/core/types'
+import { Move } from '~/core/moves/move'
+import type { IMove, IPiece, Position } from '~/core/types'
 
 const { pieces } = useChessPieces()
 
@@ -10,15 +11,53 @@ const game = ref<Game>(new Game())
 
 const board = computed(() => game.value.board)
 
-const selectedSquare = ref<[XYValue, XYValue] | null>([4, 3])
+const currentPlayer = computed(() => game.value.currentPlayer)
 
-const setSelectedSquare = (y?: XYValue, x?: XYValue) => {
-  if (!y || !x) {
-    selectedSquare.value = null
-    return
+const onGoingMove = ref<{ from: Position | null; to: Position | null }>({
+  from: null,
+  to: null,
+})
+
+const selectedSquare = computed(() => {
+  if (onGoingMove.value.from) {
+    return onGoingMove.value.from
   }
-  selectedSquare.value = [y, x]
+  return null
+})
+
+const selectedPiece = computed(() => {
+  if (selectedSquare.value) {
+    const { x, y } = selectedSquare.value
+    return board.value.squares[y][x]
+  }
+  return null
+})
+
+const handleSquareClick = ({ x, y }: Position) => {
+  if (!onGoingMove.value.from) {
+    const piece: IPiece | null = board.value.squares[y][x]
+    if (!piece || piece?.color !== currentPlayer.value.color) {
+      return
+    }
+
+    onGoingMove.value.from = { x, y }
+  } else {
+    if (!selectedPiece.value) {
+      return
+    }
+    const move: IMove = new Move(
+      selectedPiece.value!,
+      onGoingMove.value.from!,
+      { x, y }
+    )
+
+    currentPlayer.value.makeMove(move, game.value)
+
+    onGoingMove.value = { from: null, to: null }
+  }
 }
+
+
 
 const start = () => {
   game.value.initializeGame()
@@ -27,8 +66,8 @@ const start = () => {
 const squareColor = (y: number, x: number) => {
   if (
     selectedSquare.value &&
-    selectedSquare.value[0] === y &&
-    selectedSquare.value[1] === x
+    selectedSquare.value.y === y &&
+    selectedSquare.value.x === x
   ) {
     return 'bg-blue-400'
   }
@@ -50,11 +89,11 @@ const squareColor = (y: number, x: number) => {
         v-for="(col, x) in row"
         :key="`col-${x}`"
         :class="squareColor(y, x)"
-        class="w-[60px] h-[60px] flex justify-center items-center">
+        class="w-[60px] h-[60px] flex justify-center items-center"
+        @click="handleSquareClick({ y, x })">
         <span
           v-if="board.squares[y][x]"
-          class="w-full h-60px flex justify-center items-center"
-          @click="setSelectedSquare(y, x)">
+          class="w-full h-60px flex justify-center items-center">
           <component
             :is="pieces[board.squares[y][x].type][board.squares[y][x].color]" />
         </span>

@@ -11,7 +11,18 @@ export class Player implements IPlayer {
     this.name = name
   }
 
+  private detectCastlingMove(move: IMove): boolean {
+    return (
+      move.piece.type === 'king' &&
+      move.endPosition.x - move.startPosition.x !== -1 &&
+      move.endPosition.x - move.startPosition.x !== 1
+    )
+  }
+
   makeMove(move: IMove, game: IGame): boolean {
+    if (this.detectCastlingMove(move)) {
+      move.specialMoveType = 'castling'
+    }
     return game.makeMove(move)
   }
 }
