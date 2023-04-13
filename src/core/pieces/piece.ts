@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import { BOARD_SIZE } from '~/core/constants'
 import { Move } from '~/core/moves/move'
 import type {

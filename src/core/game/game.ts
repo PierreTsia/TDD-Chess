@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 import { Board } from '~/core/board/board'
 import { MoveHistory } from '~/core/moves/move-history'

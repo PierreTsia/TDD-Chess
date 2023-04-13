@@ -52,7 +52,6 @@ const handleSquareClick = ({ x, y }: Position) => {
     )
 
     currentPlayer.value.makeMove(move, game.value)
-
     onGoingMove.value = { from: null, to: null }
   }
 }

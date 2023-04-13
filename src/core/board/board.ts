@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash'
+import  cloneDeep  from 'lodash/cloneDeep'
 import { COORDS, INIT_PIECES_COORDS } from '~/core/constants'
 import { Move } from '~/core/moves/move'
 import { Bishop } from '~/core/pieces/bishop'
