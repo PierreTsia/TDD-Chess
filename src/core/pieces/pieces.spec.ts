@@ -138,6 +138,29 @@ describe('Pieces Base Moves', () => {
         })?.color
       ).toBe('white')
     })
+
+    it('a Pawn is enough to check the king', () => {
+      game.board.resetBoard()
+      // black king in a8
+      board.setPieceAt({ x: 0, y: 0 }, new King('black', { x: 0, y: 0 }))
+
+      // white pawn in b6
+      board.setPieceAt({ x: 1, y: 2 }, new Pawn('white', { x: 1, y: 2 }))
+
+      game.startGame()
+
+      expect(game.status).toBe('ongoing')
+      expect(game.currentPlayer.color).toBe('white')
+
+      const pawnCheck = new Move(
+        board.getPieceAt({ x: 1, y: 2 })!,
+        { x: 1, y: 2 },
+        { x: 1, y: 1 }
+      )
+
+      expect(player1.makeMove(pawnCheck, game)).toBe(true)
+      expect(game.status).toBe('check')
+    })
   })
   describe('Knight', () => {
     beforeEach(() => {

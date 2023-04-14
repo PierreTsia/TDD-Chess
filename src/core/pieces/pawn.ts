@@ -17,25 +17,23 @@ export class Pawn extends Piece {
   }
 
   getPotentialReach(board: IBoard): Array<Position> {
-    return this.diagonalMoveSquares(board, true)
+    return this.diagonalMoveSquares(board)
   }
 
   getMoveSquares(board: IBoard): Array<Position> {
     return [
       ...this.verticalMoveSquares(board),
-      ...this.diagonalMoveSquares(board),
+      ...this.diagonalMoveSquares(board).filter((p) => !board.isAllyPieceAt(p, this.color)),
     ]
   }
 
-  private diagonalMoveSquares(board: IBoard, defends = false): Array<Position> {
+  private diagonalMoveSquares(board: IBoard): Array<Position> {
     const { x, y } = this.position
     const diagonalLeft = { x: x - 1, y: y + this.modifier } as Position
     const diagonalRight = { x: x + 1, y: y + this.modifier } as Position
-    return [diagonalRight, diagonalLeft].filter((p) =>
-      !board.isOutOfBounds(p) && defends
-        ? board.isAllyPieceAt(p, this.color)
-        : board.isEnemyPieceAt(p, this.color)
-    )
+    return [diagonalRight, diagonalLeft].filter((p) => {
+      return !board.isOutOfBounds(p) && !board.isEmptySquare(p)
+    })
   }
 
   private verticalMoveSquares(board: IBoard): Array<Position> {
