@@ -35,6 +35,14 @@ const selectedPiece = computed(() => {
   return null
 })
 
+const chessPiece = ({ x, y }: Position) => {
+  const piece = board.value.squares[y][x]
+  if (!piece) {
+    return null
+  }
+  return pieces[piece.type][piece.color]
+}
+
 const handleSquareClick = ({ x, y }: Position) => {
   if (!onGoingMove.value.from) {
     const piece: IPiece | null = board.value.squares[y][x]
@@ -96,10 +104,9 @@ const squareColor = (y: number, x: number) => {
         class="w-[60px] h-[60px] flex justify-center items-center"
         @click="handleSquareClick({ y, x })">
         <span
-          v-if="board.squares[y][x]"
+          v-if="chessPiece({ x, y })"
           class="w-full h-60px flex justify-center items-center">
-          <component
-            :is="pieces[board.squares[y][x].type][board.squares[y][x].color]" />
+          <component :is="chessPiece({ x, y })" />
         </span>
       </span>
     </div>
