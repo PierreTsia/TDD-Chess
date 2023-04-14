@@ -1,5 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
-
 import { Board } from '~/core/board/board'
 import { MoveHistory } from '~/core/moves/move-history'
 import { Player } from '~/core/player/player'
@@ -38,7 +36,6 @@ export class Game implements IGame {
     this.startGame()
   }
 
-  // Implement other methods as required by the IGame interface
   startGame() {
     this.currentPlayer = this.players[0]
     this.status = 'ongoing'
@@ -49,25 +46,19 @@ export class Game implements IGame {
   }
 
   makeMove(move: IMove): boolean {
-    if (!this.isCurrentPlayerTurn(move.piece.color) || this.isGameOver()) {
-      return false
-    }
-
-    const isValidPieceMove = move.isValid(this.board)
-    if (!isValidPieceMove) {
-      return false
-    }
-
-    const tempBoard = cloneDeep(this.board)
-    tempBoard.applyMove(move)
-    if (tempBoard.isKingInCheck(move.piece.color)) {
+    if (
+      !this.isCurrentPlayerTurn(move.piece.color) ||
+      this.isGameOver() ||
+      !move.isValid(this.board)
+    ) {
       return false
     }
 
     this.board.applyMove(move)
-
     this.moveHistory.addMove(move)
+
     this.switchPlayer()
+
     if (this.board.isCheckMate(this.currentPlayer.color)) {
       this.status = 'checkmate'
     } else if (this.board.isKingInCheck(this.currentPlayer.color)) {

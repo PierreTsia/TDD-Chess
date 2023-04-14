@@ -23,7 +23,6 @@ export interface IBoard {
   setStartingPosition(): void
   getPieceAt(position: Position): IPiece | null
   setPieceAt(position: Position, piece: IPiece | null): void
-  isValidMove(move: IMove): boolean
   applyMove(move: IMove): void
   isPositionUnderAttack(position: Position, attackingColor: Color): boolean
   getAllPieces(color: Color): Array<IPiece>
@@ -99,3 +98,5 @@ export type Modifier = -1 | 1 | 0 | -2 | 2
 export const isValidXY = (n: any): n is XYValue => {
   return COORDS.includes(n)
 }
+
+
