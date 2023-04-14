@@ -16,6 +16,7 @@ import {
   Qxf7,
   WhiteKingSideCastle,
   WhiteQueenSideCastle,
+  d5,
   e4,
   e5,
   e6,
@@ -63,56 +64,48 @@ describe('Chess Game', () => {
       expect(game.status).toBe('check')
     })
     it('should only allow moves defending check', () => {
-      // Set up board for check scenario
+      // set up the board with a check scenario
+      // white king in a8 and black queen in e5
+
+      const game: IGame = new Game()
+
+      game.startGame()
+
+      expect(game.status).toBe('ongoing')
+
       game.board.setPieceAt({ x: 0, y: 0 }, new King('white', { x: 0, y: 0 }))
-      game.board.setPieceAt({ x: 7, y: 7 }, new Rook('white', { x: 7, y: 7 }))
-      game.board.setPieceAt({ x: 4, y: 7 }, new King('black', { x: 4, y: 7 }))
-      game.board.setPieceAt({ x: 3, y: 2 }, new Queen('black', { x: 3, y: 2 }))
+      game.board.setPieceAt({ x: 7, y: 1 }, new Rook('white', { x: 7, y: 1 }))
+
+      game.board.setPieceAt({ x: 4, y: 3 }, new Queen('black', { x: 4, y: 3 }))
 
       game.currentPlayer = game.players[1]
 
-      const checkMove = new Move(
-        game.board.getPieceAt({
-          x: 3,
-          y: 2,
-        })!,
-        {
-          x: 3,
-          y: 2,
-        },
-        {
-          x: 0,
-          y: 2,
-        },
-        null
-      )
-      player2.makeMove(checkMove, game)
-
-      // Player1 is in check
-      expect(game.status).toBe('check')
-
-      expect(game.currentPlayer).toBe(player1)
-
-      // Invalid move that doesn't defend against check
-      const invalidMove = new Move(
-        game.board.getPieceAt({
-          x: 7,
-          y: 7,
-        })!,
-        {
-          x: 7,
-          y: 7,
-        },
-        {
-          x: 7,
-          y: 0,
-        },
-        null
+      const QueenMove = new Move(
+        game.board.getPieceAt({ x: 4, y: 3 })!,
+        { x: 4, y: 3 },
+        { x: 0, y: 3 }
       )
 
-      expect(player1.makeMove(invalidMove, game)).toBe(false)
-
+      player2.makeMove(QueenMove, game)
       expect(game.status).toBe('check')
+
+      const notDefendingMove = new Move(
+        game.board.getPieceAt({ x: 7, y: 1 })!,
+        { x: 7, y: 1 },
+        { x: 7, y: 0 }
+      )
+
+      expect(player1.makeMove(notDefendingMove, game)).toBe(false)
+
+      const defendingMove = new Move(
+        game.board.getPieceAt({ x: 7, y: 1 })!,
+        { x: 7, y: 1 },
+        { x: 0, y: 1 }
+      )
+
+      expect(player1.makeMove(defendingMove, game)).toBe(true)
+
+      expect(game.status).toBe('ongoing')
     })
 
     it('should allow a player to block the check by moving another piece in between', () => {
@@ -589,6 +582,45 @@ describe('Chess Game', () => {
 
       expect(player2.makeMove(Ke7, game)).toBe(true)
       expect(game.status).toBe('ongoing')
+    })
+    it('should not allow a pinned knight to move', () => {
+      const game = new Game()
+      game.initializeGame()
+      const [player1, player2] = game.players
+
+      expect(player1.makeMove(e4(game.board), game)).toBe(true)
+      expect(player2.makeMove(d5(game.board), game)).toBe(true)
+
+      const knightC3 = new Move(
+        game.board.getPieceAt({ x: 1, y: 7 })!,
+        { x: 1, y: 7 },
+        { x: 2, y: 5 }
+      )
+
+      const knightC6 = new Move(
+        game.board.getPieceAt({ x: 1, y: 0 })!,
+        { x: 1, y: 0 },
+        { x: 2, y: 2 }
+      )
+
+      expect(player1.makeMove(knightC3, game)).toBe(true)
+      expect(player2.makeMove(knightC6, game)).toBe(true)
+
+      const bishopB4 = new Move(
+        game.board.getPieceAt({ x: 5, y: 7 })!,
+        { x: 5, y: 7 },
+        { x: 1, y: 3 }
+      )
+
+      expect(player1.makeMove(bishopB4, game)).toBe(true)
+
+      // knight is pinned and should not be able to move
+      const knightC6Move = new Move(
+        game.board.getPieceAt({ x: 2, y: 2 })!,
+        { x: 2, y: 2 },
+        { x: 3, y: 4 }
+      )
+      expect(player2.makeMove(knightC6Move, game)).toBe(false)
     })
   })
 })

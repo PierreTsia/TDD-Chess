@@ -58,12 +58,10 @@ export class Game implements IGame {
       return false
     }
 
-    if (this.status === 'check') {
-      const tempBoard = cloneDeep(this.board)
-      tempBoard.applyMove(move)
-      if (tempBoard.isKingInCheck(move.piece.color)) {
-        return false
-      }
+    const tempBoard = cloneDeep(this.board)
+    tempBoard.applyMove(move)
+    if (tempBoard.isKingInCheck(move.piece.color)) {
+      return false
     }
 
     this.board.applyMove(move)
