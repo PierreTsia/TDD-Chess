@@ -90,8 +90,6 @@ export class Move implements IMove {
     switch (this.specialMoveType) {
       case 'en_passant':
         return false
-      case 'promotion':
-        return false
       case 'castling':
         return this.isCastlingValid(board)
       default:

@@ -2,6 +2,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import { BoardInitializer } from '~/core/board/board-initializer'
 import { COORDS } from '~/core/constants'
 import { Move } from '~/core/moves/move'
+import { Queen } from '~/core/pieces/queen'
 
 import type { Color, IBoard, IMove, IPiece, Position } from '~/core/types'
 
@@ -72,10 +73,13 @@ export class Board implements IBoard {
     } else {
       if (move.specialMoveType === 'castling') {
         this.applyCastling(move)
+      } else if (move.specialMoveType === 'promotion') {
+        this.applyPromotion(move)
+      } else {
+        this.setPieceAt(move.endPosition, piece)
       }
-      this.setPieceAt(move.startPosition, null)
-      this.setPieceAt(move.endPosition, piece)
 
+      this.setPieceAt(move.startPosition, null)
       piece.hasMoved = true
     }
   }
@@ -98,6 +102,15 @@ export class Board implements IBoard {
     const rook = this.getCastingRook(move)
     this.setPieceAt(rook.position, null)
     this.setPieceAt(this.castlingRookDestination(move), rook)
+    this.setPieceAt(move.endPosition, move.piece)
+  }
+
+  private applyPromotion(move: IMove) {
+    this.setPieceAt(move.startPosition, null)
+    this.setPieceAt(
+      move.endPosition,
+      new Queen(move.piece?.color, move.endPosition)
+    )
   }
 
   private isEqualPosition(position1: Position, position2: Position): boolean {

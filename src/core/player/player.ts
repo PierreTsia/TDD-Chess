@@ -20,9 +20,19 @@ export class Player implements IPlayer {
     )
   }
 
+  private detectPawnPromotion(move: IMove): boolean {
+    return (
+      move.piece?.type === 'pawn' &&
+      ((move.endPosition.y === 0 && move.piece?.color === 'white') ||
+        (move.endPosition.y === 7 && move.piece?.color === 'black'))
+    )
+  }
+
   makeMove(move: IMove, game: IGame): boolean {
     if (this.detectCastlingMove(move)) {
       move.specialMoveType = 'castling'
+    } else if (this.detectPawnPromotion(move)) {
+      move.specialMoveType = 'promotion'
     }
     return game.makeMove(move)
   }

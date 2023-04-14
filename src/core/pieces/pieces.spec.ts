@@ -161,6 +161,17 @@ describe('Pieces Base Moves', () => {
       expect(player1.makeMove(pawnCheck, game)).toBe(true)
       expect(game.status).toBe('check')
     })
+
+    it('a white reaching the end of the board should be promoted', () => {
+      // white pawn in a7
+      game.board.resetBoard()
+      board.setPieceAt({ x: 0, y: 1 }, new Pawn('white', { x: 0, y: 1 }))
+      game.startGame()
+      const pawn = board.getPieceAt({ x: 0, y: 1 })!
+      const pawnMove = new Move(pawn, { x: 0, y: 1 }, { x: 0, y: 0 })
+      expect(player1.makeMove(pawnMove, game)).toBe(true)
+      expect(board.getPieceAt({ x: 0, y: 0 })?.type).toBe('queen')
+    })
   })
   describe('Knight', () => {
     beforeEach(() => {

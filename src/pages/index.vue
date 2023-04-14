@@ -8,7 +8,7 @@ defineOptions({
 
 <template>
   <div>
-    <div text="3xl" flex justify-center mb-4>
+    <div text-4xl flex justify-center mb-4>
       <h1 mr-2>Chess</h1>
       <div class="i-fluent:chess-20-filled" text-indigo-400 inline-block />
     </div>
