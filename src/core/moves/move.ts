@@ -46,7 +46,7 @@ export class Move implements IMove {
     const isKingSide = x === 6
 
     const [min, max] = isKingSide ? [5, 6] : [1, 3]
-    const opponentColor = this.piece.color === 'white' ? 'black' : 'white'
+    const opponentColor = this.piece.getOppositeColor()
     for (let i = min; i <= max; i++) {
       const pos = { x: i, y } as Position
       if (
@@ -65,8 +65,7 @@ export class Move implements IMove {
 
   private isCastlingValid(board: IBoard): boolean {
     const isOccupied = !!board.getPieceAt(this.endPosition)?.type
-    const isEndSquareCorrect =
-      this.endPosition.x === 6 || this.endPosition.x === 2
+    const isEndSquareCorrect = [6, 2].includes(this.endPosition.x)
     return (
       isEndSquareCorrect &&
       !isOccupied &&

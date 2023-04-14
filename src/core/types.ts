@@ -46,6 +46,8 @@ export interface IPiece {
   getMoveSquares(board: IBoard): Array<Position>
   getPossibleMoves(board: IBoard): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
+
+  getOppositeColor(): Color
 }
 
 export interface IPlayer {

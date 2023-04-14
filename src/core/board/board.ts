@@ -166,15 +166,10 @@ export class Board implements IBoard {
   }
 
   isKingInCheck(kingColor: Color): boolean {
-    const kingPosition = this.getAllPieces(kingColor).find(
-      (p) => p.type === 'king'
-    )?.position
-    if (!kingPosition) {
-      return false
-    }
-    return this.isPositionUnderAttack(
-      kingPosition,
-      kingColor === 'white' ? 'black' : 'white'
+    const king = this.getAllPieces(kingColor).find((p) => p.type === 'king')
+    return (
+      !!king &&
+      this.isPositionUnderAttack(king.position, king.getOppositeColor())
     )
   }
 

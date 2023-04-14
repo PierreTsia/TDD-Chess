@@ -26,8 +26,8 @@ export class Piece implements IPiece {
     this.position = position
   }
 
-  getOppositeColor(color: Color) {
-    return color === 'white' ? 'black' : 'white'
+  getOppositeColor() {
+    return this.color === 'white' ? 'black' : 'white'
   }
 
   getMoveSquares(board: IBoard, includeAlly = false): Array<Position> {
