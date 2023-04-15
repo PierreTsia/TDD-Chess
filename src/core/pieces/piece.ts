@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import { BOARD_SIZE } from '~/core/constants'
 import { Move } from '~/core/moves/move'
@@ -69,7 +70,6 @@ export class Piece implements IPiece {
     return this.getMoveSquares(board, true)
   }
 
-
   getPossibleMoves(board: IBoard): Array<IMove> {
     return this.getMoveSquares(board).map(
       (position) => new Move(this, this.position, position)
@@ -78,6 +78,14 @@ export class Piece implements IPiece {
 
   canMoveTo(position: Position, board: IBoard): boolean {
     const possibleMoves = this.getPossibleMoves(board)
-    return possibleMoves.some((move) => isEqual(move.endPosition, position))
+
+    return possibleMoves.some((move) => {
+      const tempBoard = cloneDeep(board)
+      tempBoard.applyMove(move) // Apply move to tempBoard
+      return (
+        !tempBoard.isKingInCheck(move.piece.color) &&
+        isEqual(move.endPosition, position)
+      )
+    })
   }
 }

@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
 import type {
   Color,
   IBoard,
@@ -64,9 +63,10 @@ export class Move implements IMove {
     return this.piece.type === 'king' && !this.piece.hasMoved
   }
 
-  private isCastlingValid(board: IBoard): boolean {
+  isCastlingValid(board: IBoard): boolean {
     const isOccupied = !!board.getPieceAt(this.endPosition)?.type
     const isEndSquareCorrect = [6, 2].includes(this.endPosition.x)
+
     return (
       isEndSquareCorrect &&
       !isOccupied &&
@@ -76,17 +76,7 @@ export class Move implements IMove {
     )
   }
 
-  private wouldBeCheck(board: IBoard): boolean {
-    const tempBoard = cloneDeep(board)
-    tempBoard.applyMove(this)
-    return tempBoard.isKingInCheck(this.piece.color)
-  }
-
   isValid(board: IBoard): boolean {
-    if (this.wouldBeCheck(board)) {
-      return false
-    }
-
     switch (this.specialMoveType) {
       case 'en_passant':
         return false

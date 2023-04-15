@@ -536,6 +536,36 @@ describe('Chess Game', () => {
   })
 
   describe('Edge Cases', () => {
+    // bug scenarios
+
+    it('should not block player after a bad queenside castle move', () => {
+      const game = new Game()
+      const whitePlayer = game.players[0]
+      game.board.resetBoard()
+      game.board.setPieceAt({ x: 4, y: 7 }, new King('white', { x: 4, y: 7 }))
+      game.board.setPieceAt({ x: 0, y: 7 }, new Rook('white', { x: 0, y: 7 }))
+      game.board.setPieceAt({ x: 7, y: 7 }, new Rook('white', { x: 7, y: 7 }))
+      game.board.setPieceAt({ x: 7, y: 6 }, new Pawn('white', { x: 7, y: 6 }))
+
+      // black queen prevents white from castling
+      game.board.setPieceAt({ x: 5, y: 4 }, new Queen('black', { x: 5, y: 4 }))
+
+      game.startGame()
+      expect(game.currentPlayer?.color).toBe('white')
+      const queenSideCastle = WhiteQueenSideCastle(game.board)
+      expect(whitePlayer.makeMove(queenSideCastle, game)).toBe(false)
+
+      // other white moves should be allowed
+      const whitePawnMove = new Move(
+        game.board.getPieceAt({ x: 7, y: 6 })!,
+        { x: 7, y: 6 },
+        { x: 7, y: 5 }
+      )
+      expect(whitePlayer.makeMove(whitePawnMove, game)).toBe(true)
+    })
+
+    // then queen side castling is not allowed which is normal but the player cannot do anything else
+
     it('should allow the king to run away from check', () => {
       // bug scenario
       // 1.e4 - e5

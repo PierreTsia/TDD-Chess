@@ -1,5 +1,5 @@
 import { COORDS } from '~/core/constants'
-
+// 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 export interface IGame {
   board: IBoard
   currentPlayer: IPlayer
