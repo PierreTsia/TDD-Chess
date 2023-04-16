@@ -3,7 +3,8 @@ import { useChessPieces } from '~/composables/chessPieces'
 
 import { Game } from '~/core/game/game'
 import { Move } from '~/core/moves/move'
-import type { IMove, IPiece, Position } from '~/core/types'
+import { Position } from '~/core/types';
+import type { IMove, IPiece } from '~/core/types'
 
 const { pieces } = useChessPieces()
 
@@ -92,21 +93,22 @@ const squareColor = (y: number, x: number) => {
     :class="{
       'outline outline-double outline-red-500': status === 'checkmate',
       'outline outline-double outline-yellow-500': status === 'check',
+      'outline outline-double outline-indigo-500': status === 'stalemate',
     }">
     <div
       v-for="(row, y) in board.squares"
       :key="`row-${y}`"
       class="mx-auto grid grid-cols-8 h-[60px]">
       <span
-        v-for="(col, x) in row"
+        v-for="(_, x) in row"
         :key="`col-${x}`"
         :class="squareColor(y, x)"
         class="w-[60px] h-[60px] flex justify-center items-center"
-        @click="handleSquareClick({ y, x })">
+        @click="handleSquareClick({ y, x } as Position)">
         <span
-          v-if="chessPiece({ x, y })"
+          v-if="chessPiece({ x, y } as Position)"
           class="w-full h-60px flex justify-center items-center">
-          <component :is="chessPiece({ x, y })" />
+          <component :is="chessPiece({ x, y } as Position)" />
         </span>
       </span>
     </div>
