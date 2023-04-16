@@ -66,7 +66,7 @@ export class Board implements IBoard {
     return piece !== null && piece.color === color
   }
 
-  applyMove(move: IMove): void {
+  applyMove(move: IMove, lastMove?: IMove): void {
     const piece: IPiece | null = this.getPieceAt(move.startPosition)
     if (!piece || piece.type !== move.piece?.type) {
       throw new Error('Invalid move')
@@ -75,6 +75,8 @@ export class Board implements IBoard {
         this.applyCastling(move)
       } else if (move.specialMoveType === 'promotion') {
         this.applyPromotion(move)
+      } else if (move.specialMoveType === 'en_passant') {
+        this.applyEnPassant(move, lastMove!)
       } else {
         this.setPieceAt(move.endPosition, piece)
       }
@@ -82,6 +84,12 @@ export class Board implements IBoard {
       this.setPieceAt(move.startPosition, null)
       piece.hasMoved = true
     }
+  }
+
+  private applyEnPassant(move: IMove, lastMove: IMove) {
+    const piece = this.getPieceAt(move.startPosition)
+    this.setPieceAt(move.endPosition, piece)
+    this.setPieceAt(lastMove?.endPosition, null)
   }
 
   private getCastingRook(move: IMove): IPiece {

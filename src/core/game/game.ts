@@ -56,7 +56,7 @@ export class Game implements IGame {
       return false
     }
 
-    this.board.applyMove(move)
+    this.board.applyMove(move, lastMove)
     this.moveHistory.addMove(move)
 
     this.switchPlayer()

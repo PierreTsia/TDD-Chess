@@ -530,6 +530,7 @@ describe('Chess Game', () => {
       expect(game.board.getPieceAt({ x: 4, y: 5 })!.color).toBe('black')
 
       expect(game.board.getPieceAt({ x: 5, y: 4 })).toBe(null)
+      expect(game.board.getPieceAt({ x: 4, y: 4 })).toBe(null)
     })
   })
 
