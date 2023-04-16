@@ -60,18 +60,18 @@ export class Game implements IGame {
     this.moveHistory.addMove(move)
 
     this.switchPlayer()
-
-    if (this.board.isMate(this.currentPlayer.color)) {
-      this.status = this.board.isKingInCheck(this.currentPlayer.color)
-        ? 'checkmate'
-        : 'stalemate'
-    } else if (this.board.isKingInCheck(this.currentPlayer.color)) {
-      this.status = 'check'
-    } else {
-      this.status = 'ongoing'
-    }
+    this.updateStatus()
 
     return true
+  }
+
+  private updateStatus(): void {
+    const isCheck = this.board.isKingInCheck(this.currentPlayer.color)
+    if (this.board.isMate(this.currentPlayer.color)) {
+      this.status = isCheck ? 'checkmate' : 'stalemate'
+    } else {
+      this.status = isCheck ? 'check' : 'ongoing'
+    }
   }
 
   isGameOver(): boolean {
