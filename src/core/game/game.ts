@@ -61,8 +61,10 @@ export class Game implements IGame {
 
     this.switchPlayer()
 
-    if (this.board.isCheckMate(this.currentPlayer.color)) {
-      this.status = 'checkmate'
+    if (this.board.isMate(this.currentPlayer.color)) {
+      this.status = this.board.isKingInCheck(this.currentPlayer.color)
+        ? 'checkmate'
+        : 'stalemate'
     } else if (this.board.isKingInCheck(this.currentPlayer.color)) {
       this.status = 'check'
     } else {
@@ -73,7 +75,7 @@ export class Game implements IGame {
   }
 
   isGameOver(): boolean {
-    return this.status === 'checkmate'
+    return ['checkmate', 'stalemate'].includes(this.status)
   }
 
   getWinner(): IPlayer | null {

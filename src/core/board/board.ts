@@ -143,7 +143,7 @@ export class Board implements IBoard {
     )
   }
 
-  isCheckMate(kingColor: Color): boolean {
+  isMate(kingColor: Color): boolean {
     return this.kingIsTrapped(kingColor) && this.noPieceCanDefend(kingColor)
   }
 

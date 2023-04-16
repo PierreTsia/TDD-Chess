@@ -362,6 +362,33 @@ describe('Chess Game', () => {
     })
   })
 
+  describe('Stalemate', () => {
+    it('should detect a stalemate', () => {
+      const game = new Game()
+      const player1 = game.players[0]
+      const player2 = game.players[1]
+      game.board.resetBoard()
+
+      game.board.setPieceAt({ x: 0, y: 0 }, new King('black', { x: 0, y: 0 }))
+      game.board.setPieceAt({ x: 1, y: 2 }, new Pawn('white', { x: 1, y: 2 }))
+
+      game.board.setPieceAt({ x: 0, y: 2 }, new King('white', { x: 0, y: 2 }))
+
+      game.startGame()
+      expect(game.status).toBe('ongoing')
+
+      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 1, y: 2 })!, { x: 1, y: 2 }, { x: 1, y: 1 }), game)).toBe(true)
+      expect(game.status).toBe('check')
+
+      expect(player2.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 0 })!, { x: 0, y: 0 }, { x: 1, y: 0 }), game)).toBe(true)
+      expect(game.status).toBe('ongoing')
+
+      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 2 })!, { x: 0, y: 2 }, { x: 1, y: 2 }), game)).toBe(true)
+      expect(game.status).toBe('stalemate')
+
+    })
+  })
+
   describe('Castling', () => {
     let game: Game
     let player1: IPlayer

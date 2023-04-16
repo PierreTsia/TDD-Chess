@@ -31,7 +31,7 @@ export interface IBoard {
   isEnemyPieceAt(position: Position, color: Color): boolean
   isAllyPieceAt(position: Position, color: Color): boolean
   isKingInCheck(color: Color): boolean
-  isCheckMate(color: Color): boolean
+  isMate(color: Color): boolean
   wouldBeInCheckAfterMove(move: IMove): boolean
 }
 
