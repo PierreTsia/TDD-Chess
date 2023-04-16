@@ -32,6 +32,7 @@ export interface IBoard {
   isAllyPieceAt(position: Position, color: Color): boolean
   isKingInCheck(color: Color): boolean
   isCheckMate(color: Color): boolean
+  wouldBeInCheckAfterMove(move: IMove): boolean
 }
 
 export interface IPiece {
@@ -59,8 +60,7 @@ export interface IMove {
   startPosition: Position
   endPosition: Position
   specialMoveType: SpecialMoveType | null
-
-  isValid(board: IBoard): boolean
+  isValid(board: IBoard, lastMove: IMove): boolean
 }
 
 export type GameStatus =
@@ -98,5 +98,3 @@ export type Modifier = -1 | 1 | 0 | -2 | 2
 export const isValidXY = (n: any): n is XYValue => {
   return COORDS.includes(n)
 }
-
-

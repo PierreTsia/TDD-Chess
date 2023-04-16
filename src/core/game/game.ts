@@ -32,6 +32,7 @@ export class Game implements IGame {
     this.board.resetBoard()
     this.board.initializeBoard()
     this.board.setStartingPosition()
+    this.moveHistory = new MoveHistory()
 
     this.startGame()
   }
@@ -46,10 +47,11 @@ export class Game implements IGame {
   }
 
   makeMove(move: IMove): boolean {
+    const lastMove = this.moveHistory.moves[this.moveHistory.moves.length - 1]
     if (
       !this.isCurrentPlayerTurn(move.piece.color) ||
       this.isGameOver() ||
-      !move.isValid(this.board)
+      !move.isValid(this.board, lastMove)
     ) {
       return false
     }

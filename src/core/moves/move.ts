@@ -76,10 +76,32 @@ export class Move implements IMove {
     )
   }
 
-  isValid(board: IBoard): boolean {
+  private isEnPassantValid(lastMove: IMove): boolean {
+
+    const isLastMovePawn = lastMove?.piece?.type === 'pawn'
+    const isLastMovePawnTwoSquares =
+      Math.abs(lastMove?.endPosition.y - lastMove?.startPosition.y) === 2
+    const isLastMovePawnOppositeColor =
+      lastMove?.piece?.color !== this.piece?.color
+    const isCorrectRow = lastMove.piece?.color === 'white' ? 4 : 3
+    const isLastMoveNextTo =
+      Math.abs(lastMove?.endPosition.x - this.startPosition.x) === 1
+    const isLastMoveSameColumn = lastMove?.endPosition.x === this.endPosition.x
+
+    return (
+      isLastMovePawn &&
+      isLastMovePawnTwoSquares &&
+      isLastMovePawnOppositeColor &&
+      isCorrectRow &&
+      isLastMoveNextTo &&
+      isLastMoveSameColumn
+    )
+  }
+
+  isValid(board: IBoard, lastMove: IMove): boolean {
     switch (this.specialMoveType) {
       case 'en_passant':
-        return false
+        return this.isEnPassantValid(lastMove)
       case 'castling':
         return this.isCastlingValid(board)
       default:

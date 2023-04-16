@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import { BOARD_SIZE } from '~/core/constants'
 import { Move } from '~/core/moves/move'
@@ -76,18 +75,12 @@ export class Piece implements IPiece {
     )
   }
 
-  private wouldBeInCheckAfterMove(move: IMove, board: IBoard): boolean {
-    const tempBoard = cloneDeep(board)
-    tempBoard.applyMove(move)
-    return tempBoard.isKingInCheck(move.piece.color)
-  }
-
   canMoveTo(position: Position, board: IBoard): boolean {
     const possibleMoves = this.getPossibleMoves(board)
 
     return possibleMoves.some(
       (move) =>
-        !this.wouldBeInCheckAfterMove(move, board) &&
+        !board.wouldBeInCheckAfterMove(move) &&
         isEqual(move.endPosition, position)
     )
   }

@@ -501,6 +501,38 @@ describe('Chess Game', () => {
     })
   })
 
+  describe('En passant', () => {
+    it('should detect en passant pawn move', () => {
+      const game = new Game()
+      const player1 = game.players[0]
+      const player2 = game.players[1]
+      const whitePawn = new Pawn('white', { x: 4, y: 6 })
+      const blackPawn = new Pawn('black', { x: 5, y: 4 })
+      game.board.setPieceAt({ x: 4, y: 6 }, whitePawn)
+      game.board.setPieceAt({ x: 5, y: 4 }, blackPawn)
+
+      game.startGame()
+      expect(game.board.getPieceAt({ x: 4, y: 6 })!.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 5, y: 4 })!.type).toBe('pawn')
+      expect(game.currentPlayer).toBe(player1)
+
+      const e4Move = new Move(whitePawn, { x: 4, y: 6 }, { x: 4, y: 4 })
+
+      expect(player1.makeMove(e4Move, game)).toBe(true)
+
+      expect(game.board.getPieceAt({ x: 4, y: 4 })!.type).toBe('pawn')
+
+      const enPassantMove = new Move(blackPawn, { x: 5, y: 4 }, { x: 4, y: 5 })
+
+      expect(player2.makeMove(enPassantMove, game)).toBe(true)
+
+      expect(game.board.getPieceAt({ x: 4, y: 5 })!.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 4, y: 5 })!.color).toBe('black')
+
+      expect(game.board.getPieceAt({ x: 5, y: 4 })).toBe(null)
+    })
+  })
+
   describe('Nailed piece', () => {
     it('should not allow a piece that is nailed to move', () => {
       const game = new Game()

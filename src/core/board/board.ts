@@ -146,10 +146,8 @@ export class Board implements IBoard {
     const piecesCanDefend = pieces.some((piece: IPiece) => {
       const moves = piece.getMoveSquares(this)
       return moves.some((position: Position) => {
-        const boardCopy = cloneDeep(this)
         const possibleMove = new Move(piece, piece.position, position)
-        boardCopy.applyMove(possibleMove)
-        return !boardCopy.isKingInCheck(kingColor)
+        return !this.wouldBeInCheckAfterMove(possibleMove)
       })
     })
     return !piecesCanDefend
@@ -157,18 +155,20 @@ export class Board implements IBoard {
 
   private kingIsTrapped(kingColor: Color): boolean {
     const king = this.getAllPieces(kingColor).find((p) => p.type === 'king')!
-
     if (!king) {
       return false
     }
     const kingMoves = king.getMoveSquares(this)
-    const kingCanMove = kingMoves.some((position: Position) => {
-      const boardCopy = cloneDeep(this)
+    return kingMoves.every((position: Position) => {
       const possibleMove = new Move(king, king.position, position)
-      boardCopy.applyMove(possibleMove)
-      return !boardCopy.isKingInCheck(kingColor)
+      return this.wouldBeInCheckAfterMove(possibleMove)
     })
-    return !kingCanMove
+  }
+
+  wouldBeInCheckAfterMove(move: IMove): boolean {
+    const tempBoard = cloneDeep(this)
+    tempBoard.applyMove(move)
+    return tempBoard.isKingInCheck(move.piece.color)
   }
 
   getAllPieces(color: Color): Array<IPiece> {
