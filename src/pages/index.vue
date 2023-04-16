@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import ChessBoard from '~/components/chess/board/ChessBoard.vue'
 
+
+
+
+
 defineOptions({
   name: 'IndexPage',
 })
@@ -12,8 +16,9 @@ defineOptions({
       <h1 mr-2>Chess</h1>
       <div class="i-fluent:chess-20-filled" text-indigo-400 inline-block />
     </div>
-
-    <ChessBoard />
+    <div class="flex flex-col md:flex-row w-full justify-center items-center">
+      <ChessBoard />
+    </div>
   </div>
 </template>
 
