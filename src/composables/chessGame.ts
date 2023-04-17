@@ -1,4 +1,8 @@
+import type { ComputedRef } from 'vue'
 import { Game } from '~/core/game/game'
+import type { Color, PieceType } from '~/core/types'
+
+type CapturedMaterial = Record<Color, Record<PieceType, number>>
 
 const game = ref(new Game(['Gary Kasparov', 'Deep Blue']))
 export const useChessGame = () => {
@@ -7,12 +11,57 @@ export const useChessGame = () => {
   const status = computed(() => game.value.status)
   const players = computed(() => game.value.players)
 
+  const capturedMaterial: ComputedRef<CapturedMaterial> = computed(() =>
+    game.value.capturedPieces.reduce(
+      (acc, piece) => {
+        if (!acc[piece.color][piece.type]) {
+          acc[piece.color][piece.type] = 1
+        } else {
+          acc[piece.color][piece.type]++
+        }
+        return acc
+      },
+      {
+        white: {},
+        black: {},
+      } as CapturedMaterial
+    )
+  )
+
+  const piecesWeight: Record<PieceType, number> = {
+    king: 0,
+    queen: 9,
+    rook: 5,
+    bishop: 3,
+    knight: 3,
+    pawn: 1,
+  }
+
+  const materialScore = computed(() => {
+    const whiteScore = Object.entries(capturedMaterial.value.white).reduce(
+      (acc, [pieceType, count]) =>
+        acc + piecesWeight[pieceType as PieceType] * count,
+      0
+    )
+    const blackScore = Object.entries(capturedMaterial.value.black).reduce(
+      (acc, [pieceType, count]) =>
+        acc + piecesWeight[pieceType as PieceType] * count,
+      0
+    )
+    return {
+      white: whiteScore,
+      black: blackScore,
+    }
+  })
+
   const start = () => {
     game.value.initializeGame()
   }
 
   return {
+    materialScore,
     players,
+    capturedMaterial,
     game,
     board,
     currentPlayer,

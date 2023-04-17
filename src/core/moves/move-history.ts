@@ -1,4 +1,4 @@
-import type { IMove, IMoveHistory } from '~/core/types'
+import type { IMove, IMoveHistory, IPiece } from '~/core/types'
 
 export class MoveHistory implements IMoveHistory {
   moves: Array<IMove>
@@ -11,6 +11,12 @@ export class MoveHistory implements IMoveHistory {
 
   addMove(move: IMove): void {
     this.moves.push(move)
+  }
+
+  getCapturedPieces(): IPiece[] {
+    return this.moves
+      .map((move) => move.capturedPiece)
+      .filter((piece) => piece !== null) as IPiece[]
   }
 
   undoMove(): boolean {

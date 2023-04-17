@@ -15,6 +15,8 @@ export class Move implements IMove {
 
   specialMoveType: SpecialMoveType | null
 
+  capturedPiece: IPiece | null = null
+
   constructor(
     piece: IPiece,
     startPosition: Position,

@@ -68,6 +68,8 @@ export class Board implements IBoard {
 
   applyMove(move: IMove, lastMove?: IMove): void {
     const piece: IPiece | null = this.getPieceAt(move.startPosition)
+    const capturedPiece = this.getPieceAt(move.endPosition)
+
     if (!piece || piece.type !== move.piece?.type) {
       throw new Error('Invalid move')
     } else {
@@ -81,15 +83,20 @@ export class Board implements IBoard {
         this.setPieceAt(move.endPosition, piece)
       }
 
+      if (capturedPiece) {
+        move.capturedPiece = capturedPiece
+      }
       this.setPieceAt(move.startPosition, null)
       piece.hasMoved = true
     }
   }
 
   private applyEnPassant(move: IMove, lastMove: IMove) {
+    const capturedPawn = this.getPieceAt(lastMove.endPosition)
     const piece = this.getPieceAt(move.startPosition)
     this.setPieceAt(move.endPosition, piece)
     this.setPieceAt(lastMove?.endPosition, null)
+    move.capturedPiece = capturedPawn
   }
 
   private getCastingRook(move: IMove): IPiece {
@@ -144,21 +151,21 @@ export class Board implements IBoard {
   }
 
   isMate(kingColor: Color): boolean {
-    return this.kingIsTrapped(kingColor) && this.noPieceCanDefend(kingColor)
+    return this.kingIsTrapped(kingColor) && this.hasNoLegalMoves(kingColor)
   }
 
-  private noPieceCanDefend(kingColor: Color): boolean {
+  private hasNoLegalMoves(kingColor: Color): boolean {
     const pieces: IPiece[] = this.getAllPieces(kingColor)
       .filter((p) => p.type !== 'king')
       .flat()
-    const piecesCanDefend = pieces.some((piece: IPiece) => {
+    const atLeastOnePieceCanPlay = pieces.some((piece: IPiece) => {
       const moves = piece.getMoveSquares(this)
       return moves.some((position: Position) => {
         const possibleMove = new Move(piece, piece.position, position)
         return !this.wouldBeInCheckAfterMove(possibleMove)
       })
     })
-    return !piecesCanDefend
+    return !atLeastOnePieceCanPlay
   }
 
   private kingIsTrapped(kingColor: Color): boolean {

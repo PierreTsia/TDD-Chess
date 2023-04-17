@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { useChessGame } from '~/composables/chessGame'
 
-const { status, currentPlayer, players } = useChessGame()
+const { status, currentPlayer, players, capturedMaterial, materialScore } =
+  useChessGame()
 </script>
 
 <template>
@@ -29,7 +30,6 @@ const { status, currentPlayer, players } = useChessGame()
             <o-text size="sm" class="flex items-center">
               <o-icon
                 class="mr-1 w-4"
-
                 :name="
                   currentPlayer.color === 'white'
                     ? 'i-tabler:chess-filled'
@@ -40,6 +40,17 @@ const { status, currentPlayer, players } = useChessGame()
           <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="secondary">Game Status :</o-text>
             <o-text size="sm">{{ status }} </o-text>
+          </li>
+          <li class="w-full flex justify-start gap-x-6">
+            <o-text size="sm" type="secondary">Material Score :</o-text>
+            <span class="flex justify-center items-center">
+              <o-icon class="w-4" name="i-tabler:chess" />
+              <o-text size="sm">{{ materialScore.white }}</o-text>
+            </span>
+            <span class="flex justify-center items-center">
+              <o-icon class="w-4" name="i-tabler:chess-filled" />
+              <o-text size="sm">{{ materialScore.black }}</o-text>
+            </span>
           </li>
         </ul>
       </template>

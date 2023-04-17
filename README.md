@@ -9,7 +9,7 @@ Based on @antfu's <b> <a href="https://github.com/antfu/vitesse">Vitesse</a></b>
 <br>
 
 <p align="center">
-<img src="./public/screenshot.png" width="450px" alt="screenshot">
+<img src="./public/screenshot.png" width="450" alt="screenshot">
 
 </p>
 

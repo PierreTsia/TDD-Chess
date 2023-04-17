@@ -6,6 +6,7 @@ export interface IGame {
   players: [IPlayer, IPlayer]
   status: GameStatus
   moveHistory: IMoveHistory
+  capturedPieces: Array<IPiece>
   initializeGame(): void
   startGame(): void
   makeMove(move: IMove): boolean
@@ -62,6 +63,7 @@ export interface IMove {
   startPosition: Position
   endPosition: Position
   specialMoveType: SpecialMoveType | null
+  capturedPiece: IPiece | null
   isValid(board: IBoard, lastMove: IMove): boolean
 }
 
@@ -89,6 +91,7 @@ export interface IMoveHistory {
   undoMove(game: IGame): boolean
   redoMove(): boolean
   getMoves(): Array<IMove>
+  getCapturedPieces(): Array<IPiece>
 }
 
 export type PieceType = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'

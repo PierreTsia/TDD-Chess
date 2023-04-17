@@ -7,7 +7,7 @@ import type {
   IBoard,
   IGame,
   IMove,
-  IMoveHistory,
+  IMoveHistory, IPiece,
   IPlayer,
 } from '~/core/types'
 
@@ -34,6 +34,10 @@ export class Game implements IGame {
     this.players = [whitePlayer, blackPlayer]
     this.status = 'not_started'
     this.moveHistory = new MoveHistory()
+  }
+
+  get capturedPieces(): Array<IPiece> {
+    return this.moveHistory.getCapturedPieces()
   }
 
   initializeGame(): void {
