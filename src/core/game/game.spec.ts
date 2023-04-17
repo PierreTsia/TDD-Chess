@@ -11,6 +11,7 @@ import {
   Bc4,
   BlackQueenSideCastle,
   Nc6,
+  Nf3,
   Nf6,
   Qh5,
   Qxf7,
@@ -20,8 +21,10 @@ import {
   e4,
   e5,
   e6,
+  exd5,
   f3,
   g4,
+  h5,
   isStartingPositionCorrect,
 } from '~/core/game/helpers'
 
@@ -812,9 +815,113 @@ describe('Chess Game', () => {
       expect(game.moveHistory.getMoves().length).toBe(0)
       expect(game.undoMove()).toBe(false)
       player1.makeMove(e4(game.board), game)
+      expect(game.board.getPieceAt({ x: 4, y: 6 })).toBeNull()
+
+      expect(game.board.getPieceAt({ x: 4, y: 4 })!.type).toBe('pawn')
+
       expect(game.moveHistory.getMoves().length).toBe(1)
       expect(game.undoMove()).toBe(true)
       expect(game.moveHistory.getMoves().length).toBe(0)
+
+      expect(game.board.getPieceAt({ x: 4, y: 6 })?.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 4, y: 4 })).toBeNull()
+
+      expect(game.redoMove()).toBe(true)
+      expect(game.board.getPieceAt({ x: 4, y: 6 })).toBeNull()
+      expect(game.board.getPieceAt({ x: 4, y: 4 })?.type).toBe('pawn')
+    })
+
+    it('should be able to undo/redo several moves in a row', () => {
+      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const player1 = game.players[0]
+      const player2 = game.players[1]
+      game.initializeGame()
+
+      player1.makeMove(e4(game.board), game)
+      player2.makeMove(e5(game.board), game)
+      player1.makeMove(Nf3(game.board), game)
+      player2.makeMove(Nc6(game.board), game)
+
+      expect(game.board.getPieceAt({ x: 4, y: 4 })?.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 4, y: 3 })?.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 5, y: 5 })?.type).toBe('knight')
+      expect(game.board.getPieceAt({ x: 2, y: 2 })?.type).toBe('knight')
+
+      game.undoMove()
+      game.undoMove()
+      game.undoMove()
+      game.undoMove()
+
+      expect(game.board.getPieceAt({ x: 6, y: 7 })?.type).toBe('knight')
+
+      game.redoMove()
+      game.redoMove()
+      game.redoMove()
+      game.redoMove()
+
+      // fails on line below knight is still there
+      expect(game.board.getPieceAt({ x: 4, y: 4 })?.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 4, y: 3 })?.type).toBe('pawn')
+      expect(game.board.getPieceAt({ x: 5, y: 5 })?.type).toBe('knight')
+      expect(game.board.getPieceAt({ x: 2, y: 2 })?.type).toBe('knight')
+    })
+
+    it('should be able to undo/redo a move when a piece captures another', () => {
+      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const player1 = game.players[0]
+      const player2 = game.players[1]
+      game.initializeGame()
+
+      player1.makeMove(e4(game.board), game)
+      player2.makeMove(d5(game.board), game)
+      player1.makeMove(exd5(game.board), game)
+
+      expect(game.board.getPieceAt({ x: 3, y: 3 })?.color).toBe('white')
+
+      game.undoMove()
+      expect(game.board.getPieceAt({ x: 3, y: 3 })?.color).toBe('black')
+    })
+
+    it('should be able to undo/redo en passant ', () => {
+      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const player1 = game.players[0]
+      const player2 = game.players[1]
+      game.initializeGame()
+
+      player1.makeMove(e4(game.board), game)
+      player2.makeMove(h5(game.board), game)
+
+      expect(game.board.getPieceAt({ x: 4, y: 4 })?.color).toBe('white')
+      expect(game.currentPlayer).toBe(player1)
+
+      const e4Move = new Move(
+        game.board.getPieceAt({ x: 4, y: 4 })!,
+        { x: 4, y: 4 },
+        { x: 4, y: 3 }
+      )
+
+      expect(player1.makeMove(e4Move, game)).toBe(true)
+      expect(game.board.getPieceAt({ x: 4, y: 3 })?.color).toBe('white')
+
+      player2.makeMove(d5(game.board), game)
+      const enPassantMove = new Move(
+        game.board.getPieceAt({ x: 4, y: 3 })!,
+        { x: 4, y: 3 },
+        { x: 3, y: 2 },
+        'en_passant'
+      )
+
+      player1.makeMove(enPassantMove, game)
+      expect(game.board.getPieceAt({ x: 3, y: 2 })?.color).toBe('white')
+      expect(game.board.getPieceAt({ x: 3, y: 3 })).toBeNull()
+
+      game.undoMove()
+      expect(game.board.getPieceAt({ x: 3, y: 2 })).toBeNull()
+      expect(game.board.getPieceAt({ x: 3, y: 3 })?.color).toBe('black')
+
+      game.redoMove()
+      expect(game.board.getPieceAt({ x: 3, y: 2 })?.color).toBe('white')
+      expect(game.board.getPieceAt({ x: 3, y: 3 })).toBeNull()
     })
   })
 })

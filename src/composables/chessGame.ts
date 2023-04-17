@@ -58,6 +58,9 @@ export const useChessGame = () => {
     game.value.initializeGame()
   }
 
+  const undo = () => game.value.undoMove()
+  const redo = () => game.value.redoMove()
+
   return {
     materialScore,
     players,
@@ -68,5 +71,7 @@ export const useChessGame = () => {
     status,
     winner,
     start,
+    undo,
+    redo,
   }
 }

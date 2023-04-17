@@ -10,6 +10,7 @@ import type {
   IMoveHistory,
   IPiece,
   IPlayer,
+  Position,
 } from '~/core/types'
 
 export class Game implements IGame {
@@ -74,16 +75,61 @@ export class Game implements IGame {
     if (!this.moveHistory.moves.length) {
       return false
     }
+    const {
+      piece,
+      capturedPiece,
+      startPosition,
+      endPosition,
+      specialMoveType,
+    } = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    piece.position = startPosition
+    this.board.setPieceAt(startPosition, piece)
+    this.board.setPieceAt(endPosition, null)
+
+    if (capturedPiece) {
+      let capturedPiecePosition = endPosition
+      if (specialMoveType === 'en_passant') {
+        const direction = capturedPiece.color === 'white' ? -1 : 1
+        capturedPiecePosition = {
+          x: endPosition.x,
+          y: endPosition.y + direction,
+        } as Position
+      }
+      this.board.setPieceAt(capturedPiecePosition, capturedPiece)
+    }
+    this.switchPlayer()
     this.moveHistory.undoMove()
     return true
   }
 
   redoMove(): boolean {
-    const lastMove = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    const lastMove =
+      this.moveHistory.cancelledMoves[
+        this.moveHistory.cancelledMoves.length - 1
+      ]
     if (!lastMove) {
       return false
     }
 
+    const { piece, startPosition, endPosition, specialMoveType } = lastMove
+    piece.position = endPosition // Update the piece position before setting
+    this.board.setPieceAt(endPosition, piece)
+
+    if (specialMoveType === 'en_passant') {
+      const capturedPiece = lastMove.capturedPiece
+      if (capturedPiece) {
+        const direction = piece.color === 'white' ? 1 : -1
+        const capturedPiecePosition = {
+          x: endPosition.x,
+          y: endPosition.y + direction,
+        } as Position
+        this.board.setPieceAt(capturedPiecePosition, null)
+      }
+    } else {
+      this.board.setPieceAt(startPosition, null)
+    }
+
+    this.switchPlayer()
     this.moveHistory.redoMove()
     return true
   }

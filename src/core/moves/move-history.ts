@@ -21,19 +21,22 @@ export class MoveHistory implements IMoveHistory {
 
   undoMove(): boolean {
     const lastMove = this.moves.pop()
+
     if (!lastMove) {
       return false
     }
-    this.cancelledMoves.unshift(lastMove)
+    this.cancelledMoves.push(lastMove)
     return true
   }
 
   redoMove(): boolean {
-    const lastMove = this.cancelledMoves.shift()
+    const lastMove = this.cancelledMoves.pop()
+
     if (!lastMove) {
       return false
     }
     this.moves.push(lastMove)
+
     return true
   }
 

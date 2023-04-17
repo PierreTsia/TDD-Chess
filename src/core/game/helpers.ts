@@ -142,6 +142,22 @@ export const exf5 = (board: IBoard) =>
     }
   )
 
+export const e4e5 = (board: IBoard) =>
+  new Move(
+    board.getPieceAt({
+      x: 4,
+      y: 4,
+    })!,
+    {
+      x: 4,
+      y: 4,
+    },
+    {
+      x: 4,
+      y: 3,
+    }
+  )
+
 export const d5 = (board: IBoard) =>
   new Move(
     board.getPieceAt({
@@ -174,6 +190,22 @@ export const e5 = (board: IBoard) =>
     }
   )
 
+export const h5 = (board: IBoard) =>
+  new Move(
+    board.getPieceAt({
+      x: 7,
+      y: 1,
+    })!,
+    {
+      x: 7,
+      y: 1,
+    },
+    {
+      x: 7,
+      y: 3,
+    }
+  )
+
 export const Bc4 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 5, y: 7 })!, { x: 5, y: 7 }, { x: 2, y: 4 })
 
@@ -185,6 +217,9 @@ export const Qh5 = (board: IBoard) =>
 
 export const Nf6 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 6, y: 0 })!, { x: 6, y: 0 }, { x: 5, y: 2 })
+
+export const Nf3 = (board: IBoard) =>
+  new Move(board.getPieceAt({ x: 6, y: 7 })!, { x: 6, y: 7 }, { x: 5, y: 5 })
 
 export const Qxf7 = (board: IBoard) =>
   new Move(board.getPieceAt({ x: 7, y: 3 })!, { x: 7, y: 3 }, { x: 5, y: 1 })
