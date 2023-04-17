@@ -23,12 +23,21 @@ const { status, currentPlayer, players } = useChessGame()
       </template>
       <template #default>
         <ul
-          class="w-full flex flex-wrap justify-center items-center px-6 gap-y-1">
-          <li class="w-full flex justify-center gap-x-6">
+          class="w-full flex flex-wrap justify-center items-center px-10 gap-y-1">
+          <li class="w-full flex start gap-x-6">
             <o-text size="sm" type="secondary">Playing :</o-text>
-            <o-text size="sm">{{ currentPlayer?.color }} </o-text>
+            <o-text size="sm" class="flex items-center">
+              <o-icon
+                class="mr-1 w-4"
+
+                :name="
+                  currentPlayer.color === 'white'
+                    ? 'i-tabler:chess-filled'
+                    : 'i-tabler:chess'
+                " />{{ currentPlayer?.name }}
+            </o-text>
           </li>
-          <li class="w-full flex justify-center gap-x-6">
+          <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="secondary">Game Status :</o-text>
             <o-text size="sm">{{ status }} </o-text>
           </li>
