@@ -13,6 +13,8 @@ export interface IGame {
   getWinner(): IPlayer | null
   getValidMovesForCurrentPlayer(): Array<IMove>
   switchPlayer(): void
+  undoMove(): boolean
+  redoMove(): boolean
 }
 
 export interface IBoard {
@@ -81,9 +83,11 @@ export interface Position {
 // MoveHistory interface
 export interface IMoveHistory {
   moves: Array<IMove>
+  cancelledMoves: Array<IMove>
   addMove(move: IMove): void
+  undoMove(): void
   undoMove(game: IGame): boolean
-  redoMove(game: IGame): boolean
+  redoMove(): boolean
   getMoves(): Array<IMove>
 }
 

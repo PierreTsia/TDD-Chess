@@ -5,7 +5,7 @@ import { useChessGame } from '~/composables/chessGame'
 
 const { board, currentPlayer, game } = useChessGame()
 
-const isBlackPov = ref(true)
+const isBlackPov = ref(false)
 export const useChessBoard = () => {
   const onGoingMove = ref<{ from: Position | null }>({
     from: null,
@@ -30,6 +30,11 @@ export const useChessBoard = () => {
     return null
   })
 
+  const isSelected = (x: number, y: number) =>
+    selectedSquare.value &&
+    selectedSquare.value.x === x &&
+    selectedSquare.value.y === y
+
   const handleSquareClick = ({ x, y }: Position) => {
     if (!onGoingMove.value.from) {
       const piece: IPiece | null = board.value.squares[y][x]
@@ -51,26 +56,12 @@ export const useChessBoard = () => {
       onGoingMove.value = { from: null }
     }
   }
-  const squareColor = (y: number, x: number) => {
-    if (
-      selectedSquare.value &&
-      selectedSquare.value.y === y &&
-      selectedSquare.value.x === x
-    ) {
-      return 'bg-blue-400'
-    }
-    const isEven = (num: number) => num % 2 === 0
-    const isEvenRow = isEven(y)
-    const isEvenCol = isEven(x)
-
-    return isEvenRow === isEvenCol ? 'bg-gray-200' : 'bg-gray-400'
-  }
 
   return {
     isBlackPov,
     onGoingMove,
     switchPov,
-    squareColor,
+    isSelected,
     handleSquareClick,
     selectedSquare,
     selectedPiece,

@@ -19,8 +19,16 @@ export class Game implements IGame {
   moveHistory: IMoveHistory
 
   constructor(playersNames?: [string, string]) {
-    const whitePlayer = new Player('white', true, playersNames?.[0] || 'player 1')
-    const blackPlayer = new Player('black', true, playersNames?.[1] || 'player 2')
+    const whitePlayer = new Player(
+      'white',
+      true,
+      playersNames?.[0] || 'player 1'
+    )
+    const blackPlayer = new Player(
+      'black',
+      true,
+      playersNames?.[1] || 'player 2'
+    )
     this.board = new Board()
     this.currentPlayer = whitePlayer
     this.players = [whitePlayer, blackPlayer]
@@ -44,6 +52,24 @@ export class Game implements IGame {
 
   private isCurrentPlayerTurn(pieceColor: Color): boolean {
     return pieceColor === this.currentPlayer.color
+  }
+
+  undoMove(): boolean {
+    if (!this.moveHistory.moves.length) {
+      return false
+    }
+    this.moveHistory.undoMove()
+    return true
+  }
+
+  redoMove(): boolean {
+    const lastMove = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    if (!lastMove) {
+      return false
+    }
+
+    this.moveHistory.redoMove()
+    return true
   }
 
   makeMove(move: IMove): boolean {

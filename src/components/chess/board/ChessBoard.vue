@@ -7,27 +7,20 @@ import { Position } from '~/core/types'
 
 const { chessPiece } = useChessPieces()
 const { board, status } = useChessGame()
-const { handleSquareClick, isBlackPov, selectedSquare } = useChessBoard()
+const { handleSquareClick, isBlackPov, isSelected } = useChessBoard()
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const mdAndSmaller = breakpoints.smallerOrEqual('md') // lg and smaller
 const squareSize = computed(() =>
   mdAndSmaller.value ? 'w-[45px] h-[45px]' : 'w-[60px] h-[60px]'
 )
+const isEven = (num: number) => num % 2 === 0
 
 const squareColor = (y: number, x: number) => {
-  if (
-    selectedSquare.value &&
-    selectedSquare.value.y === y &&
-    selectedSquare.value.x === x
-  ) {
+  if (isSelected(x, y)) {
     return 'bg-blue-400'
   }
-  const isEven = (num: number) => num % 2 === 0
-  const isEvenRow = isEven(y)
-  const isEvenCol = isEven(x)
-
-  return isEvenRow === isEvenCol ? 'bg-gray-200' : 'bg-gray-400'
+  return isEven(y) === isEven(x) ? 'bg-gray-200' : 'bg-gray-400'
 }
 </script>
 

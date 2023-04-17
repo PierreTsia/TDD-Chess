@@ -377,15 +377,41 @@ describe('Chess Game', () => {
       game.startGame()
       expect(game.status).toBe('ongoing')
 
-      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 1, y: 2 })!, { x: 1, y: 2 }, { x: 1, y: 1 }), game)).toBe(true)
+      expect(
+        player1.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 1, y: 2 })!,
+            { x: 1, y: 2 },
+            { x: 1, y: 1 }
+          ),
+          game
+        )
+      ).toBe(true)
       expect(game.status).toBe('check')
 
-      expect(player2.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 0 })!, { x: 0, y: 0 }, { x: 1, y: 0 }), game)).toBe(true)
+      expect(
+        player2.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 0, y: 0 })!,
+            { x: 0, y: 0 },
+            { x: 1, y: 0 }
+          ),
+          game
+        )
+      ).toBe(true)
       expect(game.status).toBe('ongoing')
 
-      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 2 })!, { x: 0, y: 2 }, { x: 1, y: 2 }), game)).toBe(true)
+      expect(
+        player1.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 0, y: 2 })!,
+            { x: 0, y: 2 },
+            { x: 1, y: 2 }
+          ),
+          game
+        )
+      ).toBe(true)
       expect(game.status).toBe('stalemate')
-
     })
 
     it('should not detect a stalemate if there is a piece to move', () => {
@@ -404,17 +430,52 @@ describe('Chess Game', () => {
       game.startGame()
       expect(game.status).toBe('ongoing')
 
-      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 1, y: 2 })!, { x: 1, y: 2 }, { x: 1, y: 1 }), game)).toBe(true)
+      expect(
+        player1.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 1, y: 2 })!,
+            { x: 1, y: 2 },
+            { x: 1, y: 1 }
+          ),
+          game
+        )
+      ).toBe(true)
       expect(game.status).toBe('check')
 
-      expect(player2.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 0 })!, { x: 0, y: 0 }, { x: 1, y: 0 }), game)).toBe(true)
+      expect(
+        player2.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 0, y: 0 })!,
+            { x: 0, y: 0 },
+            { x: 1, y: 0 }
+          ),
+          game
+        )
+      ).toBe(true)
       expect(game.status).toBe('ongoing')
 
-      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 2 })!, { x: 0, y: 2 }, { x: 1, y: 2 }), game)).toBe(true)
+      expect(
+        player1.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 0, y: 2 })!,
+            { x: 0, y: 2 },
+            { x: 1, y: 2 }
+          ),
+          game
+        )
+      ).toBe(true)
       expect(game.status).toBe('ongoing')
 
-     expect(player2.makeMove(new Move(game.board.getPieceAt({ x: 7, y: 1 })!, { x: 7, y: 1 }, { x: 7, y: 3 }), game)).toBe(true)
-
+      expect(
+        player2.makeMove(
+          new Move(
+            game.board.getPieceAt({ x: 7, y: 1 })!,
+            { x: 7, y: 1 },
+            { x: 7, y: 3 }
+          ),
+          game
+        )
+      ).toBe(true)
     })
   })
 
@@ -740,6 +801,20 @@ describe('Chess Game', () => {
         { x: 3, y: 4 }
       )
       expect(player2.makeMove(knightC6Move, game)).toBe(false)
+    })
+  })
+
+  describe('Game control', () => {
+    it('should be able to undo/redo a move', () => {
+      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const player1 = game.players[0]
+      game.initializeGame()
+      expect(game.moveHistory.getMoves().length).toBe(0)
+      expect(game.undoMove()).toBe(false)
+      player1.makeMove(e4(game.board), game)
+      expect(game.moveHistory.getMoves().length).toBe(1)
+      expect(game.undoMove()).toBe(true)
+      expect(game.moveHistory.getMoves().length).toBe(0)
     })
   })
 })

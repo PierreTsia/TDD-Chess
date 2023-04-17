@@ -1,22 +1,34 @@
-import type { IGame, IMove, IMoveHistory } from '~/core/types'
+import type { IMove, IMoveHistory } from '~/core/types'
 
 export class MoveHistory implements IMoveHistory {
   moves: Array<IMove>
+  cancelledMoves: Array<IMove>
 
   constructor() {
     this.moves = []
+    this.cancelledMoves = []
   }
 
   addMove(move: IMove): void {
     this.moves.push(move)
   }
 
-  undoMove(game: IGame): boolean {
-    return false
+  undoMove(): boolean {
+    const lastMove = this.moves.pop()
+    if (!lastMove) {
+      return false
+    }
+    this.cancelledMoves.unshift(lastMove)
+    return true
   }
 
-  redoMove(game: IGame): boolean {
-    return false
+  redoMove(): boolean {
+    const lastMove = this.cancelledMoves.shift()
+    if (!lastMove) {
+      return false
+    }
+    this.moves.push(lastMove)
+    return true
   }
 
   getMoves(): Array<IMove> {

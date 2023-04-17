@@ -1,5 +1,5 @@
 import type { defineComponent } from 'vue'
-import type {Color, IBoard, PieceType, Position } from '~/core/types'
+import type { Color, IBoard, PieceType, Position } from '~/core/types'
 import {
   BishopBlack,
   BishopWhite,
@@ -48,7 +48,10 @@ export const useChessPieces = () => {
     },
   }
 
-  const chessPiece = ({ x, y }: Position, board: IBoard) => {
+  const chessPiece = (
+    { x, y }: Position,
+    board: IBoard
+  ): null | ReturnType<typeof defineComponent> => {
     const piece = board.squares[y][x]
     if (!piece) {
       return null
