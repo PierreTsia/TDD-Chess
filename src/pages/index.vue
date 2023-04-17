@@ -16,9 +16,9 @@ defineOptions({
       <div class="i-fluent:chess-20-filled" text-indigo-400 inline-block />
     </div>
     <div
-      class="flex flex-col md:flex-row w-full justify-center items-center md:items-start! gap-x-8">
+      class="flex flex-col md:flex-row w-full justify-center items-center md:items-start! gap-8">
       <ChessBoard />
-      <div flex flex-col gap-y-3>
+      <div flex flex-col gap-3>
         <ScoreBoard />
         <ControlPanel />
       </div>
