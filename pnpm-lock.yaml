@@ -3,8 +3,11 @@ lockfileVersion: 5.4
 specifiers:
   '@antfu/eslint-config': ^0.37.0
   '@iconify-json/carbon': ^1.1.16
+  '@iconify-json/fa6-regular': ^1.1.11
+  '@iconify-json/fa6-solid': ^1.1.13
   '@iconify-json/fluent': ^1.1.18
   '@iconify-json/mdi': ^1.1.50
+  '@iconify-json/tabler': ^1.1.73
   '@intlify/unplugin-vue-i18n': ^0.10.0
   '@types/lodash': ^4.14.192
   '@types/markdown-it-link-attributes': ^3.0.1
@@ -80,8 +83,11 @@ dependencies:
 devDependencies:
   '@antfu/eslint-config': 0.37.0_vgl77cfdswitgr47lm5swmv43m
   '@iconify-json/carbon': 1.1.16
+  '@iconify-json/fa6-regular': 1.1.11
+  '@iconify-json/fa6-solid': 1.1.13
   '@iconify-json/fluent': 1.1.18
   '@iconify-json/mdi': 1.1.50
+  '@iconify-json/tabler': 1.1.73
   '@intlify/unplugin-vue-i18n': 0.10.0_vue-i18n@9.2.2
   '@types/lodash': 4.14.192
   '@types/markdown-it-link-attributes': 3.0.1
@@ -1782,6 +1788,18 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/fa6-regular/1.1.11:
+    resolution: {integrity: sha512-ekohCwqrZIbDJUHwZoiUO5O8bz/LiF1JIfHGHUbP+Y9IZwZqMac+1Td8xzQ+d/6FEIgVjmxccbph/wCCVznFyQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/fa6-solid/1.1.13:
+    resolution: {integrity: sha512-4rpV5lqeerkL3PBuoIYFKtOWjEIcv2q9g+lai0jSTlgzmF/hcxkozXzhhGtEjQhYqAIPR01wxlHFIhwhLN2O9w==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
   /@iconify-json/fluent/1.1.18:
     resolution: {integrity: sha512-tdfnNxTJW39t5FhGzf+LPMJyaW9lTIhVYpHReGbbK7Ivt/GksbbOFpXntUgAgrMqglxSmSOz7u0xBARS1a3waQ==}
     dependencies:
@@ -1790,6 +1808,12 @@ packages:
 
   /@iconify-json/mdi/1.1.50:
     resolution: {integrity: sha512-SgbT5w5eHCdOG74ZWPz7HlTGk6VsifIJhNi6lAsxj/5Nlqt6Cz4LlQmSa9eecU9p075Jub2aAx/o7YI+GCahRQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/tabler/1.1.73:
+    resolution: {integrity: sha512-oFJ3YY3+NbqORGhZwT44Zt4F/rkvM/YLO+5yUzA7pbn1U49pfxcK4gDaliu0+Z7N5VxNWMlP3IENqXVdpSrSaQ==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true

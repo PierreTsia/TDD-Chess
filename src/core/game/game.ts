@@ -18,9 +18,9 @@ export class Game implements IGame {
   status: GameStatus
   moveHistory: IMoveHistory
 
-  constructor() {
-    const whitePlayer = new Player('white')
-    const blackPlayer = new Player('black')
+  constructor(playersNames?: [string, string]) {
+    const whitePlayer = new Player('white', true, playersNames?.[0] || 'player 1')
+    const blackPlayer = new Player('black', true, playersNames?.[1] || 'player 2')
     this.board = new Board()
     this.currentPlayer = whitePlayer
     this.players = [whitePlayer, blackPlayer]

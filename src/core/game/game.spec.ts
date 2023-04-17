@@ -387,6 +387,35 @@ describe('Chess Game', () => {
       expect(game.status).toBe('stalemate')
 
     })
+
+    it('should not detect a stalemate if there is a piece to move', () => {
+      const game = new Game()
+      const player1 = game.players[0]
+      const player2 = game.players[1]
+      game.board.resetBoard()
+
+      game.board.setPieceAt({ x: 0, y: 0 }, new King('black', { x: 0, y: 0 }))
+      game.board.setPieceAt({ x: 7, y: 1 }, new Pawn('black', { x: 7, y: 1 }))
+
+      game.board.setPieceAt({ x: 1, y: 2 }, new Pawn('white', { x: 1, y: 2 }))
+
+      game.board.setPieceAt({ x: 0, y: 2 }, new King('white', { x: 0, y: 2 }))
+
+      game.startGame()
+      expect(game.status).toBe('ongoing')
+
+      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 1, y: 2 })!, { x: 1, y: 2 }, { x: 1, y: 1 }), game)).toBe(true)
+      expect(game.status).toBe('check')
+
+      expect(player2.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 0 })!, { x: 0, y: 0 }, { x: 1, y: 0 }), game)).toBe(true)
+      expect(game.status).toBe('ongoing')
+
+      expect(player1.makeMove(new Move(game.board.getPieceAt({ x: 0, y: 2 })!, { x: 0, y: 2 }, { x: 1, y: 2 }), game)).toBe(true)
+      expect(game.status).toBe('ongoing')
+
+     expect(player2.makeMove(new Move(game.board.getPieceAt({ x: 7, y: 1 })!, { x: 7, y: 1 }, { x: 7, y: 3 }), game)).toBe(true)
+
+    })
   })
 
   describe('Castling', () => {

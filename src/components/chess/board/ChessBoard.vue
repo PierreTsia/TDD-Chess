@@ -5,8 +5,8 @@ import { useChessBoard } from '~/composables/chessBoard'
 import { Position } from '~/core/types'
 
 const { chessPiece } = useChessPieces()
-const { board, status, start } = useChessGame()
-const { squareColor, handleSquareClick } = useChessBoard()
+const { board, status } = useChessGame()
+const { handleSquareClick, squareColor } = useChessBoard()
 </script>
 
 <template>
@@ -37,8 +37,5 @@ const { squareColor, handleSquareClick } = useChessBoard()
         </span>
       </div>
     </div>
-    <o-button my-6 type="secondary" @click="start">
-      {{ status === 'not_started' ? 'Start' : 'Reset' }}
-    </o-button>
   </div>
 </template>
