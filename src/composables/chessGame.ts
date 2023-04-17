@@ -38,19 +38,18 @@ export const useChessGame = () => {
   }
 
   const materialScore = computed(() => {
-    const whiteScore = Object.entries(capturedMaterial.value.white).reduce(
-      (acc, [pieceType, count]) =>
-        acc + piecesWeight[pieceType as PieceType] * count,
-      0
-    )
-    const blackScore = Object.entries(capturedMaterial.value.black).reduce(
-      (acc, [pieceType, count]) =>
-        acc + piecesWeight[pieceType as PieceType] * count,
-      0
-    )
+    const colors: [Color, Color] = ['white', 'black']
+    const [white, black] = colors.flatMap((color: Color) => {
+      return Object.entries(capturedMaterial.value[color]).reduce(
+        (acc, [pieceType, count]) =>
+          acc + piecesWeight[pieceType as PieceType] * count,
+        0
+      )
+    })
+
     return {
-      white: whiteScore,
-      black: blackScore,
+      white,
+      black,
     }
   })
 

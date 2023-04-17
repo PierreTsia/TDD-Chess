@@ -1,8 +1,12 @@
 <script lang="ts" setup>
 import { useChessGame } from '~/composables/chessGame'
 
-const { status, currentPlayer, players, capturedMaterial, materialScore } =
-  useChessGame()
+const { status, currentPlayer, players, materialScore } = useChessGame()
+
+const opponentMaterialScore = (color: 'white' | 'black') => {
+  const opponentColor = color === 'white' ? 'black' : 'white'
+  return materialScore.value[opponentColor]
+}
 </script>
 
 <template>
@@ -43,13 +47,18 @@ const { status, currentPlayer, players, capturedMaterial, materialScore } =
           </li>
           <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="secondary">Material Score :</o-text>
-            <span class="flex justify-center items-center">
-              <o-icon class="w-4" name="i-tabler:chess" />
-              <o-text size="sm">{{ materialScore.white }}</o-text>
-            </span>
-            <span class="flex justify-center items-center">
-              <o-icon class="w-4" name="i-tabler:chess-filled" />
-              <o-text size="sm">{{ materialScore.black }}</o-text>
+            <span
+              v-for="p in players"
+              :key="`materialScore-${p.color}`"
+              class="flex justify-center items-center">
+              <o-icon
+                class="w-4"
+                :name="
+                  p.color === 'black'
+                    ? 'i-tabler:chess-filled'
+                    : 'i-tabler:chess'
+                " />
+              <o-text size="sm">{{ opponentMaterialScore(p.color) }}</o-text>
             </span>
           </li>
         </ul>
