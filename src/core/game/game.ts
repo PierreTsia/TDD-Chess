@@ -41,6 +41,16 @@ export class Game implements IGame {
     return this.moveHistory.getCapturedPieces()
   }
 
+  get gameWinner(): IPlayer | null {
+    if (this.status !== 'checkmate') {
+      return null
+    }
+
+    return this.currentPlayer.color === 'white'
+      ? this.players[1]
+      : this.players[0]
+  }
+
   initializeGame(): void {
     this.board.resetBoard()
     this.board.initializeBoard()
@@ -108,16 +118,6 @@ export class Game implements IGame {
 
   isGameOver(): boolean {
     return ['checkmate', 'stalemate'].includes(this.status)
-  }
-
-  get gameWinner(): IPlayer | null {
-    if (this.status !== 'checkmate') {
-      return null
-    }
-
-    return this.currentPlayer.color === 'white'
-      ? this.players[1]
-      : this.players[0]
   }
 
   switchPlayer(): void {
