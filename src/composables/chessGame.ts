@@ -10,6 +10,7 @@ export const useChessGame = () => {
   const currentPlayer = computed(() => game.value.currentPlayer)
   const status = computed(() => game.value.status)
   const players = computed(() => game.value.players)
+  const winner = computed(() => game.value.gameWinner)
 
   const capturedMaterial: ComputedRef<CapturedMaterial> = computed(() =>
     game.value.capturedPieces.reduce(
@@ -65,6 +66,7 @@ export const useChessGame = () => {
     board,
     currentPlayer,
     status,
+    winner,
     start,
   }
 }

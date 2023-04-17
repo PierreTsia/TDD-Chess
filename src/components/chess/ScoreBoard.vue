@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useChessGame } from '~/composables/chessGame'
 
-const { status, currentPlayer, players, materialScore } = useChessGame()
+const { status, currentPlayer, players, materialScore, winner } = useChessGame()
 
 const opponentMaterialScore = (color: 'white' | 'black') => {
   const opponentColor = color === 'white' ? 'black' : 'white'
@@ -43,7 +43,14 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
           </li>
           <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="secondary">Game Status :</o-text>
-            <o-text size="sm">{{ status }} </o-text>
+            <o-text v-if="winner" size="sm">{{ winner?.name }} won ! </o-text>
+            <o-text v-else-if="status === 'stalemate'" size="sm">Draw </o-text>
+            <o-text v-else-if="status === 'not_started'" size="sm"
+              >Ready !</o-text
+            >
+            <o-text v-else size="sm"
+              >{{ currentPlayer.name }} is playing</o-text
+            >
           </li>
           <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="secondary">Material Score :</o-text>

@@ -7,7 +7,8 @@ import type {
   IBoard,
   IGame,
   IMove,
-  IMoveHistory, IPiece,
+  IMoveHistory,
+  IPiece,
   IPlayer,
 } from '~/core/types'
 
@@ -45,6 +46,7 @@ export class Game implements IGame {
     this.board.initializeBoard()
     this.board.setStartingPosition()
     this.moveHistory = new MoveHistory()
+    this.status = 'not_started'
 
     this.startGame()
   }
@@ -108,8 +110,14 @@ export class Game implements IGame {
     return ['checkmate', 'stalemate'].includes(this.status)
   }
 
-  getWinner(): IPlayer | null {
-    return null
+  get gameWinner(): IPlayer | null {
+    if (this.status !== 'checkmate') {
+      return null
+    }
+
+    return this.currentPlayer.color === 'white'
+      ? this.players[1]
+      : this.players[0]
   }
 
   getValidMovesForCurrentPlayer(): Array<IMove> {

@@ -7,11 +7,11 @@ export interface IGame {
   status: GameStatus
   moveHistory: IMoveHistory
   capturedPieces: Array<IPiece>
+  gameWinner: IPlayer | null
   initializeGame(): void
   startGame(): void
   makeMove(move: IMove): boolean
   isGameOver(): boolean
-  getWinner(): IPlayer | null
   getValidMovesForCurrentPlayer(): Array<IMove>
   switchPlayer(): void
   undoMove(): boolean
