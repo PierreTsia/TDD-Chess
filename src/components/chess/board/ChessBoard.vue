@@ -6,7 +6,7 @@ import { Position } from '~/core/types'
 
 const { chessPiece } = useChessPieces()
 const { board, status } = useChessGame()
-const { handleSquareClick, squareColor } = useChessBoard()
+const { handleSquareClick, squareColor, isBlackPov } = useChessBoard()
 </script>
 
 <template>
@@ -14,6 +14,8 @@ const { handleSquareClick, squareColor } = useChessBoard()
     <div
       class="max-w-[480px]"
       :class="{
+        'transform rotate-180': isBlackPov,
+        'transform rotate-0': !isBlackPov,
         'outline outline-double outline-red-500': status === 'checkmate',
         'outline outline-double outline-yellow-500': status === 'check',
         'outline outline-double outline-indigo-500': status === 'stalemate',
@@ -32,7 +34,8 @@ const { handleSquareClick, squareColor } = useChessBoard()
             v-if="chessPiece({ x, y } as Position, board)"
             class="w-full h-60px flex justify-center items-center">
             <component
-              :is="chessPiece({ x, y } as Position, board) as ReturnType<typeof defineComponent>" />
+              :is="chessPiece({ x, y } as Position, board) as ReturnType<typeof defineComponent>"
+              :class="{ 'transform rotate-180': isBlackPov }" />
           </span>
         </span>
       </div>

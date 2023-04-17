@@ -1,13 +1,19 @@
 import { Move } from '~/core/moves/move'
+
 import type { IMove, IPiece, Position } from '~/core/types'
 import { useChessGame } from '~/composables/chessGame'
 
 const { board, currentPlayer, game } = useChessGame()
 
+const isBlackPov = ref(true)
 export const useChessBoard = () => {
   const onGoingMove = ref<{ from: Position | null }>({
     from: null,
   })
+
+  const switchPov = () => {
+    isBlackPov.value = !isBlackPov.value
+  }
 
   const selectedSquare = computed(() => {
     if (onGoingMove.value.from) {
@@ -61,7 +67,9 @@ export const useChessBoard = () => {
   }
 
   return {
+    isBlackPov,
     onGoingMove,
+    switchPov,
     squareColor,
     handleSquareClick,
     selectedSquare,

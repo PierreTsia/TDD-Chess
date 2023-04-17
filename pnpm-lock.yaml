@@ -7,6 +7,7 @@ specifiers:
   '@iconify-json/fa6-solid': ^1.1.13
   '@iconify-json/fluent': ^1.1.18
   '@iconify-json/mdi': ^1.1.50
+  '@iconify-json/ph': ^1.1.5
   '@iconify-json/tabler': ^1.1.73
   '@intlify/unplugin-vue-i18n': ^0.10.0
   '@types/lodash': ^4.14.192
@@ -87,6 +88,7 @@ devDependencies:
   '@iconify-json/fa6-solid': 1.1.13
   '@iconify-json/fluent': 1.1.18
   '@iconify-json/mdi': 1.1.50
+  '@iconify-json/ph': 1.1.5
   '@iconify-json/tabler': 1.1.73
   '@intlify/unplugin-vue-i18n': 0.10.0_vue-i18n@9.2.2
   '@types/lodash': 4.14.192
@@ -1808,6 +1810,12 @@ packages:
 
   /@iconify-json/mdi/1.1.50:
     resolution: {integrity: sha512-SgbT5w5eHCdOG74ZWPz7HlTGk6VsifIJhNi6lAsxj/5Nlqt6Cz4LlQmSa9eecU9p075Jub2aAx/o7YI+GCahRQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/ph/1.1.5:
+    resolution: {integrity: sha512-iLXq3nohfGge22gL2tZmQ2WHBKkKkIbGWrkuyC8arckS4PWaONyh4A+uDPtSek9QbYDvi9AE2+NxWkNZhANotA==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true

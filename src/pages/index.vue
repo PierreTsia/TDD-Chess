@@ -3,6 +3,7 @@ import ChessBoard from '~/components/chess/board/ChessBoard.vue'
 import ScoreBoard from '~/components/chess/ScoreBoard.vue'
 import ControlPanel from '~/components/chess/ControlPanel.vue'
 
+
 defineOptions({
   name: 'IndexPage',
 })
