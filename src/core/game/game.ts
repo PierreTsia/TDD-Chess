@@ -120,10 +120,6 @@ export class Game implements IGame {
       : this.players[0]
   }
 
-  getValidMovesForCurrentPlayer(): Array<IMove> {
-    return []
-  }
-
   switchPlayer(): void {
     this.currentPlayer =
       this.currentPlayer === this.players[0] ? this.players[1] : this.players[0]

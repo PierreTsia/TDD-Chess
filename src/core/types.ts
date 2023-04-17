@@ -12,7 +12,6 @@ export interface IGame {
   startGame(): void
   makeMove(move: IMove): boolean
   isGameOver(): boolean
-  getValidMovesForCurrentPlayer(): Array<IMove>
   switchPlayer(): void
   undoMove(): boolean
   redoMove(): boolean
