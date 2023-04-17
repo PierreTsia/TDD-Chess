@@ -2,9 +2,16 @@
 TDD chess game built with TS
 </p>
 
+<p align='center'>
+Based on @antfu's <b> <a href="https://github.com/antfu/vitesse">Vitesse</a></b> <sup><em>(speed)</em> </sup> awesome starter
+</p>
+
 <br>
 
-<img src="./public/screenshot.png" width="500" alt="screenshot">
+<p align="center">
+<img src="./public/screenshot.png" width="450px" alt="screenshot">
+
+</p>
 
 <p align='center'>
 <a href="https://fastidious-swan-5709df.netlify.app/">Live Demo</a>
@@ -52,8 +59,3 @@ Run the image and specify port mapping with the `-p` flag.
 docker run --rm -it -p 8080:80 vitesse:latest
 ```
 
-## Why
-
-I have created several Vite apps recently. Setting the configs up is kinda the bottleneck for me to make the ideas simply come true within a very short time.
-
-So I made this starter template for myself to create apps more easily, along with some good practices that I have learned from making those apps. It's strongly opinionated, but feel free to tweak it or even maintain your own forks. [(see community maintained variation forks)](#variations)
