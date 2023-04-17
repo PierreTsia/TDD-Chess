@@ -29,7 +29,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
       <template #default>
         <ul
           class="w-full flex flex-wrap justify-center items-center px-10 gap-y-1">
-          <li class="w-full flex start gap-x-6">
+          <li v-show="status === 'ongoing'" class="w-full flex start gap-x-6">
             <o-text size="sm" type="secondary">Playing :</o-text>
             <o-text size="sm" class="flex items-center">
               <o-icon
@@ -48,11 +48,11 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
             <o-text v-else-if="status === 'not_started'" size="sm"
               >Ready !</o-text
             >
-            <o-text v-else size="sm"
-              >{{ currentPlayer.name }} is playing</o-text
-            >
+            <o-text v-else size="sm">{{ status }}</o-text>
           </li>
-          <li class="w-full flex justify-start gap-x-6">
+          <li
+            v-show="status === 'ongoing'"
+            class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="secondary">Material Score :</o-text>
             <span
               v-for="p in players"
