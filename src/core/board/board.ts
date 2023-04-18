@@ -3,6 +3,7 @@ import { BoardInitializer } from '~/core/board/board-initializer'
 import { COORDS } from '~/core/constants'
 import { Move } from '~/core/moves/move'
 import { Queen } from '~/core/pieces/queen'
+import { Rook } from '~/core/pieces/rook'
 
 import type { Color, IBoard, IMove, IPiece, Position } from '~/core/types'
 
@@ -110,6 +111,17 @@ export class Board implements IBoard {
         x: endPosition.x,
         y: endPosition.y + direction,
       } as Position
+    } else if (specialMoveType === 'castling') {
+      const rook = this.getPieceAt({
+        y: startPosition.y,
+        x: endPosition.x === 2 ? 3 : 5,
+      } as Position)!
+      this.setPieceAt(rook.position, null)
+      const newRookPosition: Position = {
+        x: rook.position.x === 5 ? 7 : 0,
+        y: rook.position.y,
+      } as Position
+      this.setPieceAt(newRookPosition, new Rook(rook.color, newRookPosition))
     }
     this.setPieceAt(capturedPiecePosition, capturedPiece)
   }

@@ -923,5 +923,32 @@ describe('Chess Game', () => {
       expect(game.board.getPieceAt({ x: 3, y: 2 })?.color).toBe('white')
       expect(game.board.getPieceAt({ x: 3, y: 3 })).toBeNull()
     })
+    it('should be able to undo/redo castling ', () => {
+      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const player1 = game.players[0]
+      game.board.setPieceAt({ x: 4, y: 7 }, new King('white', { x: 4, y: 7 }))
+      game.board.setPieceAt({ x: 7, y: 7 }, new Rook('white', { x: 7, y: 7 }))
+
+      game.startGame()
+
+      expect(game.board.getPieceAt({ x: 4, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 7, y: 7 })!.type).toBe('rook')
+
+      const whiteCastle = WhiteKingSideCastle(game.board)
+      expect(player1.makeMove(whiteCastle, game)).toBe(true)
+
+      expect(game.board.getPieceAt({ x: 6, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 5, y: 7 })!.type).toBe('rook')
+
+      game.undoMove()
+
+      expect(game.board.getPieceAt({ x: 4, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 7, y: 7 })!.type).toBe('rook')
+
+      game.redoMove()
+      expect(game.board.getPieceAt({ x: 6, y: 7 })!.type).toBe('king')
+      expect(game.board.getPieceAt({ x: 5, y: 7 })!.type).toBe('rook')
+
+    })
   })
 })
