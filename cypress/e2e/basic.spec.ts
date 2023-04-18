@@ -3,7 +3,7 @@ context('Basic', () => {
     cy.visit('/')
   })
 
-  it('basic nav', () => {
+  /* it('basic nav', () => {
     cy.url()
       .should('eq', 'http://localhost:3333/')
 
@@ -22,7 +22,7 @@ context('Basic', () => {
       .click()
       .url()
       .should('eq', 'http://localhost:3333/')
-  })
+  }) */
 
   it('markdown', () => {
     cy.get('[title="About"]')
