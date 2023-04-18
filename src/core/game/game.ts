@@ -1,6 +1,5 @@
 import { Board } from '~/core/board/board'
 import { MoveHistory } from '~/core/moves/move-history'
-import { Queen } from '~/core/pieces/queen'
 import { Player } from '~/core/player/player'
 import type {
   Color,
@@ -11,7 +10,6 @@ import type {
   IMoveHistory,
   IPiece,
   IPlayer,
-  Position,
 } from '~/core/types'
 
 export class Game implements IGame {
@@ -77,26 +75,7 @@ export class Game implements IGame {
     if (!lastMove) {
       return false
     }
-    const {
-      piece,
-      capturedPiece,
-      startPosition,
-      endPosition,
-      specialMoveType,
-    } = lastMove
-    piece.position = startPosition
-    this.board.setPieceAt(startPosition, piece)
-    this.board.setPieceAt(endPosition, null)
-
-    let capturedPiecePosition = endPosition
-    if (specialMoveType === 'en_passant') {
-      const direction = capturedPiece?.color === 'white' ? -1 : 1
-      capturedPiecePosition = {
-        x: endPosition.x,
-        y: endPosition.y + direction,
-      } as Position
-    }
-    this.board.setPieceAt(capturedPiecePosition, capturedPiece)
+    this.board.undoMove(lastMove)
 
     this.switchPlayer()
     this.updateStatus()
@@ -112,22 +91,7 @@ export class Game implements IGame {
     if (!lastMove) {
       return false
     }
-
-    const { piece, startPosition, endPosition, specialMoveType } = lastMove
-    piece.position = endPosition
-    this.board.setPieceAt(endPosition, piece)
-    this.board.setPieceAt(startPosition, null)
-    let capturedPiecePosition = endPosition
-    if (specialMoveType === 'en_passant') {
-      const direction = piece.color === 'white' ? 1 : -1
-      capturedPiecePosition = {
-        x: endPosition.x,
-        y: endPosition.y + direction,
-      } as Position
-      this.board.setPieceAt(capturedPiecePosition, null)
-    } else if (specialMoveType === 'promotion') {
-      this.board.setPieceAt(endPosition, new Queen(piece.color, endPosition))
-    }
+    this.board.redoMove(lastMove)
 
     this.switchPlayer()
     this.updateStatus()

@@ -91,6 +91,47 @@ export class Board implements IBoard {
     }
   }
 
+  undoMove(lastMove: IMove): void {
+    const {
+      piece,
+      capturedPiece,
+      startPosition,
+      endPosition,
+      specialMoveType,
+    } = lastMove
+    piece.position = startPosition
+    this.setPieceAt(startPosition, piece)
+    this.setPieceAt(endPosition, null)
+
+    let capturedPiecePosition = endPosition
+    if (specialMoveType === 'en_passant') {
+      const direction = capturedPiece?.color === 'white' ? -1 : 1
+      capturedPiecePosition = {
+        x: endPosition.x,
+        y: endPosition.y + direction,
+      } as Position
+    }
+    this.setPieceAt(capturedPiecePosition, capturedPiece)
+  }
+
+  redoMove(lastMove: IMove): void {
+    const { piece, startPosition, endPosition, specialMoveType } = lastMove
+    piece.position = endPosition
+    this.setPieceAt(endPosition, piece)
+    this.setPieceAt(startPosition, null)
+    let capturedPiecePosition = endPosition
+    if (specialMoveType === 'en_passant') {
+      const direction = piece.color === 'white' ? 1 : -1
+      capturedPiecePosition = {
+        x: endPosition.x,
+        y: endPosition.y + direction,
+      } as Position
+      this.setPieceAt(capturedPiecePosition, null)
+    } else if (specialMoveType === 'promotion') {
+      this.setPieceAt(endPosition, new Queen(piece.color, endPosition))
+    }
+  }
+
   private applyEnPassant(move: IMove, lastMove: IMove) {
     const capturedPawn = this.getPieceAt(lastMove.endPosition)
     const piece = this.getPieceAt(move.startPosition)

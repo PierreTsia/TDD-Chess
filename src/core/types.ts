@@ -26,6 +26,8 @@ export interface IBoard {
   getPieceAt(position: Position): IPiece | null
   setPieceAt(position: Position, piece: IPiece | null): void
   applyMove(move: IMove, lastMove?: IMove): void
+  undoMove(move: IMove): void
+  redoMove(move: IMove): void
   isPositionUnderAttack(position: Position, attackingColor: Color): boolean
   getAllPieces(color: Color): Array<IPiece>
   isEmptySquare(position: Position): boolean
