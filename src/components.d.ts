@@ -17,6 +17,7 @@ declare module '@vue/runtime-core' {
     KingWhite: typeof import('./components/chess/pieces/White/KingWhite.vue')['default']
     KnightBlack: typeof import('./components/chess/pieces/Black/KnightBlack.vue')['default']
     KnightWhite: typeof import('./components/chess/pieces/White/KnightWhite.vue')['default']
+    LoginCard: typeof import('./components/auth/LoginCard.vue')['default']
     PawnBlack: typeof import('./components/chess/pieces/Black/PawnBlack.vue')['default']
     PawnWhite: typeof import('./components/chess/pieces/White/PawnWhite.vue')['default']
     QueenBlack: typeof import('./components/chess/pieces/Black/QueenBlack.vue')['default']

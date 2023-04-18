@@ -24,12 +24,12 @@ const { switchPov, isBlackPov } = useChessBoard()
           </div>
 
           <div class="w-full flex flex-row justify-center items-center gap-4">
-            <o-button :disabled="!lastMove" type="secondary" @click="undo">
+            <o-button :disabled="!lastMove" type="success" @click="undo">
               <o-icon
                 name="i-solar:square-double-alt-arrow-left-outline"
                 class="!text-white" />
             </o-button>
-            <o-button :disabled="!lastCancelledMove" type="secondary" @click="redo">
+            <o-button :disabled="!lastCancelledMove" type="success" @click="redo">
               <o-icon
                 name="i-solar:square-double-alt-arrow-right-linear"
                 class="!text-white" />

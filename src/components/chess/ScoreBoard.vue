@@ -30,7 +30,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
         <ul
           class="w-full flex flex-wrap justify-center items-center px-10 gap-y-1">
           <li v-show="status === 'ongoing'" class="w-full flex start gap-x-6">
-            <o-text size="sm" type="secondary">Playing :</o-text>
+            <o-text size="sm" type="success">Playing :</o-text>
             <o-text size="sm" class="flex items-center">
               <o-icon
                 class="mr-1 w-4"
@@ -42,7 +42,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
             </o-text>
           </li>
           <li class="w-full flex justify-start gap-x-6">
-            <o-text size="sm" type="secondary">Game Status :</o-text>
+            <o-text size="sm" type="success">Game Status :</o-text>
             <o-text v-if="winner" size="sm">{{ winner?.name }} won ! </o-text>
             <o-text v-else-if="status === 'stalemate'" size="sm">Draw </o-text>
             <o-text v-else-if="status === 'not_started'" size="sm"
@@ -53,7 +53,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
           <li
             v-show="status === 'ongoing'"
             class="w-full flex justify-start gap-x-6">
-            <o-text size="sm" type="secondary">Material Score :</o-text>
+            <o-text size="sm" type="success">Material Score :</o-text>
             <span
               v-for="p in players"
               :key="`materialScore-${p.color}`"
