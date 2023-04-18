@@ -25,13 +25,19 @@ export const useUserStore = defineStore('user', () => {
     return data[0]
   }
 
-  const fetchUser = async () => {
-    const auth = await loginFromEmail('alice@example.com', 'testtest')
+  const getUserFromId = async (userId: string) => {
+    user.value = await fetchUserData(userId)
+  }
+
+  const fetchUser = async (email: string, password: string) => {
+    const auth = await loginFromEmail(email, password)
     user.value = await fetchUserData(auth?.id ?? '')
   }
 
   return {
     fetchUser,
+    getUserFromId,
+    fetchUserData,
     loginFromEmail,
     user,
   }
