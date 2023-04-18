@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// @ts-expect-error types are not available for this package
-import * as md5 from 'md5'
+import md5 from 'md5'
 import { storeToRefs } from 'pinia'
 import LoginCard from '~/components/auth/LoginCard.vue'
 import { supabase } from '~/modules/supabase'
@@ -11,7 +10,7 @@ const { user } = storeToRefs(userStore)
 const isLoading = ref(false)
 
 const avatarSrc = computed(
-  () => `https://www.gravatar.com/avatar/${md5(user.value?.email)}`
+  () => `https://www.gravatar.com/avatar/${md5(user.value?.email ?? '')}`
 )
 
 onBeforeMount(async () => {

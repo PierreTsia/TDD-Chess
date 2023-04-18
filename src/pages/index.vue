@@ -13,7 +13,7 @@ defineOptions({
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
-userStore.fetchUser()
+userStore.fetchUser('alice@example.com', 'testtest')
 </script>
 
 <template>
