@@ -11,6 +11,10 @@ export const useChessGame = () => {
   const status = computed(() => game.value.status)
   const players = computed(() => game.value.players)
   const winner = computed(() => game.value.gameWinner)
+  const lastMove = computed(() => game.value.moveHistory.getLastMove())
+  const lastCancelledMove = computed(() =>
+    game.value.moveHistory.getLastCancelledMove()
+  )
 
   const capturedMaterial: ComputedRef<CapturedMaterial> = computed(() =>
     game.value.capturedPieces.reduce(
@@ -69,6 +73,8 @@ export const useChessGame = () => {
     board,
     currentPlayer,
     status,
+    lastMove,
+    lastCancelledMove,
     winner,
     start,
     undo,
