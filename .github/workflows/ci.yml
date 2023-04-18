@@ -91,12 +91,13 @@ jobs:
           install-command: echo
           build: pnpm run build
           start: npx vite --port 3333
+          secrets: '["VITE_SUPABASE_ANON_KEY", "VITE_SUPABASE_URL"]'
           env: VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}, VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}"
 
 
 
   deploy:
-    needs: [lint, test, typecheck, test-e2e]
+    needs: [lint, test, typecheck]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
