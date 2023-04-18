@@ -91,3 +91,30 @@ jobs:
           install-command: echo
           build: pnpm run build
           start: npx vite --port 3333
+          env: VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}, VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}"
+
+
+
+  deploy:
+    needs: [lint, test, typecheck, test-e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=./dist --prod
+          secrets: '["NETLIFY_AUTH_TOKEN"]'
