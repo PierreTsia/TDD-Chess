@@ -1,5 +1,6 @@
 import { Board } from '~/core/board/board'
 import { MoveHistory } from '~/core/moves/move-history'
+import { Queen } from '~/core/pieces/queen'
 import { Player } from '~/core/player/player'
 import type {
   Color,
@@ -72,7 +73,8 @@ export class Game implements IGame {
   }
 
   undoMove(): boolean {
-    if (!this.moveHistory.moves.length) {
+    const lastMove = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    if (!lastMove) {
       return false
     }
     const {
@@ -81,22 +83,21 @@ export class Game implements IGame {
       startPosition,
       endPosition,
       specialMoveType,
-    } = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    } = lastMove
     piece.position = startPosition
     this.board.setPieceAt(startPosition, piece)
     this.board.setPieceAt(endPosition, null)
 
-    if (capturedPiece) {
-      let capturedPiecePosition = endPosition
-      if (specialMoveType === 'en_passant') {
-        const direction = capturedPiece.color === 'white' ? -1 : 1
-        capturedPiecePosition = {
-          x: endPosition.x,
-          y: endPosition.y + direction,
-        } as Position
-      }
-      this.board.setPieceAt(capturedPiecePosition, capturedPiece)
+    let capturedPiecePosition = endPosition
+    if (specialMoveType === 'en_passant') {
+      const direction = capturedPiece?.color === 'white' ? -1 : 1
+      capturedPiecePosition = {
+        x: endPosition.x,
+        y: endPosition.y + direction,
+      } as Position
     }
+    this.board.setPieceAt(capturedPiecePosition, capturedPiece)
+
     this.switchPlayer()
     this.updateStatus()
     this.moveHistory.undoMove()
@@ -113,20 +114,19 @@ export class Game implements IGame {
     }
 
     const { piece, startPosition, endPosition, specialMoveType } = lastMove
-    piece.position = endPosition // Update the piece position before setting
+    piece.position = endPosition
     this.board.setPieceAt(endPosition, piece)
     this.board.setPieceAt(startPosition, null)
-
+    let capturedPiecePosition = endPosition
     if (specialMoveType === 'en_passant') {
-      const capturedPiece = lastMove.capturedPiece
-      if (capturedPiece) {
-        const direction = piece.color === 'white' ? 1 : -1
-        const capturedPiecePosition = {
-          x: endPosition.x,
-          y: endPosition.y + direction,
-        } as Position
-        this.board.setPieceAt(capturedPiecePosition, null)
-      }
+      const direction = piece.color === 'white' ? 1 : -1
+      capturedPiecePosition = {
+        x: endPosition.x,
+        y: endPosition.y + direction,
+      } as Position
+      this.board.setPieceAt(capturedPiecePosition, null)
+    } else if (specialMoveType === 'promotion') {
+      this.board.setPieceAt(endPosition, new Queen(piece.color, endPosition))
     }
 
     this.switchPlayer()
