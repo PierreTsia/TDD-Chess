@@ -1,18 +1,27 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import ChessBoard from '~/components/chess/board/ChessBoard.vue'
 import ScoreBoard from '~/components/chess/ScoreBoard.vue'
 import ControlPanel from '~/components/chess/ControlPanel.vue'
 
+import { useUserStore } from '~/stores/user'
 
 defineOptions({
   name: 'IndexPage',
 })
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
+
+userStore.fetchUser()
 </script>
 
 <template>
   <div>
     <div text-4xl flex justify-center mb-4>
-      <h1 mr-2>Chess</h1>
+      <div class="i-fluent:chess-20-filled" text-indigo-400 inline-block />
+
+      <h1 mx-2>Welcome {{ user?.username }}</h1>
       <div class="i-fluent:chess-20-filled" text-indigo-400 inline-block />
     </div>
     <div

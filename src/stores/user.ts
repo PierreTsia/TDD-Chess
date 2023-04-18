@@ -1,32 +1,39 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { supabase } from '~/modules/supabase'
+import type { AuthUser, User } from '~/modules/types/supabase'
 
 export const useUserStore = defineStore('user', () => {
-  /**
-   * Current name of the user.
-   */
-  const savedName = ref('')
-  const previousNames = ref(new Set<string>())
+  const user = ref<User | null>(null)
 
-  const usedNames = computed(() => Array.from(previousNames.value))
-  const otherNames = computed(() => usedNames.value.filter(name => name !== savedName.value))
+  const loginFromEmail = async (
+    email: string,
+    password: string
+  ): Promise<AuthUser | null> => {
+    const { data } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    return data?.user ?? null
+  }
 
-  /**
-   * Changes the current name of the user and saves the one that was used
-   * before.
-   *
-   * @param name - new name to set
-   */
-  function setNewName(name: string) {
-    if (savedName.value)
-      previousNames.value.add(savedName.value)
+  const fetchUserData = async (userId: string): Promise<User | null> => {
+    const { data } = await supabase.from('users').select('*').eq('id', userId)
 
-    savedName.value = name
+    if (!data || !data[0]) {
+      return null
+    }
+    return data[0]
+  }
+
+  const fetchUser = async () => {
+    const auth = await loginFromEmail('alice@example.com', 'testtest')
+    user.value = await fetchUserData(auth?.id ?? '')
   }
 
   return {
-    setNewName,
-    otherNames,
-    savedName,
+    fetchUser,
+    loginFromEmail,
+    user,
   }
 })
 

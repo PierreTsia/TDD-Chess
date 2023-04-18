@@ -11,6 +11,7 @@ export class MoveHistory implements IMoveHistory {
 
   addMove(move: IMove): void {
     this.moves.push(move)
+    this.cancelledMoves = []
   }
 
   getCapturedPieces(): IPiece[] {
