@@ -27,13 +27,15 @@ jobs:
         run: pnpm run lint
 
   test:
+    env:
+      CI: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 16.x
           cache: pnpm
 
       - name: Install
