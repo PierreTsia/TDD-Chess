@@ -94,7 +94,7 @@ jobs:
           env: VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}, VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}"
 
   deploy:
-    needs: [test]
+    needs: [lint, typecheck, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -103,13 +103,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: pnpm
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Build
-        run: pnpm run build
+        run: npm run build
 
       - name: Deploy to Netlify
         uses: netlify/actions/cli@master
