@@ -116,4 +116,5 @@ jobs:
         uses: netlify/actions/cli@master
         with:
           args: deploy --dir=./dist --prod
-          secrets: '["NETLIFY_AUTH_TOKEN"]'
+          secrets: '["NETLIFY_AUTH_TOKEN", "VITE_SUPABASE_ANON_KEY", "VITE_SUPABASE_URL"]'
+          env: VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}, VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}"
