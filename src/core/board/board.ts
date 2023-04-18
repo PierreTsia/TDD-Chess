@@ -141,6 +141,15 @@ export class Board implements IBoard {
       this.setPieceAt(capturedPiecePosition, null)
     } else if (specialMoveType === 'promotion') {
       this.setPieceAt(endPosition, new Queen(piece.color, endPosition))
+    } else if (specialMoveType === 'castling') {
+      const rook = this.getCastingRook(lastMove)
+      rook.hasMoved = false
+      const king = this.getPieceAt(endPosition)!
+      king.hasMoved = false
+      this.setPieceAt(rook.position, null)
+      const newRookPosition = this.castlingRookDestination(lastMove)
+      this.setPieceAt(newRookPosition, rook)
+
     }
   }
 
