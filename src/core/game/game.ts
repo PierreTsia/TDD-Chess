@@ -98,6 +98,7 @@ export class Game implements IGame {
       this.board.setPieceAt(capturedPiecePosition, capturedPiece)
     }
     this.switchPlayer()
+    this.updateStatus()
     this.moveHistory.undoMove()
     return true
   }
@@ -130,6 +131,7 @@ export class Game implements IGame {
     }
 
     this.switchPlayer()
+    this.updateStatus()
     this.moveHistory.redoMove()
     return true
   }
