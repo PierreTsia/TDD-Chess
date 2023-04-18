@@ -1,12 +1,9 @@
 <script setup lang="ts">
 const props = defineProps<{ name: string }>()
 const router = useRouter()
-const user = useUserStore()
 const { t } = useI18n()
 
-watchEffect(() => {
-  user.setNewName(props.name)
-})
+
 </script>
 
 <template>
@@ -22,18 +19,7 @@ watchEffect(() => {
       <em>{{ t('intro.dynamic-route') }}</em>
     </p>
 
-    <template v-if="user.otherNames.length">
-      <p text-sm mt-4>
-        <span opacity-75>{{ t('intro.aka') }}:</span>
-        <ul>
-          <li v-for="otherName in user.otherNames" :key="otherName">
-            <RouterLink :to="`/hi/${otherName}`" replace>
-              {{ otherName }}
-            </RouterLink>
-          </li>
-        </ul>
-      </p>
-    </template>
+
 
     <div>
       <button
