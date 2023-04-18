@@ -1,4 +1,13 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useUserStore } from '~/stores/user'
+
+const email = ref('')
+const password = ref('')
+const userStore = useUserStore()
+const tryLogin = async () => {
+  await userStore.fetchUser(email.value, password.value)
+}
+</script>
 
 <template>
   <o-card class="!w-[400px] flex flex-col" divider>
@@ -15,6 +24,7 @@
         >
         <input
           id="email"
+          v-model="email"
           type="text"
           autocomplete="alice@example.com"
           placeholder="@horizon.ui"
@@ -26,6 +36,7 @@
         >
         <input
           id="password"
+          v-model="password"
           type="password"
           autocomplete="testtest"
           placeholder="password"
@@ -35,7 +46,9 @@
 
     <template #actions>
       <div class="flex flex-row justify-end gap-2">
-        <o-button type="info" class="!w-[100px]">Login</o-button>
+        <o-button type="info" class="!w-[100px]" @click="tryLogin"
+          >Login</o-button
+        >
         <o-button type="error" class="!w-[100px]">Cancel</o-button>
       </div>
     </template>

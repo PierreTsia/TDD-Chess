@@ -5,6 +5,11 @@ import type { AuthUser, User } from '~/modules/types/supabase'
 export const useUserStore = defineStore('user', () => {
   const user = ref<User | null>(null)
 
+  const logOut = async () => {
+    await supabase.auth.signOut()
+    user.value = null
+  }
+
   const loginFromEmail = async (
     email: string,
     password: string
@@ -40,6 +45,7 @@ export const useUserStore = defineStore('user', () => {
     fetchUserData,
     loginFromEmail,
     user,
+    logOut,
   }
 })
 
