@@ -115,6 +115,7 @@ export class Game implements IGame {
     const { piece, startPosition, endPosition, specialMoveType } = lastMove
     piece.position = endPosition // Update the piece position before setting
     this.board.setPieceAt(endPosition, piece)
+    this.board.setPieceAt(startPosition, null)
 
     if (specialMoveType === 'en_passant') {
       const capturedPiece = lastMove.capturedPiece
@@ -126,8 +127,6 @@ export class Game implements IGame {
         } as Position
         this.board.setPieceAt(capturedPiecePosition, null)
       }
-    } else {
-      this.board.setPieceAt(startPosition, null)
     }
 
     this.switchPlayer()
