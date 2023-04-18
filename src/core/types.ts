@@ -56,6 +56,7 @@ export interface IPiece {
 
 export interface IPlayer {
   color: Color
+  name: string
   makeMove(move: IMove, game: IGame): boolean
 }
 

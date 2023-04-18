@@ -22,7 +22,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
                   ? 'i-tabler:chess-king-filled'
                   : 'i-tabler:chess-king'
               " />
-            {{ p.name }}
+            {{ p?.name }}
           </o-text>
         </div>
       </template>

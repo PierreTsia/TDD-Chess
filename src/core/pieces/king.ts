@@ -51,7 +51,7 @@ export class King extends Piece {
         (move) =>
           !board.isPositionUnderAttack(
             move.endPosition,
-            this.getOppositeColor(this.color)
+            this.getOppositeColor()
           )
       )
   }
