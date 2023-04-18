@@ -43,4 +43,12 @@ export class MoveHistory implements IMoveHistory {
   getMoves(): Array<IMove> {
     return this.moves
   }
+
+  getLastMove(): IMove | undefined {
+    return this.moves[this.moves.length - 1]
+  }
+
+  getLastCancelledMove(): IMove | undefined {
+    return this.cancelledMoves[this.cancelledMoves.length - 1]
+  }
 }

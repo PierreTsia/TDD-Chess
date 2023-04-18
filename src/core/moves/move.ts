@@ -100,10 +100,10 @@ export class Move implements IMove {
     )
   }
 
-  isValid(board: IBoard, lastMove: IMove): boolean {
+  isValid(board: IBoard, lastMove?: IMove): boolean {
     switch (this.specialMoveType) {
       case 'en_passant':
-        return this.isEnPassantValid(lastMove)
+        return this.isEnPassantValid(lastMove!)
       case 'castling':
         return this.isCastlingValid(board)
       default:

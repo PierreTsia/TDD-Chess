@@ -71,12 +71,11 @@ export class Game implements IGame {
   }
 
   undoMove(): boolean {
-    const lastMove = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    const lastMove = this.moveHistory.getLastMove()
     if (!lastMove) {
       return false
     }
     this.board.undoMove(lastMove)
-
     this.switchPlayer()
     this.updateStatus()
     this.moveHistory.undoMove()
@@ -84,15 +83,11 @@ export class Game implements IGame {
   }
 
   redoMove(): boolean {
-    const lastMove =
-      this.moveHistory.cancelledMoves[
-        this.moveHistory.cancelledMoves.length - 1
-      ]
+    const lastMove = this.moveHistory.getLastCancelledMove()
     if (!lastMove) {
       return false
     }
     this.board.redoMove(lastMove)
-
     this.switchPlayer()
     this.updateStatus()
     this.moveHistory.redoMove()
@@ -100,7 +95,7 @@ export class Game implements IGame {
   }
 
   makeMove(move: IMove): boolean {
-    const lastMove = this.moveHistory.moves[this.moveHistory.moves.length - 1]
+    const lastMove = this.moveHistory.getLastMove()
     if (
       !this.isCurrentPlayerTurn(move.piece.color) ||
       this.isGameOver() ||

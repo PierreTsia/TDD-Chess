@@ -65,7 +65,7 @@ export interface IMove {
   endPosition: Position
   specialMoveType: SpecialMoveType | null
   capturedPiece: IPiece | null
-  isValid(board: IBoard, lastMove: IMove): boolean
+  isValid(board: IBoard, lastMove?: IMove): boolean
 }
 
 export type GameStatus =
@@ -93,6 +93,8 @@ export interface IMoveHistory {
   redoMove(): boolean
   getMoves(): Array<IMove>
   getCapturedPieces(): Array<IPiece>
+  getLastMove(): IMove | undefined
+  getLastCancelledMove(): IMove | undefined
 }
 
 export type PieceType = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn'
