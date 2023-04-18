@@ -90,7 +90,7 @@ jobs:
           install-command: echo
           build: pnpm run build
           start: npx vite --port 3333
-          secrets: '["DEV_VITE_SUPABASE_ANON_KEY", "DEV_VITE_SUPABASE_URL"]'
+          secrets: '["VITE_SUPABASE_ANON_KEY", "VITE_SUPABASE_URL"]'
           env:
             VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
             VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
