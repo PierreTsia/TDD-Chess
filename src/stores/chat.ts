@@ -8,6 +8,8 @@ export const useChatStore = defineStore('chat', () => {
 
   const chatMessages = ref<GameChatMessage[]>([])
 
+  const messageFeed = computed(() => chatMessages.value.reverse())
+
   const chatUsers = computed(() =>
     uniqBy(chatMessages.value, 'user_id').map((message) => message.user)
   )
@@ -18,6 +20,7 @@ export const useChatStore = defineStore('chat', () => {
 
   return {
     chatMessages,
+    messageFeed,
     chatUsers,
     fetchChatMessages,
   }
