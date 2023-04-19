@@ -2,8 +2,39 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import supabase from '~/modules/supabase'
 import type { OnlineGame } from '~/modules/types/supabase'
 
+export type MultiplayerGame = OnlineGame & {
+  white_player: { username: string; id: string; email: string }
+  black_player: { username: string; id: string; email: string }
+}
+
 export const useOnlineGames = defineStore('onlineGames', () => {
-  const onlineGames = ref<OnlineGame[]>([])
+  const onlineGames = ref<MultiplayerGame[]>([])
+
+  const fetchGameDetails = async (gameId: string) => {
+    const { data } = await supabase
+      .from('games')
+      .select(
+        `
+      *,
+      white_player: white_player_id (
+        username,
+        id,
+        email
+      ),
+      black_player: black_player_id (
+        username,
+        id,
+        email
+
+      )
+    `
+      )
+      .eq('id', gameId)
+
+    if (data) {
+      return data[0] as MultiplayerGame
+    }
+  }
   const subscribeToOnlineGames = async () => {
     supabase
       .channel('schema-db-changes')
@@ -14,17 +45,19 @@ export const useOnlineGames = defineStore('onlineGames', () => {
           schema: 'public',
           table: 'games',
         },
-        (payload) => {
+        async (payload) => {
           const { eventType, new: newRecord, old: oldRecord } = payload
 
           switch (eventType) {
             case 'INSERT':
-              onlineGames.value.push(newRecord as OnlineGame)
+              // eslint-disable-next-line no-case-declarations
+              const game = await fetchGameDetails(newRecord.id)
+              onlineGames.value.unshift(game!)
               break
             case 'UPDATE':
               onlineGames.value = onlineGames.value.map((game) => {
                 if (game.id === newRecord.id) {
-                  return newRecord as OnlineGame
+                  return { ...game, ...newRecord } as MultiplayerGame
                 }
                 return game
               })
@@ -44,6 +77,7 @@ export const useOnlineGames = defineStore('onlineGames', () => {
         console.log('Status is:', payload)
       })
   }
+
   const fetchOnlineGames = async (userId: string) => {
     const { data } = await supabase
       .from('games')
@@ -51,17 +85,21 @@ export const useOnlineGames = defineStore('onlineGames', () => {
         `
       *,
       white_player: white_player_id (
-        username
+        username,
+        id
       ),
       black_player: black_player_id (
-        username
+        username,
+        id
+
       )
     `
       )
       .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
+      .order('created_at', { ascending: false })
 
     if (data) {
-      onlineGames.value = data
+      onlineGames.value = data as MultiplayerGame[]
     }
 
     await subscribeToOnlineGames()
