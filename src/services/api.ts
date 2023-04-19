@@ -1,7 +1,21 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import supabase from '~/modules/supabase'
-import type { OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGame } from '~/stores/online-games'
+import type { ChatMessage, OnlineGame } from '~/modules/types/supabase'
+
+export type MultiplayerGame = OnlineGame & {
+  white_player: OnlinePlayer
+  black_player: OnlinePlayer
+}
+
+export interface OnlinePlayer {
+  username: string
+  id: string
+  email: string
+}
+
+export type GameChatMessage = ChatMessage & {
+  user: OnlinePlayer
+}
 
 interface ApiService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
@@ -9,6 +23,13 @@ interface ApiService {
   subscribeToOnlineGames(
     callBack: (p: RealtimePostgresChangesPayload<OnlineGame>) => void
   ): void
+
+  subscribeToChatMessages(
+    gameId: string,
+    callBack: (p: RealtimePostgresChangesPayload<ChatMessage>) => void
+  ): void
+
+  getChatMessages(gameId: string): Promise<GameChatMessage[]>
 }
 export class SupabaseService implements ApiService {
   async getGame(gameId: string): Promise<MultiplayerGame | null> {
@@ -82,4 +103,28 @@ export class SupabaseService implements ApiService {
         console.log('Status is:', payload)
       })
   }
+
+  async getChatMessages(gameId: string): Promise<GameChatMessage[]> {
+    const { data } = await supabase
+      .from('chat_messages')
+      .select(
+        `
+      *,
+      user: user_id (
+        username,
+        id,
+        email
+      )
+    `
+      )
+      .eq('game_id', gameId)
+      .order('created_at', { ascending: false })
+
+    return (data as GameChatMessage[]) ?? []
+  }
+
+  subscribeToChatMessages(
+    gameId: string,
+    callBack: (p: RealtimePostgresChangesPayload<ChatMessage>) => void
+  ) {}
 }

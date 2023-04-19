@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { formatDistanceToNowStrict } from 'date-fns'
-import { MultiplayerGame, useOnlineGamesStore } from '~/stores/online-games'
+import { useOnlineGamesStore } from '~/stores/online-games'
+import { MultiplayerGame } from '~/services/api'
 
 const props = defineProps<{
   userId: string

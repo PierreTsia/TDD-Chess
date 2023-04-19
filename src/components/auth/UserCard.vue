@@ -15,7 +15,7 @@ const avatarSrc = computed(
 <template>
   <o-card class="!w-[300px]">
     <div class="flex justify-center mb-3">
-      <o-avatar rounded size="lg" :src="avatarSrc"> </o-avatar>
+      <o-avatar rounded size="lg" :src="avatarSrc"/>
     </div>
     <o-text class="!text-teal !mb-2" size="xl" font="bold">
       Welcome {{ user?.username }}

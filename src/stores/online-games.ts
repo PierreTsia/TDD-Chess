@@ -1,18 +1,8 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { OnlineGame } from '~/modules/types/supabase'
+import type { MultiplayerGame } from '~/services/api'
 import { SupabaseService } from '~/services/api'
-
-interface OnlinePlayer {
-  username: string
-  id: string
-  email: string
-}
-
-export type MultiplayerGame = OnlineGame & {
-  white_player: OnlinePlayer
-  black_player: OnlinePlayer
-}
 
 export const useOnlineGamesStore = defineStore('onlineGames', () => {
   const api = new SupabaseService()
