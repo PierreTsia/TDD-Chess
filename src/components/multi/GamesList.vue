@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { formatDistanceToNowStrict } from 'date-fns'
-import { MultiplayerGame, useOnlineGames } from '~/stores/online-games'
+import { MultiplayerGame, useOnlineGamesStore } from '~/stores/online-games'
 
 const props = defineProps<{
   userId: string
 }>()
 
-const onlineGamesStore = useOnlineGames()
+const router = useRouter()
+
+const onlineGamesStore = useOnlineGamesStore()
 const { onlineGames } = storeToRefs(onlineGamesStore)
 
 onMounted(async () => {
@@ -64,7 +66,12 @@ onMounted(async () => {
         }}
       </o-text>
 
-      <o-button size="sm" class="w-1/4"> Join </o-button>
+      <o-button
+        size="sm"
+        class="w-1/4"
+        @click="router.push(`multi/game/${game.id}`)">
+        Join
+      </o-button>
     </div>
   </o-card>
 </template>

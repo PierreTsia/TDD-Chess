@@ -1,113 +1,76 @@
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import supabase from '~/modules/supabase'
 import type { OnlineGame } from '~/modules/types/supabase'
+import { SupabaseService } from '~/services/api'
 
-export type MultiplayerGame = OnlineGame & {
-  white_player: { username: string; id: string; email: string }
-  black_player: { username: string; id: string; email: string }
+interface OnlinePlayer {
+  username: string
+  id: string
+  email: string
 }
 
-export const useOnlineGames = defineStore('onlineGames', () => {
+export type MultiplayerGame = OnlineGame & {
+  white_player: OnlinePlayer
+  black_player: OnlinePlayer
+}
+
+export const useOnlineGamesStore = defineStore('onlineGames', () => {
+  const api = new SupabaseService()
+
   const onlineGames = ref<MultiplayerGame[]>([])
+  const currentGame = ref<MultiplayerGame | null>(null)
 
-  const fetchGameDetails = async (gameId: string) => {
-    const { data } = await supabase
-      .from('games')
-      .select(
-        `
-      *,
-      white_player: white_player_id (
-        username,
-        id,
-        email
-      ),
-      black_player: black_player_id (
-        username,
-        id,
-        email
+  const setGameById = async (gameId: string) => {
+    const game = await api.getGame(gameId)
+    onlineGames.value.unshift(game!)
+  }
 
-      )
-    `
-      )
-      .eq('id', gameId)
+  const setCurrentGame = async (gameId: string) => {
+    currentGame.value = await api.getGame(gameId)
+  }
 
-    if (data) {
-      return data[0] as MultiplayerGame
+  const handleGameUpdate = async (
+    payload: RealtimePostgresChangesPayload<OnlineGame>
+  ) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+
+    switch (eventType) {
+      case 'INSERT':
+        await setGameById(newRecord.id)
+        break
+      case 'UPDATE':
+        onlineGames.value = onlineGames.value.map((game) => {
+          if (game.id === newRecord.id) {
+            return { ...game, ...newRecord } as MultiplayerGame
+          }
+          return game
+        })
+        break
+      case 'DELETE':
+        onlineGames.value = onlineGames.value.filter(
+          (game) => game.id !== oldRecord.id
+        )
+        break
+      default:
+        break
     }
   }
-  const subscribeToOnlineGames = async () => {
-    supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'games',
-        },
-        async (payload) => {
-          const { eventType, new: newRecord, old: oldRecord } = payload
 
-          switch (eventType) {
-            case 'INSERT':
-              // eslint-disable-next-line no-case-declarations
-              const game = await fetchGameDetails(newRecord.id)
-              onlineGames.value.unshift(game!)
-              break
-            case 'UPDATE':
-              onlineGames.value = onlineGames.value.map((game) => {
-                if (game.id === newRecord.id) {
-                  return { ...game, ...newRecord } as MultiplayerGame
-                }
-                return game
-              })
-              break
-            case 'DELETE':
-              onlineGames.value = onlineGames.value.filter(
-                (game) => game.id !== oldRecord.id
-              )
-              break
-            default:
-              break
-          }
-        }
-      )
-      .subscribe((payload) => {
-        // eslint-disable-next-line no-console
-        console.log('Status is:', payload)
-      })
+  const subscribeToOnlineGames = async () => {
+    api.subscribeToOnlineGames(handleGameUpdate)
   }
 
   const fetchOnlineGames = async (userId: string) => {
-    const { data } = await supabase
-      .from('games')
-      .select(
-        `
-      *,
-      white_player: white_player_id (
-        username,
-        id
-      ),
-      black_player: black_player_id (
-        username,
-        id
-
-      )
-    `
-      )
-      .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
-      .order('created_at', { ascending: false })
-
-    if (data) {
-      onlineGames.value = data as MultiplayerGame[]
-    }
+    onlineGames.value = await api.getGames(userId)
 
     await subscribeToOnlineGames()
   }
 
   return {
+    setCurrentGame,
     fetchOnlineGames,
     onlineGames,
+    currentGame,
   }
 })
 

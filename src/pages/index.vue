@@ -10,6 +10,8 @@ defineOptions({
   name: 'IndexPage',
 })
 
+
+
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
