@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { supabase } from '~/modules/supabase'
+import  supabase  from '~/modules/supabase'
 import type { AuthUser, User } from '~/modules/types/supabase'
 
 export const useUserStore = defineStore('user', () => {

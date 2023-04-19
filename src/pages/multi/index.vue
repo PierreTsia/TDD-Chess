@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import md5 from 'md5'
 import { storeToRefs } from 'pinia'
 import LoginCard from '~/components/auth/LoginCard.vue'
-import { supabase } from '~/modules/supabase'
+import UserCard from '~/components/auth/UserCard.vue'
+import GamesList from '~/components/multi/GamesList.vue'
+import supabase from '~/modules/supabase'
 import { useUserStore } from '~/stores/user'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 const isLoading = ref(false)
-
-const avatarSrc = computed(
-  () => `https://www.gravatar.com/avatar/${md5(user.value?.email ?? '')}`
-)
 
 onBeforeMount(async () => {
   isLoading.value = true
@@ -28,25 +25,12 @@ onBeforeMount(async () => {
 
 <template>
   <div
-    class="min-h-[calc(100vh-100px)] flex flex-col justify-center items-center">
+    class="min-h-[calc(100vh-100px)] flex flex-col justify-start pt-20 items-center">
     <div v-if="!isLoading">
       <LoginCard v-if="!user" />
-
-      <div v-else class="flex flex-col">
-        <div class="w-full flex justify-center mb-3">
-          <o-avatar rounded size="lg" :src="avatarSrc"> </o-avatar>
-        </div>
-        <o-text class="!text-teal !mb-2" size="xl" font="bold">
-          Welcome {{ user?.username }}
-        </o-text>
-        <o-text
-          size="sm"
-          font="thin"
-          class="flex items-center"
-          @click="userStore.logOut">
-          <o-icon name="i-solar:logout-3-bold-duotone mr-1" />
-          Log out
-        </o-text>
+      <div v-else class="flex flex-col items-center w-[100vw] px-4">
+        <UserCard />
+        <GamesList :user-id="user?.id" />
       </div>
     </div>
   </div>

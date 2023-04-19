@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     BishopWhite: typeof import('./components/chess/pieces/White/BishopWhite.vue')['default']
     ChessBoard: typeof import('./components/chess/board/ChessBoard.vue')['default']
     ControlPanel: typeof import('./components/chess/ControlPanel.vue')['default']
+    GamesList: typeof import('./components/multi/GamesList.vue')['default']
     KingBlack: typeof import('./components/chess/pieces/Black/KingBlack.vue')['default']
     KingWhite: typeof import('./components/chess/pieces/White/KingWhite.vue')['default']
     KnightBlack: typeof import('./components/chess/pieces/Black/KnightBlack.vue')['default']
@@ -31,5 +32,6 @@ declare module '@vue/runtime-core' {
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']
+    UserCard: typeof import('./components/auth/UserCard.vue')['default']
   }
 }

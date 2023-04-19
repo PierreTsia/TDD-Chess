@@ -2,6 +2,8 @@ import type { User as SBU } from '@supabase/supabase-js'
 export type User = Database['public']['Tables']['users']['Row']
 export type AuthUser = SBU
 
+export type OnlineGame = Database['public']['Tables']['games']['Row']
+
 export type Json =
   | string
   | number
