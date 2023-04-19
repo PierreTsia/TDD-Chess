@@ -45,7 +45,8 @@ const squareColor = (y: number, x: number) => {
           v-for="(_, x) in row"
           :key="`col-${x}`"
           :class="[squareColor(y, x), squareSize]"
-          class="flex justify-center items-center"
+          class="flex justify-center items-center chess-square"
+          :data-test-id="`square-${y}-${x}`"
           @click="handleSquareClick({ y, x } as Position)">
           <span
             v-if="chessPiece({ x, y } as Position, board)"
@@ -54,9 +55,12 @@ const squareColor = (y: number, x: number) => {
             <component
               :is="chessPiece({ x, y } as Position, board) as ReturnType<typeof defineComponent>"
               :class="{
+                black: board.squares[y][x].color === 'black',
+                white: board.squares[y][x].color === 'white',
                 'transform rotate-180': isBlackPov,
                 'scale-75': mdAndSmaller,
-              }" />
+              }"
+              data-test-id="chess-piece" />
           </span>
         </span>
       </div>

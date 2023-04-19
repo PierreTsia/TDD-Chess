@@ -1,36 +1,34 @@
-context('Basic', () => {
+context('|-> Home Page', () => {
   beforeEach(() => {
     cy.visit('/')
   })
 
-  /* it('basic nav', () => {
-    cy.url()
-      .should('eq', 'http://localhost:3333/')
+  it('should display an empty chessboard and a start button', () => {
+    cy.url().should('eq', 'http://localhost:3333/')
 
-    cy.contains('[Home Layout]')
-      .should('exist')
+    cy.get('[data-test-id="chessboard"]').should('exist')
 
-    cy.get('#input')
-      .type('Vitesse{Enter}')
-      .url()
-      .should('eq', 'http://localhost:3333/hi/Vitesse')
+    cy.get('.chess-square').should('have.length', 64)
 
-    cy.contains('[Default Layout]')
-      .should('exist')
+    cy.get('[data-test-id="chess-piece"]').should('have.length', 0)
 
-    cy.get('[btn]')
-      .click()
-      .url()
-      .should('eq', 'http://localhost:3333/')
-  }) */
+    cy.get('[data-test-id="start-button"]').should('exist').click()
 
-  it('markdown', () => {
-    /* cy.get('[title="About"]')
-      .click()
-      .url()
-      .should('eq', 'http://localhost:3333/about')
+    cy.get('[data-test-id="chess-piece"]').should('have.length', 32)
+  })
 
-    cy.get('.shiki')
-      .should('exist') */
+  it('should display a switch pov button', () => {
+    cy.get('[data-test-id="start-button"]').should('exist').click()
+    cy.get('[data-test-id="square-7-7"]').should('exist')
+    cy.get('[data-test-id="square-7-7"] .white').should('exist')
+    cy.get('[data-test-id="square-0-0"] .black').should('exist')
+
+    cy.get('[data-test-id="chessboard"] .rotate-180').should('not.exist')
+
+    cy.get('[data-test-id="switch-pov-button"]').should('exist').click()
+    cy.get('[data-test-id="chessboard"] .rotate-180').should('exist')
+
+    cy.get('[data-test-id="square-7-7"] .white').should('exist')
+    cy.get('[data-test-id="square-0-0"] .black').should('exist')
   })
 })

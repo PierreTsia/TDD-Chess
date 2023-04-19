@@ -95,7 +95,7 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
   deploy:
-    needs: [lint, typecheck, test]
+    needs: [lint, typecheck, test, test-e2e]
     name: Deploy
     runs-on: ubuntu-latest
 

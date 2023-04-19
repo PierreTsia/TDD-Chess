@@ -26,7 +26,7 @@ userStore.fetchUser('alice@example.com', 'testtest')
     </div>
     <div
       class="flex flex-col md:flex-row w-full justify-center items-center md:items-start! gap-8">
-      <ChessBoard />
+      <ChessBoard data-test-id="chessboard" />
       <div flex flex-col gap-3>
         <ScoreBoard />
         <ControlPanel />
