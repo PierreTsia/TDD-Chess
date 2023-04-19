@@ -55,8 +55,8 @@ const squareColor = (y: number, x: number) => {
             <component
               :is="chessPiece({ x, y } as Position, board) as ReturnType<typeof defineComponent>"
               :class="{
-                black: board.squares[y][x].color === 'black',
-                white: board.squares[y][x].color === 'white',
+                black: board.squares[y][x]?.color === 'black',
+                white: board.squares[y][x]?.color === 'white',
                 'transform rotate-180': isBlackPov,
                 'scale-75': mdAndSmaller,
               }"
