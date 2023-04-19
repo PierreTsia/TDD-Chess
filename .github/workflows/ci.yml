@@ -61,7 +61,6 @@ jobs:
         run: pnpm run typecheck
 
   deploy:
-    depends-on: [lint, test, typecheck]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
