@@ -156,6 +156,9 @@ export default defineConfig({
     deps: {
       inline: ['@vue', '@vueuse', 'vue-demi'],
     },
+    coverage:{
+      provider: 'istanbul',
+    }
   },
 
   // https://github.com/antfu/vite-ssg
