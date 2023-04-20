@@ -3,10 +3,11 @@ import type { ComputedRef } from 'vue'
 import { PIECES_WEIGHT } from '~/core/constants'
 import { Game } from '~/core/game/game'
 import type { Color, IGame, PieceType } from '~/core/types'
+import { SupabaseService } from '~/services/api'
 
 type CapturedMaterial = Record<Color, Record<PieceType, number>>
 export const useGamePlayStore = defineStore('gamePlay', () => {
-  // const api = new SupabaseService()
+  const api = new SupabaseService()
   const playersNames = ref<[string, string]>(['Gary Kasparov', 'Deep Blue'])
   const gameEngine = ref<IGame>(new Game(playersNames.value))
   const board = computed(() => gameEngine.value?.board ?? null)
@@ -19,6 +20,18 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const lastCancelledMove = computed(() =>
     gameEngine.value.moveHistory.getLastCancelledMove()
   )
+
+  const initOnlineGame = async (gameId: string) => {
+    const game = await api.getGame(gameId)
+    if (!game) {
+      return
+    }
+    playersNames.value = [
+      game.white_player.username,
+      game.black_player.username,
+    ]
+    gameEngine.value = new Game(playersNames.value)
+  }
 
   const switchPoV = () => {
     isBlackPov.value = !isBlackPov.value
@@ -73,6 +86,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     winner,
     lastMove,
     lastCancelledMove,
+    initOnlineGame,
     start,
     undo,
     redo,
