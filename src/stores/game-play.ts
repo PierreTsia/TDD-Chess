@@ -16,7 +16,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     new Player('black', true, 'Gary Kasparov', '3'),
   ])
   const gameState = ref<MultiplayerGameState | null>(null)
-  const gameEngine = ref<IGame>(new Game())
+  const gameEngine = ref<IGame>(new Game(players.value))
   const board = computed(() => gameEngine.value.board)
 
   const isBlackPov = ref(false)
@@ -29,6 +29,20 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   )
   const initGameEngine = async (game: MultiplayerGame) => {
     const existingGameState = await api.getGameState(game.id)
+    players.value = [
+      new Player(
+        'white',
+        true,
+        game.white_player.username,
+        game.white_player_id!
+      ),
+      new Player(
+        'black',
+        true,
+        game.black_player.username,
+        game.black_player_id!
+      ),
+    ]
 
     gameEngine.value = new Game(players.value, api, game.id)
 
@@ -55,20 +69,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     if (!game) {
       return
     }
-    players.value = [
-      new Player(
-        'white',
-        true,
-        game.white_player.username,
-        game.white_player_id!
-      ),
-      new Player(
-        'black',
-        true,
-        game.black_player.username,
-        game.black_player_id!
-      ),
-    ]
+
     await initGameEngine(game)
   }
 
