@@ -3,20 +3,18 @@ import { storeToRefs } from 'pinia'
 import ChessBoard from '~/components/chess/board/ChessBoard.vue'
 import ScoreBoard from '~/components/chess/ScoreBoard.vue'
 import ControlPanel from '~/components/chess/ControlPanel.vue'
-import { useGamePlayStore } from '~/stores/game-play'
 
 import { useUserStore } from '~/stores/user'
+import { useGamePlayStore } from '~/stores/game-play'
 
 defineOptions({
   name: 'IndexPage',
 })
 
 const userStore = useUserStore()
-/* useGamePlayStore() */
-const { user } = storeToRefs(userStore)
-useGamePlayStore()
 
-userStore.fetchUser('alice@example.com', 'testtest')
+const { user } = storeToRefs(userStore)
+const { gameEngine } = storeToRefs(useGamePlayStore())
 </script>
 
 <template>
@@ -27,6 +25,7 @@ userStore.fetchUser('alice@example.com', 'testtest')
       <o-icon name="i-fluent:chess-20-filled" class="!text-teal-400 mx-2" />
     </div>
     <div
+      v-if="gameEngine"
       class="flex flex-col lg:flex-row w-full justify-center items-center !lg:items-start gap-8">
       <ChessBoard data-test-id="chessboard" />
       <div flex flex-col gap-3>
