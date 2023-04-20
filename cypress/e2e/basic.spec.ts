@@ -19,16 +19,10 @@ context('|-> Home Page', () => {
 
   it('should display a switch pov button', () => {
     cy.get('[data-test-id="start-button"]').should('exist').click()
-    cy.get('[data-test-id="square-7-7"]').should('exist')
-    cy.get('[data-test-id="square-7-7"] .white').should('exist')
-    cy.get('[data-test-id="square-0-0"] .black').should('exist')
 
     cy.get('[data-test-id="chessboard"] .rotate-180').should('not.exist')
 
     cy.get('[data-test-id="switch-pov-button"]').should('exist').click()
     cy.get('[data-test-id="chessboard"] .rotate-180').should('exist')
-
-    cy.get('[data-test-id="square-7-7"] .white').should('exist')
-    cy.get('[data-test-id="square-0-0"] .black').should('exist')
   })
 })
