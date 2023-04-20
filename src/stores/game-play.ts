@@ -24,7 +24,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const status = computed(() => gameEngine.value.status)
   const winner = computed(() => gameEngine.value.gameWinner)
   const lastMove = computed(
-    () => gameEngine.value?.moveHistory?.getLastMove() ?? []
+    () => gameEngine.value?.moveHistory?.getLastMove() ?? null
   )
   const lastCancelledMove = computed(() =>
     gameEngine.value.moveHistory.getLastCancelledMove()
