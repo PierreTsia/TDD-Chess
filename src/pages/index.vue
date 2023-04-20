@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import ChessBoard from '~/components/chess/board/ChessBoard.vue'
 import ScoreBoard from '~/components/chess/ScoreBoard.vue'
 import ControlPanel from '~/components/chess/ControlPanel.vue'
-
+import { useGamePlayStore } from '~/stores/game-play'
 
 import { useUserStore } from '~/stores/user'
 
@@ -14,6 +14,7 @@ defineOptions({
 const userStore = useUserStore()
 /* useGamePlayStore() */
 const { user } = storeToRefs(userStore)
+useGamePlayStore()
 
 userStore.fetchUser('alice@example.com', 'testtest')
 </script>
