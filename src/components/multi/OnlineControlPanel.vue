@@ -4,8 +4,7 @@ import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
 const { startOnlineGame, switchPoV } = gamePlayStore
-const { isBlackPov, status, lastMove, lastCancelledMove } =
-  storeToRefs(gamePlayStore)
+const { isBlackPov, status } = storeToRefs(gamePlayStore)
 </script>
 
 <template>
@@ -33,7 +32,7 @@ const { isBlackPov, status, lastMove, lastCancelledMove } =
           </div>
 
           <div class="w-full flex flex-row justify-center items-center gap-4">
-<!--            <o-button :disabled="!lastMove" type="success" @click="undo">
+            <!--            <o-button :disabled="!lastMove" type="success" @click="undo">
               <o-icon
                 name="i-solar:square-double-alt-arrow-left-outline"
                 class="!text-white" />

@@ -11,7 +11,8 @@ import type {
   IPiece,
   IPlayer,
 } from '~/core/types'
-import type { ApiService, OnlinePlayer } from '~/services/api'
+
+import type { ApiService } from '~/services/api'
 
 export class Game implements IGame {
   board: IBoard
@@ -20,18 +21,26 @@ export class Game implements IGame {
   status: GameStatus
   moveHistory: IMoveHistory
   apiService?: ApiService
+  gameId?: string
 
-  constructor(players?: [OnlinePlayer, OnlinePlayer], apiService?: ApiService) {
+  constructor(
+    players?: [IPlayer, IPlayer],
+    apiService?: ApiService,
+    onlineGameId?: string
+  ) {
     this.apiService = apiService
+    this.gameId = onlineGameId
     const whitePlayer = new Player(
       'white',
       true,
-      players?.[0]?.username || 'player 1'
+      players?.[0]?.name || 'player 1',
+      players?.[0]?.id
     )
     const blackPlayer = new Player(
       'black',
       true,
-      players?.[1]?.username || 'player 2'
+      players?.[1]?.name || 'player 2',
+      players?.[1]?.id
     )
     this.board = new Board()
     this.currentPlayer = whitePlayer
@@ -64,11 +73,11 @@ export class Game implements IGame {
     this.startGame()
   }
 
-  startGame() {
+  async startGame() {
     this.currentPlayer = this.players[0]
     this.status = 'ongoing'
     if (this.apiService) {
-      // this.apiService.updateGameStatus({ status: 'ongoing' })
+      await this.apiService.startOnlineGame(this.gameId!, this.status)
     }
   }
 

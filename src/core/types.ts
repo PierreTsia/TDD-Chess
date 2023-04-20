@@ -1,4 +1,5 @@
 import { COORDS } from '~/core/constants'
+
 // 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 export interface IGame {
   board: IBoard
@@ -56,6 +57,7 @@ export interface IPiece {
 
 export interface IPlayer {
   color: Color
+  id: string
   name: string
   makeMove(move: IMove, game: IGame): boolean
 }

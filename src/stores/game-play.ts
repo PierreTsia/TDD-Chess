@@ -2,20 +2,21 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { ComputedRef } from 'vue'
 import { PIECES_WEIGHT } from '~/core/constants'
 import { Game } from '~/core/game/game'
-import type { Color, IGame, PieceType } from '~/core/types'
-import type { MultiplayerGameState, OnlinePlayer } from '~/services/api'
+import { Player } from '~/core/player/player'
+import type { Color, GameStatus, IGame, IPlayer, PieceType } from '~/core/types'
+import type { MultiplayerGame, MultiplayerGameState } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { deserializeBoard } from '~/services/serialization'
 
 type CapturedMaterial = Record<Color, Record<PieceType, number>>
 export const useGamePlayStore = defineStore('gamePlay', () => {
   const api = new SupabaseService()
-  const players = ref<[OnlinePlayer, OnlinePlayer]>([
-    { username: 'Gary Kasparov', id: '1', email: '' },
-    { username: 'Deep Blue', id: '2', email: '' },
+  const players = ref<[IPlayer, IPlayer]>([
+    new Player('white', true, 'Deep Blue', '2'),
+    new Player('black', true, 'Gary Kasparov', '3'),
   ])
   const gameState = ref<MultiplayerGameState | null>(null)
-  const gameEngine = ref<IGame>(new Game(players.value))
+  const gameEngine = ref<IGame>(new Game())
   const board = computed(() => gameEngine.value.board)
 
   const isBlackPov = ref(false)
@@ -26,19 +27,20 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const lastCancelledMove = computed(() =>
     gameEngine.value.moveHistory.getLastCancelledMove()
   )
-  const initGameEngine = async (gameId: string) => {
-    const existingGameState = await api.getGameState(gameId)
+  const initGameEngine = async (game: MultiplayerGame) => {
+    const existingGameState = await api.getGameState(game.id)
 
-    gameEngine.value = new Game(players.value, api)
+    gameEngine.value = new Game(players.value, api, game.id)
 
     if (existingGameState) {
       // @ts-expect-error will see later
       gameState.value = existingGameState
       gameEngine.value.board = deserializeBoard(gameState.value.board)
+      gameEngine.value.status = game.status as GameStatus
     } else {
       gameEngine.value.initializeGame()
       const board = JSON.stringify(gameEngine.value.board)
-      await api.createGameState(gameId, board)
+      await api.createGameState(game.id, board)
     }
   }
 
@@ -53,8 +55,21 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     if (!game) {
       return
     }
-    players.value = [game.white_player, game.black_player]
-    await initGameEngine(gameId)
+    players.value = [
+      new Player(
+        'white',
+        true,
+        game.white_player.username,
+        game.white_player_id!
+      ),
+      new Player(
+        'black',
+        true,
+        game.black_player.username,
+        game.black_player_id!
+      ),
+    ]
+    await initGameEngine(game)
   }
 
   const switchPoV = () => {

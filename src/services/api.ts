@@ -1,4 +1,5 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import type { GameStatus } from '~/core/types'
 
 import supabase from '~/modules/supabase'
 import type {
@@ -53,6 +54,8 @@ export interface ApiService {
     content: string
     userId: string
   }): Promise<void>
+
+  startOnlineGame(gameId: string, status: GameStatus): Promise<void>
 }
 export class SupabaseService implements ApiService {
   async getGame(gameId: string): Promise<MultiplayerGame | null> {
@@ -230,5 +233,16 @@ export class SupabaseService implements ApiService {
       .single()
 
     return data as GameState
+  }
+
+  async startOnlineGame(gameId: string, status: GameStatus): Promise<void> {
+    const { error } = await supabase
+      .from('games')
+      .update({ status })
+      .eq('id', gameId)
+
+    if (error) {
+      throw new Error('Could not start game')
+    }
   }
 }

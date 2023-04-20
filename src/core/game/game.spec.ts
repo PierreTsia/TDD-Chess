@@ -809,7 +809,7 @@ describe('Chess Game', () => {
 
   describe('Game control', () => {
     it('should be able to undo/redo a move', () => {
-      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const game = new Game()
       const player1 = game.players[0]
       game.initializeGame()
       expect(game.moveHistory.getMoves().length).toBe(0)
@@ -832,7 +832,7 @@ describe('Chess Game', () => {
     })
 
     it('should be able to undo/redo several moves in a row', () => {
-      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const game = new Game()
       const player1 = game.players[0]
       const player2 = game.players[1]
       game.initializeGame()
@@ -867,7 +867,7 @@ describe('Chess Game', () => {
     })
 
     it('should be able to undo/redo a move when a piece captures another', () => {
-      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const game = new Game()
       const player1 = game.players[0]
       const player2 = game.players[1]
       game.initializeGame()
@@ -883,7 +883,7 @@ describe('Chess Game', () => {
     })
 
     it('should be able to undo/redo en passant ', () => {
-      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const game = new Game()
       const player1 = game.players[0]
       const player2 = game.players[1]
       game.initializeGame()
@@ -924,7 +924,7 @@ describe('Chess Game', () => {
       expect(game.board.getPieceAt({ x: 3, y: 3 })).toBeNull()
     })
     it('should be able to undo/redo castling ', () => {
-      const game = new Game(['Gary Kasparov', 'Deep Blue'])
+      const game = new Game()
       const player1 = game.players[0]
       game.board.setPieceAt({ x: 4, y: 7 }, new King('white', { x: 4, y: 7 }))
       game.board.setPieceAt({ x: 7, y: 7 }, new Rook('white', { x: 7, y: 7 }))
