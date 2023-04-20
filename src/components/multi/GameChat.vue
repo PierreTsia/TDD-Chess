@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import {breakpointsTailwind, useBreakpoints} from "@vueuse/core";
 import { storeToRefs } from 'pinia'
 import { useChatStore } from '~/stores/chat'
 import { useOnlineGamesStore } from '~/stores/online-games'
@@ -13,7 +12,6 @@ const { gameMessages, chatUsers } = storeToRefs(chatStore)
 const { currentGame } = storeToRefs(onlineGamesStore)
 const { user } = storeToRefs(userStore)
 
-const breakpoints = useBreakpoints(breakpointsTailwind)
 
 const handleSendMessage = async (content: string) => {
   await chatStore.sendMessage({
