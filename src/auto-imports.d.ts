@@ -131,6 +131,7 @@ declare global {
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('@vueuse/core')['useBrowserLocation']
   const useCached: typeof import('@vueuse/core')['useCached']
+  const useChatStore: typeof import('./stores/chat')['useChatStore']
   const useChessBoard: typeof import('./composables/chessBoard')['useChessBoard']
   const useChessGame: typeof import('./composables/chessGame')['useChessGame']
   const useChessPieces: typeof import('./composables/chessPieces')['useChessPieces']
@@ -423,6 +424,7 @@ declare module 'vue' {
     readonly useBroadcastChannel: UnwrapRef<typeof import('@vueuse/core')['useBroadcastChannel']>
     readonly useBrowserLocation: UnwrapRef<typeof import('@vueuse/core')['useBrowserLocation']>
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
+    readonly useChatStore: UnwrapRef<typeof import('./stores/chat')['useChatStore']>
     readonly useChessBoard: UnwrapRef<typeof import('./composables/chessBoard')['useChessBoard']>
     readonly useChessGame: UnwrapRef<typeof import('./composables/chessGame')['useChessGame']>
     readonly useChessPieces: UnwrapRef<typeof import('./composables/chessPieces')['useChessPieces']>

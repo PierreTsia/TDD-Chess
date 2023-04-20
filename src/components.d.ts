@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     BishopBlack: typeof import('./components/chess/pieces/Black/BishopBlack.vue')['default']
     BishopWhite: typeof import('./components/chess/pieces/White/BishopWhite.vue')['default']
     ChatMessage: typeof import('./components/multi/ChatMessage.vue')['default']
+    ChatMessageInput: typeof import('./components/multi/ChatMessageInput.vue')['default']
     ChessBoard: typeof import('./components/chess/board/ChessBoard.vue')['default']
     ControlPanel: typeof import('./components/chess/ControlPanel.vue')['default']
     GameChat: typeof import('./components/multi/GameChat.vue')['default']

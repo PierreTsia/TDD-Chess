@@ -30,6 +30,16 @@ interface ApiService {
   ): void
 
   getChatMessages(gameId: string): Promise<GameChatMessage[]>
+
+  postChatMessage({
+    gameId,
+    content,
+    userId,
+  }: {
+    gameId: string
+    content: string
+    userId: string
+  }): Promise<void>
 }
 export class SupabaseService implements ApiService {
   async getGame(gameId: string): Promise<MultiplayerGame | null> {
@@ -104,6 +114,39 @@ export class SupabaseService implements ApiService {
       })
   }
 
+  subscribeToChatMessages(
+    gameId: string,
+    callback: (p: RealtimePostgresChangesPayload<ChatMessage>) => void
+  ): void {
+    supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages',
+        },
+        (payload: RealtimePostgresChangesPayload<ChatMessage>) => {
+          callback(payload)
+        }
+      )
+      .subscribe((payload) => {
+        // eslint-disable-next-line no-console
+        console.log('Status is:', payload)
+      })
+  }
+
+  async getUser(userId: string): Promise<OnlinePlayer | null> {
+    const { data } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single()
+
+    return data as OnlinePlayer
+  }
+
   async getChatMessages(gameId: string): Promise<GameChatMessage[]> {
     const { data } = await supabase
       .from('chat_messages')
@@ -123,8 +166,21 @@ export class SupabaseService implements ApiService {
     return (data as GameChatMessage[]) ?? []
   }
 
-  subscribeToChatMessages(
-    gameId: string,
-    callBack: (p: RealtimePostgresChangesPayload<ChatMessage>) => void
-  ) {}
+  async postChatMessage({
+    gameId,
+    content,
+    userId,
+  }: {
+    gameId: string
+    content: string
+    userId: string
+  }): Promise<void> {
+    await supabase.from('chat_messages').insert([
+      {
+        user_id: userId,
+        content,
+        game_id: gameId,
+      },
+    ])
+  }
 }
