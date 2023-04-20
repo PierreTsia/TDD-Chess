@@ -77,7 +77,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   }
 
   const capturedMaterial: ComputedRef<CapturedMaterial> = computed(() =>
-    gameEngine.value.capturedPieces.reduce(
+    (gameEngine.value?.capturedPieces ?? []).reduce(
       (acc, piece) => {
         if (!acc[piece.color][piece.type]) {
           acc[piece.color][piece.type] = 1
