@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { useBreakPoints } from '~/composables/breakPoints'
 import { useChessPieces } from '~/composables/chessPieces'
 import { useChessBoard } from '~/composables/chessBoard'
 import { Position } from '~/core/types'
@@ -12,12 +12,20 @@ const { board, status, isBlackPov } = storeToRefs(gamePlayStore)
 const { chessPiece } = useChessPieces()
 const { handleSquareClick, isSelected } = useChessBoard()
 
-const breakpoints = useBreakpoints(breakpointsTailwind)
-const mdAndSmaller = breakpoints.smallerOrEqual('md')
+const { mobile, tablet, desktop } = useBreakPoints()
 
-const squareSize = computed(() =>
-  mdAndSmaller.value ? 'w-[45px] h-[45px]' : 'w-[80px] h-[80px]'
-)
+const squareSize = computed(() => {
+  if (mobile.value) {
+    return 'w-[45px] h-[45px]'
+  } else if (tablet.value) {
+    return 'w-[60px] h-[60px]'
+  }
+  return 'w-[80px] h-[80px]'
+})
+
+const squareHeight = computed(() => {
+  return squareSize.value.split(' ')[1]
+})
 const isEven = (num: number) => num % 2 === 0
 
 const squareColor = (y: number, x: number) => {
@@ -32,8 +40,9 @@ const squareColor = (y: number, x: number) => {
   <div class="flex flex-col items-center justify-center">
     <div
       :class="{
-        'max-w-[360px]': mdAndSmaller,
-        'max-w-[640px]': !mdAndSmaller,
+        'max-w-[360px]': mobile,
+        'max-w-[640px]': desktop,
+        'max-w-[480px]': tablet,
         'transform rotate-180': isBlackPov,
         'transform rotate-0': !isBlackPov,
         'outline outline-double outline-red-500': status === 'checkmate',
@@ -43,7 +52,7 @@ const squareColor = (y: number, x: number) => {
       <div
         v-for="(row, y) in board.squares"
         :key="`row-${y}`"
-        :class="mdAndSmaller ? 'h-[45px]' : 'h-[80px]'"
+        :class="squareHeight"
         class="mx-auto grid grid-cols-8">
         <span
           v-for="(_, x) in row"
@@ -62,8 +71,9 @@ const squareColor = (y: number, x: number) => {
                 black: board.squares[y][x]?.color === 'black',
                 white: board.squares[y][x]?.color === 'white',
                 'transform rotate-180': isBlackPov,
-                'scale-75': mdAndSmaller,
-                'scale-135': !mdAndSmaller,
+                'scale-75': mobile,
+                'scale-100': tablet,
+                'scale-135': desktop,
               }"
               data-test-id="chess-piece" />
           </span>
