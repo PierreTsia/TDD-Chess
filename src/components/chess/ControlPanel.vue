@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { useChessGame } from '~/composables/chessGame'
-import { useChessBoard } from '~/composables/chessBoard'
+import { storeToRefs } from 'pinia'
+import { useGamePlayStore } from '~/stores/game-play'
 
-const { start, status, undo, redo, lastMove, lastCancelledMove } =
-  useChessGame()
-const { switchPov, isBlackPov } = useChessBoard()
+const gamePlayStore = useGamePlayStore()
+const { start, undo, redo, switchPoV } = gamePlayStore
+const { isBlackPov, status, lastMove, lastCancelledMove } =
+  storeToRefs(gamePlayStore)
 </script>
 
 <template>
@@ -25,7 +26,7 @@ const { switchPov, isBlackPov } = useChessBoard()
             <o-button
               data-test-id="switch-pov-button"
               type="info"
-              @click="switchPov">
+              @click="switchPoV">
               <o-icon name="i-ph:arrows-clockwise-bold" class="!text-white" />
               Switch to {{ isBlackPov ? 'White' : 'Black' }}
             </o-button>

@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 import { useChessPieces } from '~/composables/chessPieces'
-import { useChessGame } from '~/composables/chessGame'
 import { useChessBoard } from '~/composables/chessBoard'
 import { Position } from '~/core/types'
+import { useGamePlayStore } from '~/stores/game-play'
 
+const gamePlayStore = useGamePlayStore()
+
+const { board, status, isBlackPov } = storeToRefs(gamePlayStore)
 const { chessPiece } = useChessPieces()
-const { board, status } = useChessGame()
-const { handleSquareClick, isBlackPov, isSelected } = useChessBoard()
+const { handleSquareClick, isSelected } = useChessBoard()
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const mdAndSmaller = breakpoints.smallerOrEqual('md') // lg and smaller

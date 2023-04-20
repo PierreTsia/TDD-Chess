@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-import { useChessGame } from '~/composables/chessGame'
+import { storeToRefs } from 'pinia'
+import { useGamePlayStore } from '~/stores/game-play'
 
-const { status, currentPlayer, players, materialScore, winner } = useChessGame()
+const gamePlayStore = useGamePlayStore()
+const { materialScore, players, winner, status, currentPlayer } =
+  storeToRefs(gamePlayStore)
 
 const opponentMaterialScore = (color: 'white' | 'black') => {
   const opponentColor = color === 'white' ? 'black' : 'white'

@@ -133,7 +133,6 @@ declare global {
   const useCached: typeof import('@vueuse/core')['useCached']
   const useChatStore: typeof import('./stores/chat')['useChatStore']
   const useChessBoard: typeof import('./composables/chessBoard')['useChessBoard']
-  const useChessGame: typeof import('./composables/chessGame')['useChessGame']
   const useChessPieces: typeof import('./composables/chessPieces')['useChessPieces']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
@@ -175,6 +174,7 @@ declare global {
   const useFocusWithin: typeof import('@vueuse/core')['useFocusWithin']
   const useFps: typeof import('@vueuse/core')['useFps']
   const useFullscreen: typeof import('@vueuse/core')['useFullscreen']
+  const useGamePlayStore: typeof import('./stores/game-play')['useGamePlayStore']
   const useGamepad: typeof import('@vueuse/core')['useGamepad']
   const useGeolocation: typeof import('@vueuse/core')['useGeolocation']
   const useHead: typeof import('@vueuse/head')['useHead']
@@ -426,7 +426,6 @@ declare module 'vue' {
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
     readonly useChatStore: UnwrapRef<typeof import('./stores/chat')['useChatStore']>
     readonly useChessBoard: UnwrapRef<typeof import('./composables/chessBoard')['useChessBoard']>
-    readonly useChessGame: UnwrapRef<typeof import('./composables/chessGame')['useChessGame']>
     readonly useChessPieces: UnwrapRef<typeof import('./composables/chessPieces')['useChessPieces']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
@@ -468,6 +467,7 @@ declare module 'vue' {
     readonly useFocusWithin: UnwrapRef<typeof import('@vueuse/core')['useFocusWithin']>
     readonly useFps: UnwrapRef<typeof import('@vueuse/core')['useFps']>
     readonly useFullscreen: UnwrapRef<typeof import('@vueuse/core')['useFullscreen']>
+    readonly useGamePlayStore: UnwrapRef<typeof import('./stores/game-play')['useGamePlayStore']>
     readonly useGamepad: UnwrapRef<typeof import('@vueuse/core')['useGamepad']>
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
     readonly useHead: UnwrapRef<typeof import('@vueuse/head')['useHead']>

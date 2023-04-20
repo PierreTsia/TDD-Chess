@@ -1,19 +1,21 @@
+import { storeToRefs } from 'pinia'
 import { Move } from '~/core/moves/move'
-
+import { useGamePlayStore } from '~/stores/game-play'
 import type { IMove, IPiece, Position } from '~/core/types'
-import { useChessGame } from '~/composables/chessGame'
 
-const { board, currentPlayer, game } = useChessGame()
-
-const isBlackPov = ref(false)
 export const useChessBoard = () => {
+  const gamePlayStore = useGamePlayStore()
+  const {
+    isBlackPov,
+    board,
+    currentPlayer,
+    gameEngine: game,
+  } = storeToRefs(gamePlayStore)
+
   const onGoingMove = ref<{ from: Position | null }>({
     from: null,
   })
 
-  const switchPov = () => {
-    isBlackPov.value = !isBlackPov.value
-  }
 
   const selectedSquare = computed(() => {
     if (onGoingMove.value.from) {
@@ -60,7 +62,6 @@ export const useChessBoard = () => {
   return {
     isBlackPov,
     onGoingMove,
-    switchPov,
     isSelected,
     handleSquareClick,
     selectedSquare,

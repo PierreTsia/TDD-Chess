@@ -34,3 +34,12 @@ export const INIT_PIECES_COORDS: Record<
     [4, 7],
   ],
 }
+
+export const PIECES_WEIGHT: Record<PieceType, number> = {
+  king: 0,
+  queen: 9,
+  rook: 5,
+  bishop: 3,
+  knight: 3,
+  pawn: 1,
+}
