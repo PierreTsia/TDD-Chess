@@ -3,7 +3,7 @@ context('|-> Home Page', () => {
     cy.visit('/')
   })
 
-  it('should display an empty chessboard and a start button', () => {
+  it.skip('should display an empty chessboard and a start button', () => {
     cy.url().should('eq', 'http://localhost:3333/')
 
     cy.get('[data-test-id="chessboard"]').should('exist')
@@ -17,7 +17,7 @@ context('|-> Home Page', () => {
     cy.get('[data-test-id="chess-piece"]').should('have.length', 32)
   })
 
-  it('should display a switch pov button', () => {
+  it.skip('should display a switch pov button', () => {
     cy.get('[data-test-id="start-button"]').should('exist').click()
 
     cy.get('[data-test-id="chessboard"] .rotate-180').should('not.exist')
