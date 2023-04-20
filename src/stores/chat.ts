@@ -1,4 +1,5 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import type { Ref } from 'vue'
 import { uniqBy } from 'lodash'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { ChatMessage } from '~/modules/types/supabase'
@@ -8,25 +9,46 @@ import { SupabaseService } from '~/services/api'
 export const useChatStore = defineStore('chat', () => {
   const api = new SupabaseService()
 
-  const chatMessages = ref<GameChatMessage[]>([])
+  const messageFeed: Ref<Record<string, GameChatMessage[]>> = ref({})
+
+  const activeGameId = ref<string | null>(null)
+
+  const gameMessages = computed(() => {
+    if (!activeGameId.value) {
+      return []
+    }
+    return messageFeed.value[activeGameId.value]
+  })
+  const setActiveGameId = (gameId: string) => (activeGameId.value = gameId)
 
   const chatUsers = computed(() =>
-    uniqBy(chatMessages.value, 'user_id').map((message) => message.user)
+    uniqBy(gameMessages.value, 'user_id').map((message) => message.user)
   )
+
+  const addNewMessage = async (newMessage: ChatMessage) => {
+    const gameId = newMessage.game_id!
+    const chatUser = await api.getUser(newMessage.user_id!)
+    messageFeed.value[gameId].push({
+      ...newMessage,
+      user: chatUser!,
+    })
+  }
 
   const handleChatMessageUpdate = async (
     payload: RealtimePostgresChangesPayload<ChatMessage>
   ) => {
     const { eventType, new: newRecord, old: oldRecord } = payload
-
+    if (!activeGameId.value) {
+      return
+    }
     switch (eventType) {
       case 'INSERT':
-        // eslint-disable-next-line no-case-declarations
-        const chatUser = await api.getUser(newRecord.user_id!)
-        chatMessages.value.push({ ...newRecord, user: chatUser! })
+        await addNewMessage(newRecord)
         break
       case 'UPDATE':
-        chatMessages.value = chatMessages.value.map((message) => {
+        messageFeed.value[activeGameId.value] = messageFeed.value[
+          activeGameId.value
+        ].map((message) => {
           if (message.id === newRecord.id) {
             return { ...message, ...newRecord }
           }
@@ -34,9 +56,9 @@ export const useChatStore = defineStore('chat', () => {
         })
         break
       case 'DELETE':
-        chatMessages.value = chatMessages.value.filter(
-          (message) => message.id !== oldRecord.id
-        )
+        messageFeed.value[activeGameId.value] = messageFeed.value[
+          activeGameId.value
+        ].filter((message) => message.id !== oldRecord.id)
         break
       default:
         break
@@ -46,8 +68,9 @@ export const useChatStore = defineStore('chat', () => {
     api.subscribeToChatMessages(gameId, handleChatMessageUpdate)
   }
   const fetchChatMessages = async (gameId: string) => {
+    setActiveGameId(gameId)
     const feed = await api.getChatMessages(gameId)
-    chatMessages.value = feed.reverse()
+    messageFeed.value[gameId] = feed.reverse()
     await subscribeToChatMessages(gameId)
   }
 
@@ -64,10 +87,13 @@ export const useChatStore = defineStore('chat', () => {
   }
 
   return {
+    activeGameId,
+    setActiveGameId,
     sendMessage,
-    chatMessages,
+    messageFeed,
     chatUsers,
     fetchChatMessages,
+    gameMessages,
     subscribeToChatMessages,
   }
 })

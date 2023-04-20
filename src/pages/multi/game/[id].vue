@@ -17,6 +17,9 @@ const chatStore = useChatStore()
 const { user } = storeToRefs(userStore)
 const { currentGame } = storeToRefs(onlineGamesStore)
 
+
+
+
 onBeforeMount(async () => {
   if (!user.value) {
     await router.push('/multi')
@@ -39,9 +42,22 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col w-100vw h-[calc(100vh-150px)] py-10">
-    <div v-if="currentGame" class="flex flex-wrap w-full mt-4 h-screen">
-      <div class="flex gap-x-12 w-full !md:w-2/3 justify-center items-start">
+  <div class="flex flex-col w-100vw xl:60vw mx-auto py-10">
+    <div
+      v-if="currentGame"
+      class="grid grid-cols-8 gap-4 w-full mt-4 min-h-screen px-0 !md:px-10">
+      <div
+        class="justify-self-center lg:justify-self-end col-span-12 lg:col-span-2 flex flex-col gap-y-6">
+        <ScoreBoard />
+        <ControlPanel />
+      </div>
+      <div class="w-full justify-self-center col-span-12 lg:col-span-4">
+        <ChessBoard />
+      </div>
+      <div class="w-full col-span-5 col-start-3 lg:col-span-2">
+        <GameChat />
+      </div>
+      <!--      <div class="flex gap-x-12 w-full !md:w-2/3 justify-center items-start">
         <div class="flex flex-col gap-y-10">
           <ScoreBoard />
           <ControlPanel />
@@ -50,7 +66,7 @@ watch(
       </div>
       <div class="w-full !md:w-1/3 px-2">
         <GameChat />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

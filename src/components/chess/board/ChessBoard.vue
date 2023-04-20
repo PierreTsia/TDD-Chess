@@ -13,9 +13,10 @@ const { chessPiece } = useChessPieces()
 const { handleSquareClick, isSelected } = useChessBoard()
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
-const mdAndSmaller = breakpoints.smallerOrEqual('md') // lg and smaller
+const mdAndSmaller = breakpoints.smallerOrEqual('md')
+
 const squareSize = computed(() =>
-  mdAndSmaller.value ? 'w-[45px] h-[45px]' : 'w-[60px] h-[60px]'
+  mdAndSmaller.value ? 'w-[45px] h-[45px]' : 'w-[80px] h-[80px]'
 )
 const isEven = (num: number) => num % 2 === 0
 
@@ -32,7 +33,7 @@ const squareColor = (y: number, x: number) => {
     <div
       :class="{
         'max-w-[360px]': mdAndSmaller,
-        'max-w-[480px]': !mdAndSmaller,
+        'max-w-[640px]': !mdAndSmaller,
         'transform rotate-180': isBlackPov,
         'transform rotate-0': !isBlackPov,
         'outline outline-double outline-red-500': status === 'checkmate',
@@ -42,7 +43,7 @@ const squareColor = (y: number, x: number) => {
       <div
         v-for="(row, y) in board.squares"
         :key="`row-${y}`"
-        :class="mdAndSmaller ? 'h-[45px]' : 'h-[60px]'"
+        :class="mdAndSmaller ? 'h-[45px]' : 'h-[80px]'"
         class="mx-auto grid grid-cols-8">
         <span
           v-for="(_, x) in row"
@@ -62,6 +63,7 @@ const squareColor = (y: number, x: number) => {
                 white: board.squares[y][x]?.color === 'white',
                 'transform rotate-180': isBlackPov,
                 'scale-75': mdAndSmaller,
+                'scale-135': !mdAndSmaller,
               }"
               data-test-id="chess-piece" />
           </span>

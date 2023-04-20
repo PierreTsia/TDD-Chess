@@ -26,7 +26,7 @@ userStore.fetchUser('alice@example.com', 'testtest')
       <o-icon name="i-fluent:chess-20-filled" class="!text-teal-400 mx-2" />
     </div>
     <div
-      class="flex flex-col md:flex-row w-full justify-center items-center md:items-start! gap-8">
+      class="flex flex-col lg:flex-row w-full justify-center items-center !lg:items-start gap-8">
       <ChessBoard data-test-id="chessboard" />
       <div flex flex-col gap-3>
         <ScoreBoard />

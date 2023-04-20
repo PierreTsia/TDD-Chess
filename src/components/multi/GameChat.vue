@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {breakpointsTailwind, useBreakpoints} from "@vueuse/core";
 import { storeToRefs } from 'pinia'
 import { useChatStore } from '~/stores/chat'
 import { useOnlineGamesStore } from '~/stores/online-games'
@@ -8,9 +9,11 @@ import ChatMessageInput from '~/components/multi/ChatMessageInput.vue'
 const chatStore = useChatStore()
 const onlineGamesStore = useOnlineGamesStore()
 const userStore = useUserStore()
-const { chatMessages, chatUsers } = storeToRefs(chatStore)
+const { gameMessages, chatUsers } = storeToRefs(chatStore)
 const { currentGame } = storeToRefs(onlineGamesStore)
 const { user } = storeToRefs(userStore)
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
 
 const handleSendMessage = async (content: string) => {
   await chatStore.sendMessage({
@@ -22,19 +25,19 @@ const handleSendMessage = async (content: string) => {
 </script>
 
 <template>
-  <o-card class="!h-full flex flex-col justify-between relative">
+  <o-card class="min-h-[640px] flex flex-col justify-between relative">
     <template #header>
       <div class="flex flex-col justify-center items-center w-full">
         <o-text size="xl" font="bold">Game Chat</o-text>
         <o-text size="sm" class="!text-teal-500">
-          {{ chatMessages.length }} messages from {{ chatUsers.length }} user(s)
+          {{ gameMessages.length }} messages from {{ chatUsers.length }} user(s)
         </o-text>
       </div>
     </template>
 
     <div class="flex flex-col justify-start items-end mb-4 relative top-8">
       <ChatMessage
-        v-for="message in chatMessages"
+        v-for="message in gameMessages"
         :key="message.id"
         :message="message" />
 
