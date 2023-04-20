@@ -6,6 +6,8 @@ export type OnlineGame = Database['public']['Tables']['games']['Row']
 
 export type ChatMessage = Database['public']['Tables']['chat_messages']['Row']
 
+export type GameState = Database['public']['Tables']['game_states']['Row']
+
 export type Json =
   | string
   | number

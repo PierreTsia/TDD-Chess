@@ -11,8 +11,8 @@ export class Board implements IBoard {
   squares: Array<Array<IPiece | null>>
   boardInitializer = new BoardInitializer()
 
-  constructor() {
-    this.squares = this.boardInitializer.generateEmptySquares()
+  constructor(squares?: Array<Array<IPiece | null>>) {
+    this.squares = squares || this.boardInitializer.generateEmptySquares()
   }
 
   initializeBoard(): void {
@@ -149,7 +149,6 @@ export class Board implements IBoard {
       this.setPieceAt(rook.position, null)
       const newRookPosition = this.castlingRookDestination(lastMove)
       this.setPieceAt(newRookPosition, rook)
-
     }
   }
 

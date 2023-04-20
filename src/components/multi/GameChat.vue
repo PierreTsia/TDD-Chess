@@ -28,7 +28,7 @@ const handleSendMessage = async (content: string) => {
       <div class="flex flex-col justify-center items-center w-full">
         <o-text size="xl" font="bold">Game Chat</o-text>
         <o-text size="sm" class="!text-teal-500">
-          {{ gameMessages.length }} messages from {{ chatUsers.length }} user(s)
+          {{ gameMessages?.length }} messages from {{ chatUsers?.length }} user(s)
         </o-text>
       </div>
     </template>

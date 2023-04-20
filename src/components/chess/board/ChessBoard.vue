@@ -8,7 +8,7 @@ import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
 
-const { board, status, isBlackPov } = storeToRefs(gamePlayStore)
+const { board, status, isBlackPov} = storeToRefs(gamePlayStore)
 const { chessPiece } = useChessPieces()
 const { handleSquareClick, isSelected } = useChessBoard()
 

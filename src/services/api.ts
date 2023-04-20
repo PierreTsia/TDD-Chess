@@ -1,10 +1,20 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+
 import supabase from '~/modules/supabase'
-import type { ChatMessage, OnlineGame } from '~/modules/types/supabase'
+import type {
+  ChatMessage,
+  GameState,
+  Json,
+  OnlineGame,
+} from '~/modules/types/supabase'
 
 export type MultiplayerGame = OnlineGame & {
   white_player: OnlinePlayer
   black_player: OnlinePlayer
+}
+
+export type MultiplayerGameState = GameState & {
+  game: MultiplayerGame
 }
 
 export interface OnlinePlayer {
@@ -20,9 +30,12 @@ export type GameChatMessage = ChatMessage & {
 interface ApiService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
   getGames(userId: string): Promise<MultiplayerGame[]>
+  getGameState(gameId: string): Promise<MultiplayerGameState | null>
   subscribeToOnlineGames(
     callBack: (p: RealtimePostgresChangesPayload<OnlineGame>) => void
   ): void
+
+  createGameState(gameId: string, board: Json): Promise<GameState>
 
   subscribeToChatMessages(
     gameId: string,
@@ -90,6 +103,19 @@ export class SupabaseService implements ApiService {
       .order('created_at', { ascending: false })
 
     return (data ?? []) as MultiplayerGame[]
+  }
+
+  async getGameState(gameId: string): Promise<MultiplayerGameState | null> {
+    const { data, error } = await supabase
+      .from('game_states')
+      .select('*')
+      .eq('game_id', gameId)
+      .order('created_at', { ascending: false })
+
+    if (!data?.length || error) {
+      return null
+    }
+    return data[0] as MultiplayerGameState
   }
 
   subscribeToOnlineGames(
@@ -182,5 +208,27 @@ export class SupabaseService implements ApiService {
         game_id: gameId,
       },
     ])
+  }
+
+  async createGameState(gameId: string, board: Json): Promise<GameState> {
+    const { error } = await supabase.from('game_states').insert([
+      {
+        game_id: gameId,
+        board,
+        captured_pieces: [],
+        move_history: [],
+      },
+    ])
+    if (error) {
+      throw new Error('Could not create game state')
+    }
+    const { data } = await supabase
+      .from('game_states')
+      .select('*')
+      .eq('game_id', gameId)
+      .order('created_at', { ascending: false })
+      .single()
+
+    return data as GameState
   }
 }
