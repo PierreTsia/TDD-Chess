@@ -4,11 +4,13 @@ export class Player implements IPlayer {
   color: Color
   isHuman: boolean
   name: string
+  id: string
 
-  constructor(color: Color, isHuman = true, name = '') {
+  constructor(color: Color, isHuman = true, name = '', id?: string) {
     this.color = color
     this.isHuman = isHuman
     this.name = name
+    this.id = id ?? name
   }
 
   private detectCastlingMove(move: IMove): boolean {

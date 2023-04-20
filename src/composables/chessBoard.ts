@@ -16,7 +16,6 @@ export const useChessBoard = () => {
     from: null,
   })
 
-
   const selectedSquare = computed(() => {
     if (onGoingMove.value.from) {
       return onGoingMove.value.from
@@ -55,6 +54,7 @@ export const useChessBoard = () => {
       )
 
       currentPlayer.value.makeMove(move, game.value)
+
       onGoingMove.value = { from: null }
     }
   }

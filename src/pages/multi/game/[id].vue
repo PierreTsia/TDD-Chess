@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import GameChat from '~/components/multi/GameChat.vue'
+import OnlineControlPanel from '~/components/multi/OnlineControlPanel.vue'
 import { useUserStore } from '~/stores/user'
 import { useChatStore } from '~/stores/chat'
 import { useOnlineGamesStore } from '~/stores/online-games'
@@ -46,7 +47,7 @@ watch(
       <div
         class="justify-self-center col-span-12 xl:col-span-3 !xl:col-start-2 flex flex-col gap-y-6">
         <ScoreBoard />
-        <ControlPanel />
+        <OnlineControlPanel />
       </div>
       <div class="w-full !justify-self-center col-span-12 xl:col-span-6">
         <ChessBoard />

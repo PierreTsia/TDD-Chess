@@ -11,6 +11,7 @@ import type {
   IPiece,
   IPlayer,
 } from '~/core/types'
+import type { ApiService, OnlinePlayer } from '~/services/api'
 
 export class Game implements IGame {
   board: IBoard
@@ -18,17 +19,19 @@ export class Game implements IGame {
   players: [IPlayer, IPlayer]
   status: GameStatus
   moveHistory: IMoveHistory
+  apiService?: ApiService
 
-  constructor(playersNames?: [string, string]) {
+  constructor(players?: [OnlinePlayer, OnlinePlayer], apiService?: ApiService) {
+    this.apiService = apiService
     const whitePlayer = new Player(
       'white',
       true,
-      playersNames?.[0] || 'player 1'
+      players?.[0]?.username || 'player 1'
     )
     const blackPlayer = new Player(
       'black',
       true,
-      playersNames?.[1] || 'player 2'
+      players?.[1]?.username || 'player 2'
     )
     this.board = new Board()
     this.currentPlayer = whitePlayer
@@ -64,6 +67,9 @@ export class Game implements IGame {
   startGame() {
     this.currentPlayer = this.players[0]
     this.status = 'ongoing'
+    if (this.apiService) {
+      // this.apiService.updateGameStatus({ status: 'ongoing' })
+    }
   }
 
   private isCurrentPlayerTurn(pieceColor: Color): boolean {
@@ -109,6 +115,10 @@ export class Game implements IGame {
 
     this.switchPlayer()
     this.updateStatus()
+    if (this.apiService) {
+      // eslint-disable-next-line no-console
+      console.log('calling api service')
+    }
 
     return true
   }

@@ -27,7 +27,7 @@ export type GameChatMessage = ChatMessage & {
   user: OnlinePlayer
 }
 
-interface ApiService {
+export interface ApiService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
   getGames(userId: string): Promise<MultiplayerGame[]>
   getGameState(gameId: string): Promise<MultiplayerGameState | null>
