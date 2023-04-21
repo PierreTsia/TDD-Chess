@@ -23,6 +23,24 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
 
   const isMultiPlayer = computed(() => !!gameId.value)
 
+  const handleChatMessageUpdate = async (
+    payload: RealtimePostgresChangesPayload<ChatMessage>
+  ) => {
+    await chatStore.handleChatMessageUpdate(payload)
+  }
+
+  const handleGameUpdate = async (
+    payload: RealtimePostgresChangesPayload<OnlineGame>
+  ) => {
+    await gamePlayStore.handleGameUpdate(payload)
+  }
+
+  const handleGameStateUpdate = async (
+    payload: RealtimePostgresChangesPayload<GameState>
+  ) => {
+    await gamePlayStore.handleGameStateUpdate(payload)
+  }
+
   const subscribeToGameEvents = () => {
     if (!gameId.value) {
       return
@@ -36,9 +54,7 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
           schema: 'public',
           table: 'chat_messages',
         },
-        async (payload: RealtimePostgresChangesPayload<ChatMessage>) => {
-          await chatStore.handleChatMessageUpdate(payload)
-        }
+        handleChatMessageUpdate
       )
       .on(
         POSTGRES_CHANGES,
@@ -47,9 +63,7 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
           schema: 'public',
           table: 'games',
         },
-        async (payload: RealtimePostgresChangesPayload<OnlineGame>) => {
-          await gamePlayStore.handleGameUpdate(payload)
-        }
+        handleGameUpdate
       )
       .on(
         POSTGRES_CHANGES,
@@ -59,9 +73,7 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
           table: 'game_states',
           filter: `game_id=eq.${gameId.value}`,
         },
-        async (payload: RealtimePostgresChangesPayload<GameState>) => {
-          await gamePlayStore.handleGameStateUpdate(payload)
-        }
+        handleGameStateUpdate
       )
       .subscribe((payload) => {
         // eslint-disable-next-line no-console

@@ -22,7 +22,7 @@ onMounted(async () => {
   <o-card class="!max-w-[800px] mt-10 min-h-[400px] rounded">
     <template #header>
       <o-text size="xl" font="bold" class="w-full !text-teal-500"
-        >Open Games (45)
+        >Open Games ({{ onlineGames.length }})
       </o-text>
     </template>
 

@@ -39,18 +39,21 @@ export type GameChatMessage = ChatMessage & {
   user: OnlinePlayer
 }
 
+export interface SubscriptionService {
+  subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
+}
+
+
 export interface ApiService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
   getGames(userId: string): Promise<MultiplayerGame[]>
   getGameState(gameId: string): Promise<MultiplayerGameState | null>
-
   createGameState(gameId: string, board: Json): Promise<GameState>
-
   getChatMessages(gameId: string): Promise<GameChatMessage[]>
   postChatMessage(payload: PostChatPayload): Promise<void>
-  startOnlineGame(gameId: string, status: GameStatus): Promise<void>
-  subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
+}
 
+export interface MultiplayerService {
   persistMove(
     gameId: string,
     board: GameStateUpdate,
@@ -58,7 +61,10 @@ export interface ApiService {
     winnerId: string | null
   ): Promise<void>
 }
-export class SupabaseService implements ApiService {
+
+export class SupabaseService
+  implements ApiService, MultiplayerService, SubscriptionService
+{
   async persistMove(
     gameId: string,
     payload: GameStateUpdate,
@@ -234,17 +240,5 @@ export class SupabaseService implements ApiService {
       .single()
 
     return data as GameState
-  }
-
-  async startOnlineGame(gameId: string, status: GameStatus): Promise<void> {
-    // used by Game ENGINE
-    const { error } = await supabase
-      .from('games')
-      .update({ status })
-      .eq('id', gameId)
-
-    if (error) {
-      throw new Error('Could not start game')
-    }
   }
 }

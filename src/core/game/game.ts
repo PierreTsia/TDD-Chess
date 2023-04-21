@@ -12,7 +12,7 @@ import type {
   IPlayer,
 } from '~/core/types'
 
-import type { ApiService } from '~/services/api'
+import type { MultiplayerService } from '~/services/api'
 
 export class Game implements IGame {
   board: IBoard
@@ -20,13 +20,13 @@ export class Game implements IGame {
   players: [IPlayer, IPlayer]
   status: GameStatus
   moveHistory: IMoveHistory
-  apiService?: ApiService
+  apiService?: MultiplayerService
   gameId?: string
   gameWinner: IPlayer | null = null
 
   constructor(
     players?: [IPlayer, IPlayer],
-    apiService?: ApiService,
+    apiService?: MultiplayerService,
     onlineGameId?: string
   ) {
     this.apiService = apiService
@@ -77,10 +77,19 @@ export class Game implements IGame {
     this.currentPlayer = this.players[0]
     this.status = 'ongoing'
     if (this.apiService) {
-      this.apiService.startOnlineGame(this.gameId!, this.status).then(() => {
-        // eslint-disable-next-line no-console
-        console.log('game started')
-      })
+      this.apiService
+        .persistMove(
+          this.gameId!,
+          {
+            board: JSON.stringify(this.board),
+          },
+          this.status,
+          null
+        )
+        .then(() => {
+          // eslint-disable-next-line no-console
+          console.log('game started')
+        })
     }
   }
 
