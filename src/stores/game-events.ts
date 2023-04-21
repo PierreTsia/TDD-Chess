@@ -1,21 +1,22 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { defineStore } from 'pinia'
+import { SupabaseService } from '~/services/api'
 import { useChatStore } from '~/stores/chat'
 import { useGamePlayStore } from '~/stores/game-play'
-import supabase from '~/modules/supabase'
+
 import type {
   ChatMessage,
   GameState,
   OnlineGame,
 } from '~/modules/types/supabase'
 
-const POSTGRES_CHANGES = 'postgres_changes'
-
 export const useGameEventsStore = defineStore('gameEvents', () => {
   const chatStore = useChatStore()
   const gamePlayStore = useGamePlayStore()
 
   const gameId = ref<string | null>(null)
+
+  const api = new SupabaseService()
 
   const setGameId = (id: string) => {
     gameId.value = id
@@ -45,40 +46,12 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
     if (!gameId.value) {
       return
     }
-    supabase
-      .channel('schema-db-changes')
-      .on(
-        POSTGRES_CHANGES,
-        {
-          event: '*',
-          schema: 'public',
-          table: 'chat_messages',
-        },
-        handleChatMessageUpdate
-      )
-      .on(
-        POSTGRES_CHANGES,
-        {
-          event: '*',
-          schema: 'public',
-          table: 'games',
-        },
-        handleGameUpdate
-      )
-      .on(
-        POSTGRES_CHANGES,
-        {
-          event: '*',
-          schema: 'public',
-          table: 'game_states',
-          filter: `game_id=eq.${gameId.value}`,
-        },
-        handleGameStateUpdate
-      )
-      .subscribe((payload) => {
-        // eslint-disable-next-line no-console
-        console.log('Subscribe to Game Events:', payload)
-      })
+
+    api.subscribeToGameEvents(gameId.value, [
+      handleChatMessageUpdate,
+      handleGameUpdate,
+      handleGameStateUpdate,
+    ])
   }
 
   return { isMultiPlayer, setGameId, subscribeToGameEvents }

@@ -41,8 +41,15 @@ export type GameChatMessage = ChatMessage & {
 
 export interface SubscriptionService {
   subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
+  subscribeToGameEvents(
+    gameId: string,
+    callbacks: [
+      SubscriptionCallBack<ChatMessage>,
+      SubscriptionCallBack<OnlineGame>,
+      SubscriptionCallBack<GameState>
+    ]
+  ): void
 }
-
 
 export interface ApiService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
@@ -65,6 +72,8 @@ export interface MultiplayerService {
 export class SupabaseService
   implements ApiService, MultiplayerService, SubscriptionService
 {
+  private POSTGRES_CHANGES = 'postgres_changes' as const
+
   async persistMove(
     gameId: string,
     payload: GameStateUpdate,
@@ -149,6 +158,50 @@ export class SupabaseService
       return null
     }
     return data[0] as MultiplayerGameState
+  }
+
+  subscribeToGameEvents(
+    gameId: string,
+    callbacks: [
+      SubscriptionCallBack<ChatMessage>,
+      SubscriptionCallBack<OnlineGame>,
+      SubscriptionCallBack<GameState>
+    ]
+  ) {
+    supabase
+      .channel('schema-db-changes')
+      .on(
+        this.POSTGRES_CHANGES,
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages',
+        },
+        callbacks[0]
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'games',
+        },
+        callbacks[1]
+      )
+      .on(
+        this.POSTGRES_CHANGES,
+        {
+          event: '*',
+          schema: 'public',
+          table: 'game_states',
+          filter: `game_id=eq.${gameId}`,
+        },
+        callbacks[2]
+      )
+      .subscribe((payload) => {
+        // eslint-disable-next-line no-console
+        console.log('Subscribe to Game Events:', payload)
+      })
   }
 
   subscribeToGamesFeed(
