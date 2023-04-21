@@ -1,4 +1,5 @@
 import { Board } from '~/core/board/board'
+import { MoveHistory } from '~/core/moves/move-history'
 import { Bishop } from '~/core/pieces/bishop'
 import { King } from '~/core/pieces/king'
 import { Knight } from '~/core/pieces/knight'
@@ -6,12 +7,28 @@ import { Pawn } from '~/core/pieces/pawn'
 import { Queen } from '~/core/pieces/queen'
 import { Rook } from '~/core/pieces/rook'
 
-import type { IBoard, IPiece } from '~/core/types'
+import type { IMoveHistory, IPiece } from '~/core/types'
 import type { Json } from '~/modules/types/supabase'
+
 interface BoardData {
   squares: Array<Array<IPiece | null>>
 }
-export const deserializeBoard = (boardJson: Json | BoardData): IBoard => {
+
+export const deserializeMoveHistory = (
+  moveHistoryPojo: Json | IMoveHistory
+): MoveHistory => {
+  if (!moveHistoryPojo) {
+    return new MoveHistory()
+  }
+
+  const moveHistoryData =
+    typeof moveHistoryPojo === 'string'
+      ? (JSON.parse(moveHistoryPojo as string) as IMoveHistory)
+      : (moveHistoryPojo as IMoveHistory)
+
+  return new MoveHistory(moveHistoryData.moves)
+}
+export const deserializeBoard = (boardJson: Json | BoardData): Board => {
   if (!boardJson) {
     return new Board()
   }

@@ -8,7 +8,10 @@ import type { Color, GameStatus, IGame, IPlayer, PieceType } from '~/core/types'
 import type { GameState, OnlineGame } from '~/modules/types/supabase'
 import type { MultiplayerGame, MultiplayerGameState } from '~/services/api'
 import { SupabaseService } from '~/services/api'
-import { deserializeBoard } from '~/services/serialization'
+import {
+  deserializeBoard,
+  deserializeMoveHistory,
+} from '~/services/serialization'
 
 type CapturedMaterial = Record<Color, Record<PieceType, number>>
 export const useGamePlayStore = defineStore('gamePlay', () => {
@@ -48,6 +51,9 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   ) => {
     if (payload.eventType === 'UPDATE') {
       gameEngine.value.board = deserializeBoard(payload.new.board)
+      gameEngine.value.moveHistory = deserializeMoveHistory(
+        payload.new.move_history
+      )
 
       const myOpponentJustPlayed = payload.new.current_player_id === myId.value
 

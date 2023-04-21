@@ -4,9 +4,9 @@ export class MoveHistory implements IMoveHistory {
   moves: Array<IMove>
   cancelledMoves: Array<IMove>
 
-  constructor() {
-    this.moves = []
-    this.cancelledMoves = []
+  constructor(moves: Array<IMove> = [], cancelledMoves: Array<IMove> = []) {
+    this.moves = moves
+    this.cancelledMoves = cancelledMoves
   }
 
   addMove(move: IMove): void {
