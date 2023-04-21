@@ -9,6 +9,16 @@ import type {
   OnlineGame,
 } from '~/modules/types/supabase'
 
+interface PostChatPayload {
+  gameId: string
+  content: string
+  userId: string
+}
+
+type SubscriptionCallBack<T extends { [key: string]: any }> = (
+  p: RealtimePostgresChangesPayload<T>
+) => void
+
 export type MultiplayerGame = OnlineGame & {
   white_player: OnlinePlayer
   black_player: OnlinePlayer
@@ -32,30 +42,22 @@ export interface ApiService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
   getGames(userId: string): Promise<MultiplayerGame[]>
   getGameState(gameId: string): Promise<MultiplayerGameState | null>
-  subscribeToOnlineGames(
-    callBack: (p: RealtimePostgresChangesPayload<OnlineGame>) => void
-  ): void
 
   createGameState(gameId: string, board: Json): Promise<GameState>
 
+  getChatMessages(gameId: string): Promise<GameChatMessage[]>
+  postChatMessage(payload: PostChatPayload): Promise<void>
+  startOnlineGame(gameId: string, status: GameStatus): Promise<void>
+
+  subscribeToOnlineGames(callBack: SubscriptionCallBack<OnlineGame>): void
   subscribeToChatMessages(
     gameId: string,
-    callBack: (p: RealtimePostgresChangesPayload<ChatMessage>) => void
+    callBack: SubscriptionCallBack<ChatMessage>
   ): void
-
-  getChatMessages(gameId: string): Promise<GameChatMessage[]>
-
-  postChatMessage({
-    gameId,
-    content,
-    userId,
-  }: {
-    gameId: string
-    content: string
-    userId: string
-  }): Promise<void>
-
-  startOnlineGame(gameId: string, status: GameStatus): Promise<void>
+  subscribeToGameStatus(
+    gameId: string,
+    callBack: SubscriptionCallBack<OnlineGame>
+  ): void
 }
 export class SupabaseService implements ApiService {
   async getGame(gameId: string): Promise<MultiplayerGame | null> {
@@ -139,7 +141,7 @@ export class SupabaseService implements ApiService {
       )
       .subscribe((payload) => {
         // eslint-disable-next-line no-console
-        console.log('Status is:', payload)
+        console.log('Subscribe to Online Games:', payload)
       })
   }
 
@@ -162,7 +164,7 @@ export class SupabaseService implements ApiService {
       )
       .subscribe((payload) => {
         // eslint-disable-next-line no-console
-        console.log('Status is:', payload)
+        console.log('Subscribe to Chat Messages:', payload)
       })
   }
 
@@ -233,6 +235,29 @@ export class SupabaseService implements ApiService {
       .single()
 
     return data as GameState
+  }
+
+  subscribeToGameStatus(
+    gameId: string,
+    callBack: SubscriptionCallBack<OnlineGame>
+  ): void {
+    supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'games',
+        },
+        (payload: RealtimePostgresChangesPayload<OnlineGame>) => {
+          callBack(payload)
+        }
+      )
+      .subscribe((payload) => {
+        // eslint-disable-next-line no-console
+        console.log('Subscribe to Game Status:', payload)
+      })
   }
 
   async startOnlineGame(gameId: string, status: GameStatus): Promise<void> {

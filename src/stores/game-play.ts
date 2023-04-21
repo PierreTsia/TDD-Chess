@@ -58,6 +58,13 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     }
   }
 
+  const subscribeToGameStatus = (gameId: string) => {
+    api.subscribeToGameStatus(gameId, ({ eventType, new: newGame }) => {
+      if (eventType === 'UPDATE') {
+        gameEngine.value.status = newGame.status as GameStatus
+      }
+    })
+  }
   const startOnlineGame = async () => {
     if (!players.value[0] || !players.value[1]) {
       return
@@ -71,6 +78,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     }
 
     await initGameEngine(game)
+    subscribeToGameStatus(gameId)
   }
 
   const switchPoV = () => {

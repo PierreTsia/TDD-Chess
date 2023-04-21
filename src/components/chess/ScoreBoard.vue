@@ -46,12 +46,20 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
           </li>
           <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="success">Game Status :</o-text>
-            <o-text v-if="winner" size="sm">{{ winner?.name }} won ! </o-text>
-            <o-text v-else-if="status === 'stalemate'" size="sm">Draw </o-text>
-            <o-text v-else-if="status === 'not_started'" size="sm"
-              >Ready !</o-text
-            >
-            <o-text v-else size="sm">{{ status }}</o-text>
+            <o-tag v-if="winner" type="secondary">
+              {{ winner?.name }} won !
+            </o-tag>
+
+            <o-tag v-else-if="status === 'stalemate'" type="primary"
+              >Draw
+            </o-tag>
+
+            <o-tag v-else-if="status === 'not_started'" type="warning">
+              Ready
+            </o-tag>
+            <o-tag v-else type="success">
+              {{ status }}
+            </o-tag>
           </li>
           <li
             v-show="status === 'ongoing'"
