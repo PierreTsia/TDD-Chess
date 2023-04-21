@@ -1,6 +1,6 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import type { Ref } from 'vue'
-import { uniqBy } from 'lodash'
+import uniqBy from 'lodash/uniqBy'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { ChatMessage } from '~/modules/types/supabase'
 import type { GameChatMessage } from '~/services/api'
