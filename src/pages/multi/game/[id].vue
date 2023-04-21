@@ -7,6 +7,7 @@ import { useUserStore } from '~/stores/user'
 import { useChatStore } from '~/stores/chat'
 import { useOnlineGamesStore } from '~/stores/online-games'
 import { useGamePlayStore } from '~/stores/game-play'
+import { useGameEventsStore } from '~/stores/game-events'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,6 +15,7 @@ const router = useRouter()
 const userStore = useUserStore()
 const onlineGamesStore = useOnlineGamesStore()
 const gamePlayStore = useGamePlayStore()
+const gameEventsStore = useGameEventsStore()
 
 const chatStore = useChatStore()
 const { user } = storeToRefs(userStore)
@@ -34,7 +36,6 @@ onBeforeMount(async () => {
       }
     }
   }
-
 })
 
 watch(
@@ -44,6 +45,8 @@ watch(
       await onlineGamesStore.setCurrentGame(id as string)
       await chatStore.fetchChatMessages(id as string)
       await gamePlayStore.initOnlineGame(id as string)
+      gameEventsStore.setGameId(id as string)
+      gameEventsStore.subscribeToGameEvents()
       isLoading.value = false
     }
   },

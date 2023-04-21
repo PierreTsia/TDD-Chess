@@ -64,14 +64,11 @@ export const useChatStore = defineStore('chat', () => {
         break
     }
   }
-  const subscribeToChatMessages = async (gameId: string) => {
-    api.subscribeToChatMessages(gameId, handleChatMessageUpdate)
-  }
+
   const fetchChatMessages = async (gameId: string) => {
     setActiveGameId(gameId)
     const feed = await api.getChatMessages(gameId)
     messageFeed.value[gameId] = feed.reverse()
-    await subscribeToChatMessages(gameId)
   }
 
   const sendMessage = async ({
@@ -94,7 +91,7 @@ export const useChatStore = defineStore('chat', () => {
     chatUsers,
     fetchChatMessages,
     gameMessages,
-    subscribeToChatMessages,
+    handleChatMessageUpdate,
   }
 })
 

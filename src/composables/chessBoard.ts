@@ -1,10 +1,19 @@
 import { storeToRefs } from 'pinia'
 import { Move } from '~/core/moves/move'
+import { useGameEventsStore } from '~/stores/game-events'
+
+import { useUserStore } from '~/stores/user'
+
 import { useGamePlayStore } from '~/stores/game-play'
 import type { IMove, IPiece, Position } from '~/core/types'
 
 export const useChessBoard = () => {
   const gamePlayStore = useGamePlayStore()
+  const gameEventsStore = useGameEventsStore()
+  const { isMultiPlayer } = storeToRefs(gameEventsStore)
+  const userStore = useUserStore()
+  const { user } = storeToRefs(userStore)
+
   const {
     isBlackPov,
     board,
@@ -53,7 +62,17 @@ export const useChessBoard = () => {
         { x, y }
       )
 
-      currentPlayer.value.makeMove(move, game.value)
+      if (isMultiPlayer.value) {
+        const me = game.value.players.find((p) => p.id === user.value?.id)
+
+        if (!me || me.id !== currentPlayer.value.id) {
+          return
+        }
+
+        me.makeMove(move, game.value)
+      } else {
+        currentPlayer.value.makeMove(move, game.value)
+      }
 
       onGoingMove.value = { from: null }
     }

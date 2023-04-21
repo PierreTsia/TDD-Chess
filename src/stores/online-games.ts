@@ -47,7 +47,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   }
 
   const subscribeToOnlineGames = async () => {
-    api.subscribeToOnlineGames(handleGameUpdate)
+    api.subscribeToGamesFeed(handleGameUpdate)
   }
 
   const fetchOnlineGames = async (userId: string) => {

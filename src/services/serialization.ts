@@ -8,15 +8,17 @@ import { Rook } from '~/core/pieces/rook'
 
 import type { IBoard, IPiece } from '~/core/types'
 import type { Json } from '~/modules/types/supabase'
-
-export const deserializeBoard = (boardJson: Json): IBoard => {
-  interface BoardData {
-    squares: Array<Array<IPiece | null>>
-  }
+interface BoardData {
+  squares: Array<Array<IPiece | null>>
+}
+export const deserializeBoard = (boardJson: Json | BoardData): IBoard => {
   if (!boardJson) {
     return new Board()
   }
-  const boardData = JSON.parse(boardJson as string) as BoardData
+  const boardData =
+    typeof boardJson === 'string'
+      ? (JSON.parse(boardJson as string) as BoardData)
+      : (boardJson as BoardData)
 
   if (!boardData?.squares) {
     return new Board()

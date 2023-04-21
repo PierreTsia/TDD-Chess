@@ -73,11 +73,14 @@ export class Game implements IGame {
     this.startGame()
   }
 
-  async startGame() {
+  startGame() {
     this.currentPlayer = this.players[0]
     this.status = 'ongoing'
     if (this.apiService) {
-      await this.apiService.startOnlineGame(this.gameId!, this.status)
+      this.apiService.startOnlineGame(this.gameId!, this.status).then(() => {
+        // eslint-disable-next-line no-console
+        console.log('game started')
+      })
     }
   }
 
@@ -125,8 +128,17 @@ export class Game implements IGame {
     this.switchPlayer()
     this.updateStatus()
     if (this.apiService) {
-      // eslint-disable-next-line no-console
-      console.log('calling api service')
+      this.apiService
+        .persistMove(this.gameId!, {
+          board: JSON.stringify(this.board),
+          current_player_id: this.currentPlayer.id,
+          captured_pieces: JSON.stringify(this.capturedPieces),
+          move_history: JSON.stringify(this.moveHistory),
+        })
+        .then(() => {
+          // eslint-disable-next-line no-console
+          console.log('move persisted')
+        })
     }
 
     return true

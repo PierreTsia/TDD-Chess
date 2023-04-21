@@ -1,15 +1,22 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import type { ComputedRef } from 'vue'
 import { PIECES_WEIGHT } from '~/core/constants'
 import { Game } from '~/core/game/game'
 import { Player } from '~/core/player/player'
 import type { Color, GameStatus, IGame, IPlayer, PieceType } from '~/core/types'
+import type { GameState, OnlineGame } from '~/modules/types/supabase'
 import type { MultiplayerGame, MultiplayerGameState } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { deserializeBoard } from '~/services/serialization'
 
 type CapturedMaterial = Record<Color, Record<PieceType, number>>
 export const useGamePlayStore = defineStore('gamePlay', () => {
+  const userStore = useUserStore()
+  const { user } = storeToRefs(userStore)
+
+  const myId = computed(() => user.value?.id)
+
   const api = new SupabaseService()
   const players = ref<[IPlayer, IPlayer]>([
     new Player('white', true, 'Deep Blue', '2'),
@@ -27,6 +34,29 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const lastCancelledMove = computed(() =>
     gameEngine.value.moveHistory.getLastCancelledMove()
   )
+
+  const handleGameUpdate = (
+    payload: RealtimePostgresChangesPayload<OnlineGame>
+  ) => {
+    if (payload.eventType === 'UPDATE') {
+      gameEngine.value.status = payload.new.status as GameStatus
+    }
+  }
+
+  const handleGameStateUpdate = (
+    payload: RealtimePostgresChangesPayload<GameState>
+  ) => {
+    if (payload.eventType === 'UPDATE') {
+      gameEngine.value.board = deserializeBoard(payload.new.board)
+
+      const myOpponentJustPlayed = payload.new.current_player_id === myId.value
+
+      if (myOpponentJustPlayed) {
+        gameEngine.value.switchPlayer()
+      }
+    }
+  }
+
   const initGameEngine = async (game: MultiplayerGame) => {
     const existingGameState = await api.getGameState(game.id)
     players.value = [
@@ -58,13 +88,6 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     }
   }
 
-  const subscribeToGameStatus = (gameId: string) => {
-    api.subscribeToGameStatus(gameId, ({ eventType, new: newGame }) => {
-      if (eventType === 'UPDATE') {
-        gameEngine.value.status = newGame.status as GameStatus
-      }
-    })
-  }
   const startOnlineGame = async () => {
     if (!players.value[0] || !players.value[1]) {
       return
@@ -78,7 +101,6 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     }
 
     await initGameEngine(game)
-    subscribeToGameStatus(gameId)
   }
 
   const switchPoV = () => {
@@ -145,6 +167,8 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     initGameEngine,
     startOnlineGame,
     gameState,
+    handleGameUpdate,
+    handleGameStateUpdate,
   }
 })
 
