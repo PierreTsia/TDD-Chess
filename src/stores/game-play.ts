@@ -86,6 +86,9 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
       // @ts-expect-error will see later
       gameState.value = existingGameState
       gameEngine.value.board = deserializeBoard(gameState.value.board)
+      gameEngine.value.moveHistory = deserializeMoveHistory(
+        gameState.value.move_history
+      )
       gameEngine.value.status = game.status as GameStatus
     } else {
       gameEngine.value.initializeGame()
