@@ -46,11 +46,19 @@ export const useChessBoard = () => {
     selectedSquare.value.y === y
 
   const handleSquareClick = ({ x, y }: Position) => {
+    const me = game.value.players.find((p) => p.id === user.value?.id)
+
     if (!onGoingMove.value.from) {
       const piece: IPiece | null = board.value.squares[y][x]
-      if (!piece || piece?.color !== currentPlayer.value.color) {
+      if (
+        !piece ||
+        piece?.color !== currentPlayer.value.color ||
+        !me ||
+        me.id !== currentPlayer.value.id
+      ) {
         return
       }
+
       onGoingMove.value.from = { x, y }
     } else {
       if (!selectedPiece.value) {
@@ -62,14 +70,8 @@ export const useChessBoard = () => {
         { x, y }
       )
 
-      if (isMultiPlayer.value) {
-        const me = game.value.players.find((p) => p.id === user.value?.id)
-
-        if (!me || me.id !== currentPlayer.value.id) {
-          return
-        }
-
-        me.makeMove(move, game.value)
+      if (isMultiPlayer.value && me) {
+        me?.makeMove(move, game.value)
       } else {
         currentPlayer.value.makeMove(move, game.value)
       }
