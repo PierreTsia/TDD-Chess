@@ -81,13 +81,16 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     ]
 
     gameEngine.value = new Game(players.value, api, game.id)
+    const winner: IPlayer | undefined = players.value.find(
+      (player) => player.id === game.winner_id
+    )
+
+    gameEngine.value.gameWinner = winner ?? null
 
     if (existingGameState) {
-      // @ts-expect-error will see later
-      gameState.value = existingGameState
-      gameEngine.value.board = deserializeBoard(gameState.value.board)
+      gameEngine.value.board = deserializeBoard(existingGameState.board)
       gameEngine.value.moveHistory = deserializeMoveHistory(
-        gameState.value.move_history
+        existingGameState.move_history
       )
       gameEngine.value.status = game.status as GameStatus
     } else {

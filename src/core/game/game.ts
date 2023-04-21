@@ -22,6 +22,7 @@ export class Game implements IGame {
   moveHistory: IMoveHistory
   apiService?: ApiService
   gameId?: string
+  gameWinner: IPlayer | null = null
 
   constructor(
     players?: [IPlayer, IPlayer],
@@ -53,14 +54,13 @@ export class Game implements IGame {
     return this.moveHistory.getCapturedPieces()
   }
 
-  get gameWinner(): IPlayer | null {
+  setGameWinner(): void {
     if (this.status !== 'checkmate') {
-      return null
+      this.gameWinner = null
+    } else {
+      const hasWhiteWon = this.board.isMate('black')
+      this.gameWinner = hasWhiteWon ? this.players[0] : this.players[1]
     }
-
-    return this.currentPlayer.color === 'white'
-      ? this.players[1]
-      : this.players[0]
   }
 
   initializeGame(): void {
@@ -137,7 +137,8 @@ export class Game implements IGame {
             captured_pieces: JSON.stringify(this.capturedPieces),
             move_history: JSON.stringify(this.moveHistory),
           },
-          this.status
+          this.status,
+          this.gameWinner?.id ?? null
         )
         .then(() => {
           // eslint-disable-next-line no-console
@@ -155,6 +156,8 @@ export class Game implements IGame {
     } else {
       this.status = isCheck ? 'check' : 'ongoing'
     }
+
+    this.setGameWinner()
   }
 
   isGameOver(): boolean {

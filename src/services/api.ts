@@ -54,14 +54,16 @@ export interface ApiService {
   persistMove(
     gameId: string,
     board: GameStateUpdate,
-    status: GameStatus
+    status: GameStatus,
+    winnerId: string | null
   ): Promise<void>
 }
 export class SupabaseService implements ApiService {
   async persistMove(
     gameId: string,
     payload: GameStateUpdate,
-    status: GameStatus
+    status: GameStatus,
+    winnerId: string | null
   ): Promise<void> {
     const { error } = await supabase
       .from('game_states')
@@ -70,7 +72,7 @@ export class SupabaseService implements ApiService {
 
     const { error: error2 } = await supabase
       .from('games')
-      .update({ status })
+      .update({ status, winner_id: winnerId })
       .eq('id', gameId)
 
     if (error) {
