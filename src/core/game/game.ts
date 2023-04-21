@@ -129,12 +129,16 @@ export class Game implements IGame {
     this.updateStatus()
     if (this.apiService) {
       this.apiService
-        .persistMove(this.gameId!, {
-          board: JSON.stringify(this.board),
-          current_player_id: this.currentPlayer.id,
-          captured_pieces: JSON.stringify(this.capturedPieces),
-          move_history: JSON.stringify(this.moveHistory),
-        })
+        .persistMove(
+          this.gameId!,
+          {
+            board: JSON.stringify(this.board),
+            current_player_id: this.currentPlayer.id,
+            captured_pieces: JSON.stringify(this.capturedPieces),
+            move_history: JSON.stringify(this.moveHistory),
+          },
+          this.status
+        )
         .then(() => {
           // eslint-disable-next-line no-console
           console.log('move persisted')

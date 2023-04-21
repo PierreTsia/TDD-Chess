@@ -51,17 +51,32 @@ export interface ApiService {
   startOnlineGame(gameId: string, status: GameStatus): Promise<void>
   subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
 
-  persistMove(gameId: string, board: Json): Promise<void>
+  persistMove(
+    gameId: string,
+    board: GameStateUpdate,
+    status: GameStatus
+  ): Promise<void>
 }
 export class SupabaseService implements ApiService {
-  async persistMove(gameId: string, payload: GameStateUpdate): Promise<void> {
+  async persistMove(
+    gameId: string,
+    payload: GameStateUpdate,
+    status: GameStatus
+  ): Promise<void> {
     const { error } = await supabase
       .from('game_states')
       .update(payload)
       .eq('game_id', gameId)
 
+    const { error: error2 } = await supabase
+      .from('games')
+      .update({ status })
+      .eq('id', gameId)
+
     if (error) {
       throw new Error(error.message)
+    } else if (error2) {
+      throw new Error(error2.message)
     }
   }
 
