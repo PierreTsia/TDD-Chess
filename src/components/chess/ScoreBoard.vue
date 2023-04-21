@@ -61,9 +61,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
               {{ status }}
             </o-tag>
           </li>
-          <li
-            v-show="status === 'ongoing'"
-            class="w-full flex justify-start gap-x-6">
+          <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="success">Material Score :</o-text>
             <span
               v-for="p in players"
