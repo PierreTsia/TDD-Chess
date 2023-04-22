@@ -1,6 +1,6 @@
-import { COORDS } from '~/core/constants'
+import type { COORDS } from '~/core/constants'
+import type { MultiplayerService } from '~/services/api'
 
-// 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 export interface IGame {
   board: IBoard
   currentPlayer: IPlayer
@@ -18,10 +18,14 @@ export interface IGame {
   redoMove(): boolean
 }
 
+export interface IOnlineGame extends IGame {
+  gameId: string
+  apiService: MultiplayerService
+}
+
 export interface IBoard {
   squares: Array<Array<IPiece | null>>
   initializeBoard(): void
-
   resetBoard(): void
   setStartingPosition(): void
   getPieceAt(position: Position): IPiece | null
@@ -46,12 +50,10 @@ export interface IPiece {
   position: Position
   hasMoved: boolean
   directionOffsets: Array<{ x: Modifier; y: Modifier }>
-
   getPotentialReach(board: IBoard): Array<Position>
   getMoveSquares(board: IBoard): Array<Position>
   getPossibleMoves(board: IBoard): Array<IMove>
   canMoveTo(position: Position, board: IBoard): boolean
-
   getOppositeColor(): Color
 }
 
@@ -107,7 +109,3 @@ export type SpecialMoveType = 'castling' | 'en_passant' | 'promotion'
 export type XYValue = (typeof COORDS)[number]
 
 export type Modifier = -1 | 1 | 0 | -2 | 2
-
-export const isValidXY = (n: any): n is XYValue => {
-  return COORDS.includes(n)
-}

@@ -1,7 +1,7 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGame } from '~/services/api'
+import type { MultiplayerGame, OnlinePlayer } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 
 export const useOnlineGamesStore = defineStore('onlineGames', () => {
@@ -9,10 +9,15 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
 
   const onlineGames = ref<MultiplayerGame[]>([])
   const currentGame = ref<MultiplayerGame | null>(null)
+  const onlinePayers = ref<OnlinePlayer[]>([])
 
   const setGameById = async (gameId: string) => {
     const game = await api.getGame(gameId)
     onlineGames.value.unshift(game!)
+  }
+
+  const fetchOnlinePlayers = async () => {
+    onlinePayers.value = await api.getUsers()
   }
 
   const setCurrentGame = async (gameId: string) => {
@@ -57,6 +62,8 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   }
 
   return {
+    fetchOnlinePlayers,
+    onlinePayers,
     setCurrentGame,
     fetchOnlineGames,
     onlineGames,

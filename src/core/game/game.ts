@@ -12,25 +12,16 @@ import type {
   IPlayer,
 } from '~/core/types'
 
-import type { MultiplayerService } from '~/services/api'
-
 export class Game implements IGame {
   board: IBoard
   currentPlayer: IPlayer
   players: [IPlayer, IPlayer]
   status: GameStatus
   moveHistory: IMoveHistory
-  apiService?: MultiplayerService
-  gameId?: string
+
   gameWinner: IPlayer | null = null
 
-  constructor(
-    players?: [IPlayer, IPlayer],
-    apiService?: MultiplayerService,
-    onlineGameId?: string
-  ) {
-    this.apiService = apiService
-    this.gameId = onlineGameId
+  constructor(players?: [IPlayer, IPlayer]) {
     const whitePlayer = new Player(
       'white',
       true,
@@ -76,21 +67,6 @@ export class Game implements IGame {
   startGame() {
     this.currentPlayer = this.players[0]
     this.status = 'ongoing'
-    if (this.apiService) {
-      this.apiService
-        .persistMove(
-          this.gameId!,
-          {
-            board: JSON.stringify(this.board),
-          },
-          this.status,
-          null
-        )
-        .then(() => {
-          // eslint-disable-next-line no-console
-          console.log('game started')
-        })
-    }
   }
 
   private isCurrentPlayerTurn(pieceColor: Color): boolean {
@@ -135,29 +111,6 @@ export class Game implements IGame {
     this.moveHistory.addMove(move)
     this.switchPlayer()
     this.updateStatus()
-    if (this.apiService) {
-      this.apiService
-        .persistMove(
-          this.gameId!,
-          {
-            board: JSON.stringify(this.board),
-            current_player_id:
-              move.piece.color === 'white'
-                ? this.players[1].id
-                : this.players[0].id,
-            captured_pieces: JSON.stringify(this.capturedPieces),
-            move_history: JSON.stringify(this.moveHistory),
-          },
-          this.status,
-          this.gameWinner?.id ?? null
-        )
-
-        .then(() => {
-          // eslint-disable-next-line no-console
-          console.log('move persisted')
-        })
-    }
-
     return true
   }
 

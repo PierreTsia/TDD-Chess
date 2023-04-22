@@ -1,7 +1,6 @@
 import { storeToRefs } from 'pinia'
 import { Move } from '~/core/moves/move'
 import { useGameEventsStore } from '~/stores/game-events'
-
 import { useGamePlayStore } from '~/stores/game-play'
 import type { IMove, IPiece, Position } from '~/core/types'
 

@@ -12,6 +12,7 @@ import {
   deserializeBoard,
   deserializeMoveHistory,
 } from '~/services/serialization'
+import { MultiplayerGameEngine } from '~/core/game/online-game'
 
 type CapturedMaterial = Record<Color, Record<PieceType, number>>
 export const useGamePlayStore = defineStore('gamePlay', () => {
@@ -83,7 +84,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
       ),
     ]
 
-    gameEngine.value = new Game(players.value, api, game.id)
+    gameEngine.value = new MultiplayerGameEngine(players.value, api, game.id)
     const winner: IPlayer | undefined = players.value.find(
       (player) => player.id === game.winner_id
     )

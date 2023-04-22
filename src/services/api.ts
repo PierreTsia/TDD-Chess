@@ -54,6 +54,7 @@ export interface SubscriptionService {
 export interface CrudService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
   getGames(userId: string): Promise<MultiplayerGame[]>
+  getUsers(): Promise<OnlinePlayer[]>
   getGameState(gameId: string): Promise<MultiplayerGameState | null>
   createGameState(gameId: string, board: Json): Promise<GameState>
   getChatMessages(gameId: string): Promise<GameChatMessage[]>
@@ -132,11 +133,13 @@ export class SupabaseService
       *,
       white_player: white_player_id (
         username,
-        id
+        id,
+        email
       ),
       black_player: black_player_id (
         username,
-        id
+        id,
+        email
 
       )
     `
@@ -293,5 +296,10 @@ export class SupabaseService
       .single()
 
     return data as GameState
+  }
+
+  async getUsers(): Promise<OnlinePlayer[]> {
+    const { data } = await supabase.from('users').select('*')
+    return data as OnlinePlayer[]
   }
 }
