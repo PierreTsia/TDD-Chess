@@ -51,7 +51,7 @@ export interface SubscriptionService {
   ): void
 }
 
-export interface ApiService {
+export interface CrudService {
   getGame(gameId: string): Promise<MultiplayerGame | null>
   getGames(userId: string): Promise<MultiplayerGame[]>
   getGameState(gameId: string): Promise<MultiplayerGameState | null>
@@ -70,7 +70,7 @@ export interface MultiplayerService {
 }
 
 export class SupabaseService
-  implements ApiService, MultiplayerService, SubscriptionService
+  implements CrudService, MultiplayerService, SubscriptionService
 {
   private POSTGRES_CHANGES = 'postgres_changes' as const
 

@@ -8,7 +8,7 @@ import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
 
-const { board, status, isBlackPov} = storeToRefs(gamePlayStore)
+const { board, status, isBlackPov } = storeToRefs(gamePlayStore)
 const { chessPiece } = useChessPieces()
 const { handleSquareClick, isSelected } = useChessBoard()
 
@@ -37,14 +37,18 @@ const squareColor = (y: number, x: number) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center">
+  <div
+    data-test-id="chessboard"
+    :class="{
+      'transform rotate-180': isBlackPov,
+      'transform rotate-0': !isBlackPov,
+    }"
+    class="flex flex-col items-center justify-center">
     <div
       :class="{
         'max-w-[360px]': mobile,
         'max-w-[640px]': desktop,
         'max-w-[480px]': tablet,
-        'transform rotate-180': isBlackPov,
-        'transform rotate-0': !isBlackPov,
         'outline outline-double outline-red-500': status === 'checkmate',
         'outline outline-double outline-yellow-500': status === 'check',
         'outline outline-double outline-indigo-500': status === 'stalemate',
