@@ -22,6 +22,7 @@ export class MultiplayerGameEngine extends Game implements IOnlineGame {
         this.gameId!,
         {
           board: JSON.stringify(this.board),
+          current_player_id: this.players[0].id,
         },
         this.status,
         null
@@ -33,26 +34,27 @@ export class MultiplayerGameEngine extends Game implements IOnlineGame {
   }
 
   makeMove(move: IMove): boolean {
-    super.makeMove(move)
-    const nextPlayer =
-      move.piece.color === 'white' ? this.players[1] : this.players[0]
-
-    this.apiService
-      .persistMove(
-        this.gameId!,
-        {
-          board: JSON.stringify(this.board),
-          current_player_id: nextPlayer.id,
-          captured_pieces: JSON.stringify(this.capturedPieces),
-          move_history: JSON.stringify(this.moveHistory),
-        },
-        this.status,
-        this.gameWinner?.id ?? null
-      )
-      .then((r) => {
-        // eslint-disable-next-line no-console
-        console.log('move persisted', r)
-      })
-    return true
+    if (super.makeMove(move)) {
+      const nextPlayer =
+        move.piece.color === 'white' ? this.players[1] : this.players[0]
+      this.apiService
+        .persistMove(
+          this.gameId!,
+          {
+            board: JSON.stringify(this.board),
+            current_player_id: nextPlayer.id,
+            captured_pieces: JSON.stringify(this.capturedPieces),
+            move_history: JSON.stringify(this.moveHistory),
+          },
+          this.status,
+          this.gameWinner?.id ?? null
+        )
+        .then((r) => {
+          // eslint-disable-next-line no-console
+          console.log('move persisted', r)
+        })
+      return true
+    }
+    return false
   }
 }
