@@ -4,7 +4,7 @@ import type { OnlinePlayer } from '~/services/api'
 
 const props = withDefaults(
   defineProps<{
-    user: OnlinePlayer
+    user: OnlinePlayer | null
     size?: 'sm' | 'md' | 'lg'
     rounded?: boolean
   }>(),
@@ -14,7 +14,7 @@ const props = withDefaults(
   }
 )
 const avatarSrc = computed(
-  () => `https://www.gravatar.com/avatar/${md5(props.user.email ?? '')}`
+  () => `https://www.gravatar.com/avatar/${md5(props.user?.email ?? '')}`
 )
 </script>
 

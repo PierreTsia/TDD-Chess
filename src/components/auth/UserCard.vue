@@ -11,7 +11,7 @@ const { user } = storeToRefs(userStore)
 <template>
   <o-card class="!w-[300px]">
     <div class="flex justify-center mb-3">
-      <Avatar :user="user" size="lg" rounded="false" />
+      <Avatar :user="user" size="lg" />
     </div>
     <o-text class="!text-teal !mb-2" size="xl" font="bold">
       Welcome {{ user?.username }}
