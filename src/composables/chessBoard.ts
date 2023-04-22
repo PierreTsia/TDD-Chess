@@ -66,6 +66,9 @@ export const useChessBoard = () => {
   }
 
   const multiplayerSquareClick = ({ x, y }: Position) => {
+    if (!me.value) {
+      return
+    }
     if (!onGoingMove.value.from) {
       const piece: IPiece | null = board.value.squares[y][x]
       if (
@@ -87,10 +90,7 @@ export const useChessBoard = () => {
         { x, y }
       )
 
-      if (me.value) {
-        me.value.makeMove(move, game.value)
-      }
-
+      me.value.makeMove(move, game.value)
       onGoingMove.value = { from: null }
     }
   }
