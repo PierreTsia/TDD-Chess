@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Avatar: typeof import('./components/user/Avatar.vue')['default']
     BishopBlack: typeof import('./components/chess/pieces/Black/BishopBlack.vue')['default']
     BishopWhite: typeof import('./components/chess/pieces/White/BishopWhite.vue')['default']
     ChatMessage: typeof import('./components/multi/ChatMessage.vue')['default']
@@ -26,6 +27,7 @@ declare module '@vue/runtime-core' {
     OnlineControlPanel: typeof import('./components/multi/OnlineControlPanel.vue')['default']
     PawnBlack: typeof import('./components/chess/pieces/Black/PawnBlack.vue')['default']
     PawnWhite: typeof import('./components/chess/pieces/White/PawnWhite.vue')['default']
+    PlayersList: typeof import('./components/multi/PlayersList.vue')['default']
     QueenBlack: typeof import('./components/chess/pieces/Black/QueenBlack.vue')['default']
     QueenWhite: typeof import('./components/chess/pieces/White/QueenWhite.vue')['default']
     README: typeof import('./components/README.md')['default']

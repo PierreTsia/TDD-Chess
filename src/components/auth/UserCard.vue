@@ -1,21 +1,17 @@
 <script lang="ts" setup>
-import md5 from 'md5'
 import { storeToRefs } from 'pinia'
+import Avatar from '~/components/user/Avatar.vue'
 import { useUserStore } from '~/stores/user'
 
 const userStore = useUserStore()
 
 const { user } = storeToRefs(userStore)
-
-const avatarSrc = computed(
-  () => `https://www.gravatar.com/avatar/${md5(user.value?.email ?? '')}`
-)
 </script>
 
 <template>
   <o-card class="!w-[300px]">
     <div class="flex justify-center mb-3">
-      <o-avatar rounded size="lg" :src="avatarSrc"/>
+      <Avatar :user="user" size="lg" rounded="false" />
     </div>
     <o-text class="!text-teal !mb-2" size="xl" font="bold">
       Welcome {{ user?.username }}
