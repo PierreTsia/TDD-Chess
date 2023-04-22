@@ -3,6 +3,7 @@ import vitePreprocessor from 'cypress-vite'
 
 export default defineConfig({
   e2e: {
+    defaultCommandTimeout: 10000,
     baseUrl: 'http://localhost:3333',
     chromeWebSecurity: false,
     specPattern: 'cypress/e2e/**/*.spec.*',
