@@ -32,6 +32,14 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     currentGame.value = await api.getGame(gameId)
   }
 
+  const createGame = async (opponentId: string) => {
+    await api.createGame({
+      white_player_id: user.value?.id,
+      black_player_id: opponentId,
+      status: 'not_started',
+    })
+  }
+
   const handleGameUpdate = async (
     payload: RealtimePostgresChangesPayload<OnlineGame>
   ) => {
@@ -75,6 +83,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     availableOpponents,
     setCurrentGame,
     fetchOnlineGames,
+    createGame,
     onlineGames,
     currentGame,
   }

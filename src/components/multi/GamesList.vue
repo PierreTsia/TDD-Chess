@@ -15,7 +15,6 @@ const { onlineGames } = storeToRefs(onlineGamesStore)
 
 onMounted(async () => {
   await onlineGamesStore.fetchOnlineGames(props.userId)
-
 })
 </script>
 

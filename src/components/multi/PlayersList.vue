@@ -23,6 +23,14 @@ const handlePlayerClick = (id: string) => {
   setSelectPlayerId(newSelectedPlayerId)
 }
 
+const handleCreateGame = () => {
+  if (!selectedPlayerId.value) {
+    return
+  }
+  onlineGamesStore.createGame(selectedPlayerId.value)
+  setSelectPlayerId(null)
+}
+
 onMounted(async () => {
   await onlineGamesStore.fetchOnlinePlayers()
 })
@@ -47,14 +55,19 @@ onMounted(async () => {
           size="md"
           :class="{
             'border-2 border-teal-500': selectedPlayerId === player.id,
-            'opacity-75 border-2 border-gray-300': selectedPlayerId !== player.id,
+            'opacity-75 border-2 border-gray-300':
+              selectedPlayerId !== player.id,
           }" />
         <o-text size="xs">{{ player.username }}</o-text>
         <span class="w-2 h-2 rounded-full bg-green-400" />
       </div>
     </div>
     <template #actions>
-      <o-button :disabled="!selectedPlayerId" type="success" class="w-[300px]">
+      <o-button
+        :disabled="!selectedPlayerId"
+        type="success"
+        class="w-[300px]"
+        @click="handleCreateGame">
         {{
           !selectedPlayerId
             ? 'Select a player to start a game'

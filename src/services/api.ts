@@ -4,6 +4,7 @@ import type { GameStatus } from '~/core/types'
 import supabase from '~/modules/supabase'
 import type {
   ChatMessage,
+  GameInsert,
   GameState,
   GameStateUpdate,
   Json,
@@ -59,6 +60,7 @@ export interface CrudService {
   createGameState(gameId: string, board: Json): Promise<GameState>
   getChatMessages(gameId: string): Promise<GameChatMessage[]>
   postChatMessage(payload: PostChatPayload): Promise<void>
+  createGame(payload: GameInsert): Promise<void>
 }
 
 export interface MultiplayerService {
@@ -74,6 +76,14 @@ export class SupabaseService
   implements CrudService, MultiplayerService, SubscriptionService
 {
   private POSTGRES_CHANGES = 'postgres_changes' as const
+
+  async createGame(payload: GameInsert): Promise<void> {
+    const { error } = await supabase.from('games').insert(payload).select()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+  }
 
   async persistMove(
     gameId: string,

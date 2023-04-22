@@ -10,6 +10,8 @@ export type GameState = Database['public']['Tables']['game_states']['Row']
 
 export type GameStateUpdate = Database['public']['Tables']['game_states']['Update']
 
+export type GameInsert = Database['public']['Tables']['games']['Insert']
+
 export type Json =
   | string
   | number
