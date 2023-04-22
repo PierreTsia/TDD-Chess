@@ -19,8 +19,8 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const { user } = storeToRefs(userStore)
 
   const myId = computed(() => user.value?.id)
-
   const api = new SupabaseService()
+
   const players = ref<[IPlayer, IPlayer]>([
     new Player('white', true, 'Deep Blue', '2'),
     new Player('black', true, 'Gary Kasparov', '3'),
@@ -28,6 +28,9 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const gameState = ref<MultiplayerGameState | null>(null)
   const gameEngine = ref<IGame>(new Game(players.value))
   const board = computed(() => gameEngine.value.board)
+  const me = computed(() =>
+    gameEngine.value.players.find((p) => p.id === myId.value)
+  )
 
   const isBlackPov = ref(false)
   const currentPlayer = computed(() => gameEngine.value.currentPlayer)
@@ -93,6 +96,11 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
         existingGameState.move_history
       )
       gameEngine.value.status = game.status as GameStatus
+      const currentPlayer = players.value.find(
+        (player) => player.id === existingGameState.current_player_id
+      )
+      gameEngine.value.currentPlayer =
+        currentPlayer ?? gameEngine.value.players[0]
     } else {
       gameEngine.value.initializeGame()
       const board = JSON.stringify(gameEngine.value.board)
@@ -160,6 +168,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const redo = () => gameEngine.value.redoMove()
 
   return {
+    me,
     gameEngine,
     board,
     currentPlayer,

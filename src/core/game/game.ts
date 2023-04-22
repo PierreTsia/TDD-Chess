@@ -133,7 +133,6 @@ export class Game implements IGame {
 
     this.board.applyMove(move, lastMove)
     this.moveHistory.addMove(move)
-
     this.switchPlayer()
     this.updateStatus()
     if (this.apiService) {
@@ -142,13 +141,17 @@ export class Game implements IGame {
           this.gameId!,
           {
             board: JSON.stringify(this.board),
-            current_player_id: this.currentPlayer.id,
+            current_player_id:
+              move.piece.color === 'white'
+                ? this.players[1].id
+                : this.players[0].id,
             captured_pieces: JSON.stringify(this.capturedPieces),
             move_history: JSON.stringify(this.moveHistory),
           },
           this.status,
           this.gameWinner?.id ?? null
         )
+
         .then(() => {
           // eslint-disable-next-line no-console
           console.log('move persisted')
