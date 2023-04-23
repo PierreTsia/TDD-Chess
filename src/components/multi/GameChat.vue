@@ -23,7 +23,7 @@ const handleSendMessage = async (content: string) => {
 </script>
 
 <template>
-  <o-card class="min-h-[640px] flex flex-col justify-between relative">
+  <o-card class="min-h-[400px] flex flex-col justify-between relative">
     <template #header>
       <div class="flex flex-col justify-center items-center w-full">
         <o-text size="xl" font="bold">Game Chat</o-text>

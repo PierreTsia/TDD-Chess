@@ -60,18 +60,16 @@ watch(
   <div class="flex flex-col w-100vw xl:60vw mx-auto py-10">
     <div
       v-if="!isLoading && currentGame"
-      class="grid grid-cols-12 gap-4 w-full mt-4 min-h-screen px-0 !md:px-10">
-      <div
-        class="justify-self-center col-span-12 xl:col-span-3 !xl:col-start-2 flex flex-col gap-y-6">
+      class="flex flex-col gap-y-4 xl:flex-row flex-wrap w-full max-w-[1600px] mx-auto px-0 !xl:px-10 mt-4 min-h-screen">
+      <div class="flex flex-col items-center gap-y-4 !xl:w-3/12 !w-full">
         <ScoreBoard />
         <OnlineControlPanel />
       </div>
-      <div class="w-full !justify-self-center col-span-12 xl:col-span-6">
+      <div class="flex flex-col !w-full !xl:w-6/12">
         <ChessBoard />
       </div>
-      <div
-        class="w-full col-span-8 !col-start-3 !md:col-span-6 !md:col-start-4 !xl:col-span-2 !justify-self-center">
-        <GameChat />
+      <div class="flex flex-col items-center !w-full !xl:w-3/12">
+        <GameChat class="!max-w-[500px]" />
       </div>
     </div>
   </div>
