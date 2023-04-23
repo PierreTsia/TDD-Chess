@@ -12,3 +12,9 @@ intro:
   aka: Also known as
   whats-your-name: What's your name?
 not-found: Not found
+game_status:
+  ongoing: Ongoing
+  not_started: Not started
+  check: Check !
+  checkmate: Checkmate !
+  stalemate: Stalemate !

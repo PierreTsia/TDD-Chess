@@ -6,7 +6,10 @@ import { Game } from '~/core/game/game'
 import { Player } from '~/core/player/player'
 import type { Color, GameStatus, IGame, IPlayer, PieceType } from '~/core/types'
 import type { GameState, OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGame, MultiplayerGameState } from '~/services/api'
+import type {
+  MultiplayerGame,
+  MultiplayerGameState,
+} from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import {
   deserializeBoard,
@@ -67,8 +70,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     }
   }
 
-  const initGameEngine = async (game: MultiplayerGame) => {
-    const existingGameState = await api.getGameState(game.id)
+  function setPlayers(game: MultiplayerGame) {
     players.value = [
       new Player(
         'white',
@@ -83,6 +85,11 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
         game.black_player_id!
       ),
     ]
+  }
+
+  const initGameEngine = async (game: MultiplayerGame) => {
+    const existingGameState = await api.getGameState(game.id)
+    setPlayers(game)
 
     gameEngine.value = new MultiplayerGameEngine(players.value, api, game.id)
     const winner: IPlayer | undefined = players.value.find(

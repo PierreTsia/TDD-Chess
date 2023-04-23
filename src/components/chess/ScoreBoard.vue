@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
+import type { Color, PieceType } from '~/core/types'
 import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
@@ -10,6 +11,30 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
   const opponentColor = color === 'white' ? 'black' : 'white'
   return materialScore.value[opponentColor]
 }
+
+const { t } = useI18n()
+
+const getIcon = (color: Color, pieceType?: PieceType) => {
+  const pieceSlug = pieceType ? `i-tabler:chess-${pieceType}` : 'i-tabler:chess'
+  return color === 'white' ? `${pieceSlug}-filled` : pieceSlug
+}
+
+const isNotOver = computed(
+  () => !['not_started', 'checkmate', 'stalemate'].includes(status.value)
+)
+
+const getTagType = (status: string) => {
+  switch (status) {
+    case 'check':
+      return 'error'
+    case 'not_started':
+      return 'warning'
+    case 'ongoing':
+      return 'success'
+    default:
+      return 'success'
+  }
+}
 </script>
 
 <template>
@@ -18,13 +43,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
       <template #header>
         <div class="flex justify-center items-center w-full gap-4">
           <o-text v-for="p in players" :key="p.color" class="flex items-center">
-            <o-icon
-              class="mr-1"
-              :name="
-                p.color === 'white'
-                  ? 'i-tabler:chess-king-filled'
-                  : 'i-tabler:chess-king'
-              " />
+            <o-icon class="mr-1" :name="getIcon(p.color, 'king')" />
             {{ p?.name }}
           </o-text>
         </div>
@@ -32,33 +51,22 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
       <template #default>
         <ul
           class="w-full flex flex-wrap justify-center items-center px-10 gap-y-1">
-          <li v-show="status === 'ongoing'" class="w-full flex start gap-x-6">
+          <li v-show="isNotOver" class="w-full flex start gap-x-6">
             <o-text size="sm" type="success">Playing :</o-text>
             <o-text size="sm" class="flex items-center">
-              <o-icon
-                class="mr-1 w-4"
-                :name="
-                  currentPlayer.color === 'white'
-                    ? 'i-tabler:chess-filled'
-                    : 'i-tabler:chess'
-                " />{{ currentPlayer?.name }}
+              <o-icon class="mr-1 w-4" :name="getIcon(currentPlayer.color)" />{{
+                currentPlayer?.name
+              }}
             </o-text>
           </li>
           <li class="w-full flex justify-start gap-x-6">
             <o-text size="sm" type="success">Game Status :</o-text>
-            <o-tag v-if="winner" type="secondary">
+            <o-tag v-if="winner" type="secondary" size="xs" light>
               {{ winner?.name }} won !
             </o-tag>
 
-            <o-tag v-else-if="status === 'stalemate'" type="primary"
-              >Draw
-            </o-tag>
-
-            <o-tag v-else-if="status === 'not_started'" type="warning">
-              Ready
-            </o-tag>
-            <o-tag v-else type="success">
-              {{ status }}
+            <o-tag v-else :type="getTagType(status)" size="xs" light>
+              {{ t(`game_status.${status}`) }}
             </o-tag>
           </li>
           <li class="w-full flex justify-start gap-x-6">
@@ -67,13 +75,7 @@ const opponentMaterialScore = (color: 'white' | 'black') => {
               v-for="p in players"
               :key="`materialScore-${p.color}`"
               class="flex justify-center items-center">
-              <o-icon
-                class="w-4"
-                :name="
-                  p.color === 'black'
-                    ? 'i-tabler:chess-filled'
-                    : 'i-tabler:chess'
-                " />
+              <o-icon class="w-4" :name="getIcon(p.color)" />
               <o-text size="sm">{{ opponentMaterialScore(p.color) }}</o-text>
             </span>
           </li>
