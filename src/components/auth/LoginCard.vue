@@ -25,6 +25,7 @@ const tryLogin = async () => {
         <input
           id="email"
           v-model="email"
+          data-test-id="login-email"
           type="text"
           autocomplete="alice@example.com"
           placeholder="@horizon.ui"
@@ -37,6 +38,7 @@ const tryLogin = async () => {
         <input
           id="password"
           v-model="password"
+          data-test-id="login-password"
           type="password"
           autocomplete="testtest"
           placeholder="password"
@@ -46,7 +48,11 @@ const tryLogin = async () => {
 
     <template #actions>
       <div class="flex flex-row justify-end gap-2">
-        <o-button type="info" class="!w-[100px]" @click="tryLogin"
+        <o-button
+          type="info"
+          class="!w-[100px]"
+          data-test-id="login-btn"
+          @click="tryLogin"
           >Login</o-button
         >
         <o-button type="error" class="!w-[100px]">Cancel</o-button>
