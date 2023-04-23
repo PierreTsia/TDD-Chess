@@ -38,15 +38,20 @@ onBeforeMount(async () => {
   }
 })
 
+onUnmounted(() => {
+  gameEventsStore.unsubscribeFromPresence(route.params.id as string, user.value?.id as string)
+})
+
 watch(
-  () => route.params.id,
-  async (id) => {
-    if (id) {
-      await onlineGamesStore.setCurrentGame(id as string)
-      await chatStore.fetchChatMessages(id as string)
-      await gamePlayStore.initOnlineGame(id as string)
-      gameEventsStore.setGameId(id as string)
+  () => [route.params.id, user.value?.id],
+  async ([gameId, userId]) => {
+    if (gameId && userId) {
+      await onlineGamesStore.setCurrentGame(gameId as string)
+      await chatStore.fetchChatMessages(gameId as string)
+      await gamePlayStore.initOnlineGame(gameId as string)
+      gameEventsStore.setGameId(gameId as string)
       gameEventsStore.subscribeToGameEvents()
+      gameEventsStore.subscribeToPresence(gameId as string, userId as string)
       isLoading.value = false
     }
   },
@@ -71,6 +76,9 @@ watch(
       <div class="flex flex-col items-center !w-full !xl:w-3/12">
         <GameChat class="!max-w-[500px]" />
       </div>
+    </div>
+    <div v-else>
+      <!--      <o-empty>No game found with id {{ route.params.id }}</o-empty> -->
     </div>
   </div>
 </template>

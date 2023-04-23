@@ -1,11 +1,20 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import type { Color, PieceType } from '~/core/types'
+import type { Color, IPlayer, PieceType } from '~/core/types'
+import { useGameEventsStore } from '~/stores/game-events'
 import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
 const { materialScore, players, winner, status, currentPlayer } =
   storeToRefs(gamePlayStore)
+
+const gameEventsStore = useGameEventsStore()
+const { onlineUsers } = storeToRefs(gameEventsStore)
+
+const presenceColor = (player: IPlayer) => {
+  const isOnline = onlineUsers.value.find(({ user }) => user === player.id)
+  return isOnline ? 'bg-green-500' : 'bg-yellow-500'
+}
 
 const opponentMaterialScore = (color: 'white' | 'black') => {
   const opponentColor = color === 'white' ? 'black' : 'white'
@@ -43,6 +52,7 @@ const getTagType = (status: string) => {
       <template #header>
         <div class="flex justify-center items-center w-full gap-4">
           <o-text v-for="p in players" :key="p.color" class="flex items-center">
+            <span class="w-2 h-2 rounded-full mr-1" :class="presenceColor(p)" />
             <o-icon class="mr-1" :name="getIcon(p.color, 'king')" />
             {{ p?.name }}
           </o-text>

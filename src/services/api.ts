@@ -1,4 +1,7 @@
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import type {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from '@supabase/supabase-js'
 import type { GameStatus } from '~/core/types'
 
 import supabase from '~/modules/supabase'
@@ -17,8 +20,19 @@ interface PostChatPayload {
   userId: string
 }
 
+export interface PresenceRef {
+  presence_ref: string
+  user: string
+  online_at: string
+}
+
 export type SubscriptionCallBack<T extends { [key: string]: any }> = (
   p: RealtimePostgresChangesPayload<T>
+) => void
+
+export type PresenceSubscriptionCallBack = (
+  status: 'SUBSCRIBED' | 'TIMED_OUT' | 'CLOSED' | 'CHANNEL_ERROR',
+  err?: Error | undefined
 ) => void
 
 export type MultiplayerGame = OnlineGame & {
@@ -50,6 +64,13 @@ export interface SubscriptionService {
       SubscriptionCallBack<GameState>
     ]
   ): void
+  subscribeToPlayersPresence(
+    gameId: string,
+    userId: string,
+    callback: PresenceSubscriptionCallBack
+  ): void
+
+  unsubscribeFromPlayersPresence(gameId: string, userId: string): void
 }
 
 export interface CrudService {
@@ -76,6 +97,7 @@ export class SupabaseService
   implements CrudService, MultiplayerService, SubscriptionService
 {
   private POSTGRES_CHANGES = 'postgres_changes' as const
+  private presenceChannel!: RealtimeChannel
 
   async createGame(payload: GameInsert): Promise<void> {
     const { error } = await supabase.from('games').insert(payload).select()
@@ -217,13 +239,51 @@ export class SupabaseService
       })
   }
 
+  createPresenceChannel(gameId: string, userId: string, callback: any) {
+    this.presenceChannel = supabase
+      .channel(`game-events:${gameId}`, {
+        config: {
+          presence: {
+            key: userId,
+          },
+        },
+      })
+      .on('presence', { event: 'sync' }, () => {
+        const state = this.presenceChannel.presenceState<PresenceRef>()
+        const onLineUsers = Object.values(state).map((p) => p[0])
+        callback(onLineUsers)
+      })
+  }
+
+  subscribeToPlayersPresence(gameId: string, userId: string, callback: any) {
+    this.createPresenceChannel(gameId, userId, callback)
+
+    this.presenceChannel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await this.presenceChannel.track({
+          user: userId,
+          online_at: new Date().toISOString(),
+        })
+        // eslint-disable-next-line no-console
+        console.log(`Player ${userId} logged in : ${new Date().toISOString()}`)
+      }
+    })
+  }
+
+  unsubscribeFromPlayersPresence(gameId: string, userId: string) {
+    this.presenceChannel.unsubscribe().then(() => {
+      // eslint-disable-next-line no-console
+      console.log('Unsubscribed from presence channel', gameId, userId)
+    })
+  }
+
   subscribeToGamesFeed(
     callBack: (p: RealtimePostgresChangesPayload<OnlineGame>) => void
   ): void {
     supabase
       .channel('schema-db-changes')
       .on(
-        'postgres_changes',
+        this.POSTGRES_CHANGES,
         {
           event: '*',
           schema: 'public',

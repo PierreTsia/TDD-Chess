@@ -1,5 +1,6 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { defineStore } from 'pinia'
+import type { PresenceRef} from '~/services/api';
 import { SupabaseService } from '~/services/api'
 import { useChatStore } from '~/stores/chat'
 import { useGamePlayStore } from '~/stores/game-play'
@@ -13,6 +14,7 @@ import type {
 export const useGameEventsStore = defineStore('gameEvents', () => {
   const chatStore = useChatStore()
   const gamePlayStore = useGamePlayStore()
+  const onlineUsers = ref<PresenceRef[]>([])
 
   const gameId = ref<string | null>(null)
 
@@ -20,6 +22,16 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
 
   const setGameId = (id: string) => {
     gameId.value = id
+  }
+
+  const subscribeToPresence = (gameId: string, userId: string) => {
+    api.subscribeToPlayersPresence(gameId, userId, (users: PresenceRef[]) => {
+      onlineUsers.value = users
+    })
+  }
+
+  const unsubscribeFromPresence = (gameId: string, userId:string) => {
+    api.unsubscribeFromPlayersPresence(gameId, userId)
   }
 
   const isMultiPlayer = computed(() => !!gameId.value)
@@ -54,5 +66,12 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
     ])
   }
 
-  return { isMultiPlayer, setGameId, subscribeToGameEvents }
+  return {
+    isMultiPlayer,
+    onlineUsers,
+    setGameId,
+    subscribeToGameEvents,
+    subscribeToPresence,
+    unsubscribeFromPresence,
+  }
 })
