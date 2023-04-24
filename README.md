@@ -1,16 +1,25 @@
 <p align='center'>
-TDD chess game built with TS
+TDD chess game built with :
 </p>
 
 <p align='center'>
-Based on @antfu's <b> <a href="https://github.com/antfu/vitesse">Vitesse</a></b> <sup><em>(speed)</em> </sup> awesome starter
+<img src="./public/typescript.svg"  alt="ts">
+<img src="./public/vue.svg"  alt="vue">
+<img src="./public/vite.svg"  alt="vite">
+<img src="./public/netlify.svg"  alt="netlify">
+<img src="./public/supabase.svg"  alt="supabase">
+
+<p align='center'>
+Based on @antfu's <b> <a href="https://github.com/antfu/vitesse">Vitesse</a></b> <sup><em>(speed)</em> </sup> awesome starter<br/>
+Home-made chess engine (see <code> ./src/core</code>) built with <b><a href="https://www.typescriptlang.org/">TypeScript</a></b> <sup><em>(strict mode)</em></sup><br/>
+Realtime live games and chat powered by <b><a href="https://supabase.io/">Supabase</a></b> <sup><em>(free tier)</em></sup>
+Deployed with <b><a href="https://www.netlify.com/">Netlify</a></b> <sup><em>(free tier)</em></sup>
 </p>
 
 <br>
 
 <p align="center">
-<img src="./public/screenshot.png" width="450" alt="screenshot">
-
+<img src="./public/screenshot.png" width="3358" alt="screenshot">
 </p>
 
 <p align='center'>
@@ -58,4 +67,3 @@ Run the image and specify port mapping with the `-p` flag.
 ```bash
 docker run --rm -it -p 8080:80 vitesse:latest
 ```
-
