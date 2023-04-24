@@ -35,6 +35,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   )
 
   const isBlackPov = ref(false)
+  const mePlaysBlack = computed(() => me.value?.color === 'black')
   const currentPlayer = computed(() => gameEngine.value.currentPlayer)
   const status = computed(() => gameEngine.value.status)
   const winner = computed(() => gameEngine.value.gameWinner)
@@ -180,6 +181,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
 
   return {
     me,
+    mePlaysBlack,
     gameEngine,
     board,
     currentPlayer,

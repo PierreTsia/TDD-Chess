@@ -9,13 +9,8 @@ export const useChessBoard = () => {
   const gameEventsStore = useGameEventsStore()
   const { isMultiPlayer } = storeToRefs(gameEventsStore)
 
-  const {
-    me,
-    isBlackPov,
-    board,
-    currentPlayer,
-    gameEngine: game,
-  } = storeToRefs(gamePlayStore)
+  const { me, isBlackPov, board, currentPlayer, gameEngine } =
+    storeToRefs(gamePlayStore)
 
   const onGoingMove = ref<{ from: Position | null }>({
     from: null,
@@ -58,7 +53,7 @@ export const useChessBoard = () => {
         { x, y }
       )
 
-      currentPlayer.value.makeMove(move, game.value)
+      currentPlayer.value.makeMove(move, gameEngine.value)
 
       onGoingMove.value = { from: null }
     }
@@ -89,7 +84,7 @@ export const useChessBoard = () => {
         { x, y }
       )
 
-      me.value.makeMove(move, game.value)
+      me.value.makeMove(move, gameEngine.value)
       onGoingMove.value = { from: null }
     }
   }
