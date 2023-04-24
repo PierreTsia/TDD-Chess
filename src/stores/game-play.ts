@@ -47,6 +47,9 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   ) => {
     if (payload.eventType === 'UPDATE') {
       gameEngine.value.status = payload.new.status as GameStatus
+      gameEngine.value.gameWinner =
+        players.value.find((player) => player.id === payload.new.winner_id) ??
+        null
     }
   }
 
