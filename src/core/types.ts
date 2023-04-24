@@ -16,6 +16,7 @@ export interface IGame {
   switchPlayer(): void
   undoMove(): boolean
   redoMove(): boolean
+  updateStatus(): void
 }
 
 export interface IOnlineGame extends IGame {

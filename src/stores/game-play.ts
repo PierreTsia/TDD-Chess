@@ -59,7 +59,6 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     payload: RealtimePostgresChangesPayload<OnlineGame>
   ) => {
     if (payload.eventType === 'UPDATE') {
-      gameEngine.value.status = payload.new.status as GameStatus
       gameEngine.value.gameWinner =
         players.value.find((player) => player.id === payload.new.winner_id) ??
         null
@@ -98,6 +97,8 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
       gameEngine.value.currentPlayer = players.value.find(
         (player) => player.id === payload.new.current_player_id
       )!
+
+      gameEngine.value.updateStatus()
     }
   }
 

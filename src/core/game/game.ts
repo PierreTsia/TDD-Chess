@@ -114,7 +114,7 @@ export class Game implements IGame {
     return true
   }
 
-  private updateStatus(): void {
+  updateStatus(): void {
     const isCheck = this.board.isKingInCheck(this.currentPlayer.color)
     if (this.board.isMate(this.currentPlayer.color)) {
       this.status = isCheck ? 'checkmate' : 'stalemate'

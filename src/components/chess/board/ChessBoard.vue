@@ -8,7 +8,8 @@ import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
 
-const { board, status, isBlackPov, mePlaysBlack } = storeToRefs(gamePlayStore)
+const { board, status, isBlackPov, mePlaysBlack, lastMove } =
+  storeToRefs(gamePlayStore)
 const { chessPiece } = useChessPieces()
 const { handleSquareClick, isSelected } = useChessBoard()
 
@@ -46,6 +47,12 @@ const isEven = (num: number) => num % 2 === 0
 const squareColor = (y: number, x: number) => {
   if (isSelected(x, y)) {
     return 'bg-blue-400'
+  } else if (
+    lastMove.value &&
+    lastMove.value.endPosition.x === x &&
+    lastMove.value.endPosition.y === y
+  ) {
+    return 'bg-amber-300 border border-white'
   }
   return isEven(y) === isEven(x) ? 'bg-gray-200' : 'bg-gray-400'
 }
