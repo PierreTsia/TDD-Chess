@@ -63,7 +63,13 @@ onMounted(async () => {
               selectedPlayerId !== player.id,
           }" />
         <o-text size="xs">{{ player.username }}</o-text>
-        <span class="w-2 h-2 rounded-full bg-green-400" />
+        <span
+          class="w-2 h-2 rounded-full"
+          :class="
+            onlineGamesStore.isOnline(player.id)
+              ? 'bg-green-500'
+              : 'bg-yellow-500'
+          " />
       </div>
     </div>
     <template #actions>

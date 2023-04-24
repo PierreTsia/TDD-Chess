@@ -34,6 +34,8 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
     api.unsubscribeFromPlayersPresence(gameId, userId)
   }
 
+
+
   const isMultiPlayer = computed(() => !!gameId.value)
 
   const handleChatMessageUpdate = async (

@@ -1,7 +1,7 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import type { OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGame, OnlinePlayer } from '~/services/api'
+import type { MultiplayerGame, OnlinePlayer, PresenceRef } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { useUserStore } from '~/stores/user'
 
@@ -13,10 +13,19 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
 
   const onlineGames = ref<MultiplayerGame[]>([])
   const currentGame = ref<MultiplayerGame | null>(null)
-  const onlinePayers = ref<OnlinePlayer[]>([])
+  const registeredPlayers = ref<OnlinePlayer[]>([])
+  const connectedPlayersIds = ref<string[]>([])
+
+  const onlineUsers = computed(() =>
+    registeredPlayers.value.filter((player) =>
+      connectedPlayersIds.value.includes(player.id)
+    )
+  )
 
   const availableOpponents = computed(() => {
-    return onlinePayers.value.filter((player) => player.id !== user.value?.id)
+    return registeredPlayers.value.filter(
+      (player) => player.id !== user.value?.id
+    )
   })
 
   const setGameById = async (gameId: string) => {
@@ -25,7 +34,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   }
 
   const fetchOnlinePlayers = async () => {
-    onlinePayers.value = await api.getUsers()
+    registeredPlayers.value = await api.getUsers()
   }
 
   const setCurrentGame = async (gameId: string) => {
@@ -78,15 +87,32 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     api.subscribeToGamesFeed(handleGameUpdate)
   }
 
+  const subscribeToOnlinePlayers = async () => {
+    api.subscribeToUsersPresence(
+      user.value?.id as string,
+      (usersRef: PresenceRef[]) => {
+        connectedPlayersIds.value = usersRef.map(({ user }) => user)
+      }
+    )
+  }
+
+  const isOnline = (userId: string) => {
+    return connectedPlayersIds.value.includes(userId)
+  }
+
   const fetchOnlineGames = async (userId: string) => {
     onlineGames.value = await api.getGames(userId)
 
     await subscribeToOnlineGames()
+    await subscribeToOnlinePlayers()
   }
 
   return {
+    isOnline,
+    onlineUsers,
+    connectedPlayersIds,
     fetchOnlinePlayers,
-    onlinePayers,
+    registeredPlayers,
     availableOpponents,
     setCurrentGame,
     fetchOnlineGames,

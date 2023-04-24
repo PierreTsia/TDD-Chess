@@ -30,10 +30,7 @@ export type SubscriptionCallBack<T extends { [key: string]: any }> = (
   p: RealtimePostgresChangesPayload<T>
 ) => void
 
-export type PresenceSubscriptionCallBack = (
-  status: 'SUBSCRIBED' | 'TIMED_OUT' | 'CLOSED' | 'CHANNEL_ERROR',
-  err?: Error | undefined
-) => void
+export type PresenceSubscriptionCallBack = (onlineUsers: PresenceRef[]) => void
 
 export type MultiplayerGame = OnlineGame & {
   white_player: OnlinePlayer
@@ -70,7 +67,13 @@ export interface SubscriptionService {
     callback: PresenceSubscriptionCallBack
   ): void
 
+  subscribeToUsersPresence(
+    userId: string,
+    callback: PresenceSubscriptionCallBack
+  ): void
+
   unsubscribeFromPlayersPresence(gameId: string, userId: string): void
+  unsubscribeFromUsersPresence(): void
 }
 
 export interface CrudService {
@@ -97,7 +100,8 @@ export class SupabaseService
   implements CrudService, MultiplayerService, SubscriptionService
 {
   private POSTGRES_CHANGES = 'postgres_changes' as const
-  private presenceChannel!: RealtimeChannel
+  private gamePlayersPresenceChannel!: RealtimeChannel
+  private onlineUsersPresenceChannel!: RealtimeChannel
 
   async createGame(payload: GameInsert): Promise<OnlineGame['id']> {
     const { data, error } = await supabase
@@ -243,8 +247,12 @@ export class SupabaseService
       })
   }
 
-  createPresenceChannel(gameId: string, userId: string, callback: any) {
-    this.presenceChannel = supabase
+  createPresenceChannel(
+    gameId: string,
+    userId: string,
+    callback: PresenceSubscriptionCallBack
+  ) {
+    this.gamePlayersPresenceChannel = supabase
       .channel(`game-events:${gameId}`, {
         config: {
           presence: {
@@ -253,18 +261,23 @@ export class SupabaseService
         },
       })
       .on('presence', { event: 'sync' }, () => {
-        const state = this.presenceChannel.presenceState<PresenceRef>()
+        const state =
+          this.gamePlayersPresenceChannel.presenceState<PresenceRef>()
         const onLineUsers = Object.values(state).map((p) => p[0])
         callback(onLineUsers)
       })
   }
 
-  subscribeToPlayersPresence(gameId: string, userId: string, callback: any) {
+  subscribeToPlayersPresence(
+    gameId: string,
+    userId: string,
+    callback: PresenceSubscriptionCallBack
+  ) {
     this.createPresenceChannel(gameId, userId, callback)
 
-    this.presenceChannel.subscribe(async (status) => {
+    this.gamePlayersPresenceChannel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        await this.presenceChannel.track({
+        await this.gamePlayersPresenceChannel.track({
           user: userId,
           online_at: new Date().toISOString(),
         })
@@ -274,10 +287,51 @@ export class SupabaseService
     })
   }
 
+  createOnlineUsersPresenceChannel(callback: PresenceSubscriptionCallBack) {
+    this.onlineUsersPresenceChannel = supabase
+      .channel('online-users', {
+        config: {
+          presence: {
+            key: 'online_at',
+          },
+        },
+      })
+      .on('presence', { event: 'sync' }, () => {
+        const state =
+          this.onlineUsersPresenceChannel.presenceState<PresenceRef>()
+        const onLineUsers = Object.values(state).map((p) => p[0])
+        callback(onLineUsers)
+      })
+  }
+
+  subscribeToUsersPresence(
+    userId: string,
+    callback: PresenceSubscriptionCallBack
+  ) {
+    this.createOnlineUsersPresenceChannel(callback)
+    this.onlineUsersPresenceChannel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await this.onlineUsersPresenceChannel.track({
+          user: userId,
+          online_at: new Date().toISOString(),
+        })
+        // eslint-disable-next-line no-console
+        console.log(`User logged in : ${new Date().toISOString()}`)
+      }
+    })
+  }
+
   unsubscribeFromPlayersPresence(gameId: string, userId: string) {
-    this.presenceChannel.unsubscribe().then(() => {
+    this.gamePlayersPresenceChannel.unsubscribe().then(() => {
       // eslint-disable-next-line no-console
       console.log('Unsubscribed from presence channel', gameId, userId)
+    })
+  }
+
+  unsubscribeFromUsersPresence() {
+    this.onlineUsersPresenceChannel.unsubscribe().then(() => {
+      // eslint-disable-next-line no-console
+      console.log('Unsubscribed from presence channel')
     })
   }
 
