@@ -22,14 +22,16 @@ export class MultiplayerGameEngine extends Game implements IOnlineGame {
   }
 
   makeMove(move: IMove): boolean {
-    if (super.makeMove(move)) {
-      this.updateOnlineGame()
-      return true
+    if (!super.makeMove(move)) {
+      return false
     }
-    return false
+
+    this.updateOnlineGame()
+    return true
   }
 
   private updateOnlineGame() {
+    this.updateStatus()
     this.apiService
       .persistMove(
         this.gameId!,

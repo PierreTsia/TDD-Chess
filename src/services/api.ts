@@ -10,6 +10,7 @@ import type {
   GameInsert,
   GameState,
   GameStateUpdate,
+  GameUpdate,
   Json,
   OnlineGame,
 } from '~/modules/types/supabase'
@@ -85,6 +86,7 @@ export interface CrudService {
   getChatMessages(gameId: string): Promise<GameChatMessage[]>
   postChatMessage(payload: PostChatPayload): Promise<void>
   createGame(payload: GameInsert): Promise<OnlineGame['id']>
+  updateGame(payload: GameUpdate): Promise<OnlineGame>
 }
 
 export interface MultiplayerService {
@@ -163,6 +165,19 @@ export class SupabaseService
       return data[0] as MultiplayerGame
     }
     return null
+  }
+
+  async updateGame(payload: GameUpdate): Promise<OnlineGame> {
+    const { data, error } = await supabase
+      .from('games')
+      .update(payload)
+      .eq('id', payload.id)
+      .select()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0]
   }
 
   async getGames(userId: string): Promise<MultiplayerGame[]> {

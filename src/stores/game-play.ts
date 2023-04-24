@@ -99,6 +99,26 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
       )!
 
       gameEngine.value.updateStatus()
+
+      /* TODO hack to propagate status change
+       *
+       * Otherwise the persist move function in Multiplayer games
+       * evaluates checks and checkmates too early
+       *
+       *  */
+
+      if (payload.new.game_id) {
+        api
+          .updateGame({
+            id: payload.new.game_id as string,
+            winner_id: gameEngine.value.gameWinner?.id,
+            status: gameEngine.value.status,
+          })
+          .then(() => {
+            // eslint-disable-next-line no-console
+            console.log('game updated')
+          })
+      }
     }
   }
 

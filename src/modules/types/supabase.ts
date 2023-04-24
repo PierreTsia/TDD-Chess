@@ -8,6 +8,8 @@ export type ChatMessage = Database['public']['Tables']['chat_messages']['Row']
 
 export type GameState = Database['public']['Tables']['game_states']['Row']
 
+export type GameUpdate = Database['public']['Tables']['games']['Update']
+
 export type GameStateUpdate = Database['public']['Tables']['game_states']['Update']
 
 export type GameInsert = Database['public']['Tables']['games']['Insert']
