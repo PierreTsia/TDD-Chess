@@ -6,10 +6,7 @@ import { Game } from '~/core/game/game'
 import { Player } from '~/core/player/player'
 import type { Color, GameStatus, IGame, IPlayer, PieceType } from '~/core/types'
 import type { GameState, OnlineGame } from '~/modules/types/supabase'
-import type {
-  MultiplayerGame,
-  MultiplayerGameState,
-} from '~/services/api'
+import type { MultiplayerGame, MultiplayerGameState } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import {
   deserializeBoard,
@@ -62,11 +59,9 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
         payload.new.move_history
       )
 
-      const myOpponentJustPlayed = payload.new.current_player_id === myId.value
-
-      if (myOpponentJustPlayed) {
-        gameEngine.value.switchPlayer()
-      }
+      gameEngine.value.currentPlayer = players.value.find(
+        (player) => player.id === payload.new.current_player_id
+      )!
     }
   }
 

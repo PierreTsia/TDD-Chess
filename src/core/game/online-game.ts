@@ -44,9 +44,16 @@ export class MultiplayerGameEngine extends Game implements IOnlineGame {
   }
 
   private generateGameStateUpdate(): GameStateUpdate {
+    const lastMove = this.moveHistory.getLastMove()
+    const lastColorPlayed = lastMove?.piece.color
+
+    const nextPlayer =
+      this.players.find((player) => player.color !== lastColorPlayed) ??
+      this.players[0]
+
     return {
       board: JSON.stringify(this.board),
-      current_player_id: this.currentPlayer.id,
+      current_player_id: nextPlayer.id,
       captured_pieces: JSON.stringify(this.capturedPieces),
       move_history: JSON.stringify(this.moveHistory),
     }
