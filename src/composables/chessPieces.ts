@@ -59,5 +59,5 @@ export const useChessPieces = () => {
     return pieces[piece.type][piece.color]
   }
 
-  return { chessPiece }
+  return { chessPiece, pieces }
 }

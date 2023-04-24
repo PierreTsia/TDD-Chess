@@ -126,7 +126,7 @@ export class Game implements IGame {
   }
 
   isGameOver(): boolean {
-    return ['checkmate', 'stalemate'].includes(this.status)
+    return ['checkmate', 'stalemate', 'resigned'].includes(this.status)
   }
 
   switchPlayer(): void {

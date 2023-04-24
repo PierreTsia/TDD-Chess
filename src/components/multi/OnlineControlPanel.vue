@@ -3,8 +3,10 @@ import { storeToRefs } from 'pinia'
 import { useGamePlayStore } from '~/stores/game-play'
 
 const gamePlayStore = useGamePlayStore()
-const { startOnlineGame, switchPoV } = gamePlayStore
-const { isBlackPov, status } = storeToRefs(gamePlayStore)
+const { switchPoV, resignGame } = gamePlayStore
+const { isBlackPov, isGameOver } = storeToRefs(gamePlayStore)
+
+
 </script>
 
 <template>
@@ -16,11 +18,12 @@ const { isBlackPov, status } = storeToRefs(gamePlayStore)
           <div class="w-full flex flex-row justify-center items-center">
             <o-button
               data-test-id="start-button"
-              type="error"
+              type="success"
               my-6
               mr-2
-              @click="startOnlineGame">
-              {{ status === 'not_started' ? 'Start' : 'Reset' }}
+              :disabled="isGameOver"
+              @click="resignGame">
+              Resign
             </o-button>
             <o-button
               data-test-id="switch-pov-button"

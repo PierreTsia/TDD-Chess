@@ -81,6 +81,7 @@ export type GameStatus =
   | 'checkmate'
   | 'stalemate'
   | 'draw'
+  | 'resigned'
 
 export type Color = 'white' | 'black'
 

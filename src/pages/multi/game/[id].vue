@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import MoveHistory from '~/components/chess/MoveHistory.vue'
+import ScoreBoard from '~/components/chess/ScoreBoard.vue'
 import GameChat from '~/components/multi/GameChat.vue'
 import OnlineControlPanel from '~/components/multi/OnlineControlPanel.vue'
+import { IMove } from '~/core/types'
 import supabase from '~/modules/supabase'
 import { useUserStore } from '~/stores/user'
 import { useChatStore } from '~/stores/chat'
@@ -18,6 +21,7 @@ const gamePlayStore = useGamePlayStore()
 const gameEventsStore = useGameEventsStore()
 
 const chatStore = useChatStore()
+const { moveHistory } = storeToRefs(gamePlayStore)
 const { user } = storeToRefs(userStore)
 const { currentGame } = storeToRefs(onlineGamesStore)
 
@@ -39,7 +43,10 @@ onBeforeMount(async () => {
 })
 
 onUnmounted(() => {
-  gameEventsStore.unsubscribeFromPresence(route.params.id as string, user.value?.id as string)
+  gameEventsStore.unsubscribeFromPresence(
+    route.params.id as string,
+    user.value?.id as string
+  )
 })
 
 watch(
@@ -69,12 +76,15 @@ watch(
       <div class="flex flex-col items-center gap-y-4 !xl:w-3/12 !w-full">
         <ScoreBoard />
         <OnlineControlPanel />
+        <MoveHistory
+          class="max-h-[400px] !w-[400px]"
+          :moves="moveHistory as Array<IMove>" />
       </div>
       <div class="flex flex-col !w-full !xl:w-6/12">
         <ChessBoard />
       </div>
       <div class="flex flex-col items-center !w-full !xl:w-3/12">
-        <GameChat class="!max-w-[500px] max-h-[600px]" />
+        <GameChat class="!max-w-[500px] max-h-[640px]" />
       </div>
     </div>
     <div v-else>

@@ -41,6 +41,8 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     gameEngine.value.players.find((p) => p.id === myId.value)
   )
 
+  const moveHistory = computed<Array<IMove>>(() => gameEngine.value.moveHistory.moves)
+
   const isBlackPov = ref(false)
   const mePlaysBlack = computed(() => me.value?.color === 'black')
   const currentPlayer = computed(() => gameEngine.value.currentPlayer)
@@ -49,6 +51,10 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
   const lastMove = computed(() => gameEngine.value.moveHistory.getLastMove())
   const lastCancelledMove = computed(() =>
     gameEngine.value.moveHistory.getLastCancelledMove()
+  )
+
+  const isGameOver = computed(() =>
+    ['checkmate', 'draw', 'resigned'].includes(status.value)
   )
 
   const initSoloGame = () => {
@@ -78,6 +84,17 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     audio.play().then(() => {
       // eslint-disable-next-line no-console
       console.log('audio played')
+    })
+  }
+
+  const resignGame = async () => {
+    const winnerId = mePlaysBlack.value
+      ? players.value[0].id
+      : players.value[1].id
+    await api.updateGame({
+      id: (gameEngine.value as MultiplayerGameEngine).gameId,
+      winner_id: winnerId,
+      status: 'resigned',
     })
   }
 
@@ -253,6 +270,9 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     handleGameUpdate,
     handleGameStateUpdate,
     playSound,
+    resignGame,
+    isGameOver,
+    moveHistory,
   }
 })
 
