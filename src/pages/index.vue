@@ -21,7 +21,6 @@ const playgroundContent =
     <div class="w-full flex justify-center gap-x-8">
       <o-card
         divider
-        cover="public/playground.svg"
         title="Playground mode"
         :content="playgroundContent"
         class="!max-w-[300px] divider o-card-hoverable">
@@ -37,7 +36,6 @@ const playgroundContent =
       <o-card
         divider
         hoverable
-        cover="public/multiplayer.svg"
         title="Multiplayer mode"
         :content="multiplayerContent"
         class="!max-w-[300px] o-card-hoverable">
