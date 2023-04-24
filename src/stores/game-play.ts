@@ -16,16 +16,17 @@ import { MultiplayerGameEngine } from '~/core/game/online-game'
 
 type CapturedMaterial = Record<Color, Record<PieceType, number>>
 export const useGamePlayStore = defineStore('gamePlay', () => {
+  const playgroundPlayers: [IPlayer, IPlayer] = [
+    new Player('white', true, 'Deep Blue', '2'),
+    new Player('black', true, 'Gary Kasparov', '3'),
+  ]
   const userStore = useUserStore()
   const { user } = storeToRefs(userStore)
 
   const myId = computed(() => user.value?.id)
   const api = new SupabaseService()
 
-  const players = ref<[IPlayer, IPlayer]>([
-    new Player('white', true, 'Deep Blue', '2'),
-    new Player('black', true, 'Gary Kasparov', '3'),
-  ])
+  const players = ref<[IPlayer, IPlayer]>(playgroundPlayers)
   const gameState = ref<MultiplayerGameState | null>(null)
   const gameEngine = ref<IGame>(new Game(players.value))
   const board = computed(() => gameEngine.value.board)
@@ -42,6 +43,10 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     gameEngine.value.moveHistory.getLastCancelledMove()
   )
 
+  const initSoloGame = () => {
+    players.value = playgroundPlayers
+    gameEngine.value = new Game(playgroundPlayers)
+  }
   const handleGameUpdate = (
     payload: RealtimePostgresChangesPayload<OnlineGame>
   ) => {
@@ -194,6 +199,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     initGameEngine,
     startOnlineGame,
     gameState,
+    initSoloGame,
     handleGameUpdate,
     handleGameStateUpdate,
   }

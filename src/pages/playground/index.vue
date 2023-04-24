@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useGamePlayStore } from '~/stores/game-play'
+
+onMounted(() => {
+  const gamePlayStore = useGamePlayStore()
+  gamePlayStore.initSoloGame()
+})
+</script>
 
 <template>
   <div class="mt-10">
