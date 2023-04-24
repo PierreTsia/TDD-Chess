@@ -53,7 +53,9 @@ export const useChessBoard = () => {
         { x, y }
       )
 
-      currentPlayer.value.makeMove(move, gameEngine.value)
+      if (currentPlayer.value.makeMove(move, gameEngine.value)) {
+        gamePlayStore.playSound(gameEngine.value.moveHistory.getLastMove()!)
+      }
 
       onGoingMove.value = { from: null }
     }

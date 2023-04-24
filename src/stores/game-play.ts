@@ -231,6 +231,7 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     initSoloGame,
     handleGameUpdate,
     handleGameStateUpdate,
+    playSound,
   }
 })
 
