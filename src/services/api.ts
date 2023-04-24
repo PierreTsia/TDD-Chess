@@ -81,7 +81,7 @@ export interface CrudService {
   createGameState(gameId: string, board: Json): Promise<GameState>
   getChatMessages(gameId: string): Promise<GameChatMessage[]>
   postChatMessage(payload: PostChatPayload): Promise<void>
-  createGame(payload: GameInsert): Promise<void>
+  createGame(payload: GameInsert): Promise<OnlineGame['id']>
 }
 
 export interface MultiplayerService {
@@ -99,12 +99,16 @@ export class SupabaseService
   private POSTGRES_CHANGES = 'postgres_changes' as const
   private presenceChannel!: RealtimeChannel
 
-  async createGame(payload: GameInsert): Promise<void> {
-    const { error } = await supabase.from('games').insert(payload).select()
+  async createGame(payload: GameInsert): Promise<OnlineGame['id']> {
+    const { data, error } = await supabase
+      .from('games')
+      .insert(payload)
+      .select()
 
     if (error) {
       throw new Error(error.message)
     }
+    return data![0].id
   }
 
   async persistMove(

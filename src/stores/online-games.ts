@@ -32,12 +32,19 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     currentGame.value = await api.getGame(gameId)
   }
 
-  const createGame = async (opponentId: string) => {
-    await api.createGame({
+  const createGame = async (
+    opponentId: string,
+    callBack?: (id: string) => void
+  ) => {
+    const gameId = await api.createGame({
       white_player_id: user.value?.id,
       black_player_id: opponentId,
       status: 'not_started',
     })
+
+    if (callBack) {
+      callBack(gameId)
+    }
   }
 
   const handleGameUpdate = async (

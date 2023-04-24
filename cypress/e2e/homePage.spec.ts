@@ -5,8 +5,8 @@ context('|-> Home Page', () => {
 
   it('should navigate to playground  page', () => {
     cy.url().should('eq', 'http://localhost:3333/')
-    cy.get('[data-test-id="playground-page-btn"]').should('exist')/* .click()
-    cy.url().should('eq', 'http://localhost:3333/playground') */
+    cy.get('[data-test-id="playground-page-btn"]').should('exist').click()
+    cy.url().should('eq', 'http://localhost:3333/playground')
   })
 
   it.skip('should navigate to multiplayer page', () => {

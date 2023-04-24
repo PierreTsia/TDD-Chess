@@ -2,6 +2,8 @@
 import { storeToRefs } from 'pinia'
 import { useOnlineGamesStore } from '~/stores/online-games'
 
+const router = useRouter()
+
 const onlineGamesStore = useOnlineGamesStore()
 const { availableOpponents } = storeToRefs(onlineGamesStore)
 
@@ -27,7 +29,9 @@ const handleCreateGame = () => {
   if (!selectedPlayerId.value) {
     return
   }
-  onlineGamesStore.createGame(selectedPlayerId.value)
+  onlineGamesStore.createGame(selectedPlayerId.value, (gameId: string) =>
+    router.push(`/multi/game/${gameId}`)
+  )
   setSelectPlayerId(null)
 }
 
