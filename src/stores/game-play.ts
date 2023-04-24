@@ -4,7 +4,14 @@ import type { ComputedRef } from 'vue'
 import { PIECES_WEIGHT } from '~/core/constants'
 import { Game } from '~/core/game/game'
 import { Player } from '~/core/player/player'
-import type { Color, GameStatus, IGame, IPlayer, PieceType } from '~/core/types'
+import type {
+  Color,
+  GameStatus,
+  IGame,
+  IMove,
+  IPlayer,
+  PieceType,
+} from '~/core/types'
 import type { GameState, OnlineGame } from '~/modules/types/supabase'
 import type { MultiplayerGame, MultiplayerGameState } from '~/services/api'
 import { SupabaseService } from '~/services/api'
@@ -59,6 +66,22 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
     }
   }
 
+  const playSound = (move: IMove): void => {
+    const moveAudioFile =
+      move.specialMoveType === 'castling'
+        ? 'castle'
+        : move.capturedPiece
+        ? 'capture'
+        : 'move-self'
+
+    const audio = new Audio(`/sounds/${moveAudioFile}.mp3`)
+
+    audio.play().then(() => {
+      // eslint-disable-next-line no-console
+      console.log('audio played')
+    })
+  }
+
   const handleGameStateUpdate = (
     payload: RealtimePostgresChangesPayload<GameState>
   ) => {
@@ -67,6 +90,10 @@ export const useGamePlayStore = defineStore('gamePlay', () => {
       gameEngine.value.moveHistory = deserializeMoveHistory(
         payload.new.move_history
       )
+      const lastMove = gameEngine.value.moveHistory.getLastMove()
+      if (lastMove) {
+        playSound(lastMove)
+      }
 
       gameEngine.value.currentPlayer = players.value.find(
         (player) => player.id === payload.new.current_player_id
