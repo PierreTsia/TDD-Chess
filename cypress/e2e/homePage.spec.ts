@@ -6,6 +6,8 @@ context('|-> Home Page', () => {
   it('should navigate to playground  page', () => {
     cy.url().should('eq', 'http://localhost:3333/')
     cy.get('[data-test-id="playground-page-btn"]').should('exist').click()
+    cy.wait(2000)
+
     cy.url().should('eq', 'http://localhost:3333/playground')
   })
 
