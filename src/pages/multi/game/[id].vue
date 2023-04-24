@@ -65,7 +65,7 @@ watch(
   <div class="flex flex-col w-100vw xl:60vw mx-auto py-10">
     <div
       v-if="!isLoading && currentGame"
-      class="flex flex-col gap-y-4 xl:flex-row flex-wrap w-full max-w-[1600px] mx-auto px-0 !xl:px-10 mt-4 min-h-screen">
+      class="flex flex-col gap-y-4 xl:flex-row flex-wrap w-full max-w-[1600px] mx-auto px-0 !xl:px-10 mt-4 min-h-[calc(100vh-250px)]">
       <div class="flex flex-col items-center gap-y-4 !xl:w-3/12 !w-full">
         <ScoreBoard />
         <OnlineControlPanel />
@@ -74,7 +74,7 @@ watch(
         <ChessBoard />
       </div>
       <div class="flex flex-col items-center !w-full !xl:w-3/12">
-        <GameChat class="!max-w-[500px]" />
+        <GameChat class="!max-w-[500px] max-h-[600px]" />
       </div>
     </div>
     <div v-else>

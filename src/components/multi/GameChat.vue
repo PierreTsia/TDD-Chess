@@ -12,6 +12,41 @@ const { gameMessages, chatUsers } = storeToRefs(chatStore)
 const { currentGame } = storeToRefs(onlineGamesStore)
 const { user } = storeToRefs(userStore)
 
+const chatInput = ref(null)
+
+const chatIsVisible = useElementVisibility(chatInput)
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    const lastMessageEl = document.getElementById('chatInput')
+
+    if (lastMessageEl) {
+      lastMessageEl.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  })
+}
+
+watch(
+  chatIsVisible,
+  (isVisible) => {
+    if (!isVisible) {
+      scrollToBottom()
+    }
+  },
+  {
+    immediate: true,
+  }
+)
+
+watch(
+  gameMessages,
+  () => {
+    scrollToBottom()
+  },
+  {
+    deep: true,
+  }
+)
 
 const handleSendMessage = async (content: string) => {
   await chatStore.sendMessage({
@@ -23,12 +58,14 @@ const handleSendMessage = async (content: string) => {
 </script>
 
 <template>
-  <o-card class="min-h-[400px] flex flex-col justify-between relative">
+  <o-card
+    class="min-h-[400px] flex flex-col justify-between relative !overflow-auto">
     <template #header>
       <div class="flex flex-col justify-center items-center w-full">
         <o-text size="xl" font="bold">Game Chat</o-text>
         <o-text size="sm" class="!text-teal-500">
-          {{ gameMessages?.length }} messages from {{ chatUsers?.length }} user(s)
+          {{ gameMessages?.length }} messages from
+          {{ chatUsers?.length }} user(s)
         </o-text>
       </div>
     </template>
@@ -39,7 +76,10 @@ const handleSendMessage = async (content: string) => {
         :key="message.id"
         :message="message" />
 
-      <ChatMessageInput @on-send-message="handleSendMessage" />
+      <ChatMessageInput
+        id="chatInput"
+        ref="chatInput"
+        @on-send-message="handleSendMessage" />
     </div>
   </o-card>
 </template>
