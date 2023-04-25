@@ -42,7 +42,7 @@ charles-at-example-com / testtest <br/>
 
 ## Usage
 
-### Supabase
+### Supabase <img src="./public/supabase.svg"  alt="supabase">
 
 1. Create a new project on [Supabase](https://supabase.io/).
 2. Copy the `.env.example` file to `.env` and fill in the values. (see supabase documentation for more info on how to get the values for your project)
@@ -217,7 +217,7 @@ ALTER TABLE chat_messages FORCE ROW LEVEL SECURITY;
 
 4. Enable supabase realtime functionalities : <code>database->replications->supabase_realtime </code> : select the above created tables
 
-### Development
+### Development <img src="./public/typescript.svg"  alt="ts"> <img src="./public/vue.svg"  alt="vue">
 
 Just run and visit http://localhost:3333
 
@@ -225,7 +225,7 @@ Just run and visit http://localhost:3333
 pnpm run dev
 ```
 
-### Build
+### Build <img src="./public/vite.svg"  alt="vite">
 
 To build the App, run
 
@@ -235,10 +235,12 @@ pnpm run build
 
 And you will see the generated file in `dist` that ready to be served.
 
-### CI-CD pipeline with Github actions and Netlify Deploy
+### CI-CD pipeline with Github actions and Netlify <img src="./public/netlify.svg"  alt="netlify">
 
 1. Create a new project on [Netlify](https://www.netlify.com/)
-2. Get your netlify <code>NETLIFY_AUTH_TOKEN</code> and <code>NETLIFY_SITE_ID</code> from your netlify account settings
-3. Add the above variables to your github repository secrets
+2. Get your netlify <code>NETLIFY_AUTH_TOKEN</code> and <code>NETLIFY_SITE_ID</code> [from your netlify account settings](https://docs.netlify.com/cli/get-started/#obtain-a-token-in-the-netlify-ui)
+3. Add the above variables to [your github repository secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
+4. Add supabase variables defined in your local `.env` file to your github repository secrets
+5. Finally add those same supabase variables [to your netlify environment variables](https://docs.netlify.com/configure-builds/environment-variables/)
 
 The action defined in <code>/.github/workflows/ci.yml</code> will run on every push to the main branch,<br/> run <code>lint</code>, <code>typecheck</code>, <code>test:unit</code> and <code>test:e2e</code> and will build and deploy the app to netlify 🚀 if all tests pass ✅.
