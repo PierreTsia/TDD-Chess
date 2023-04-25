@@ -1,24 +1,27 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
+import { Position } from '~/core/types';
+import type { GameStatus, IBoard, IMove } from '~/core/types'
 import { useBreakPoints } from '~/composables/breakPoints'
 import { useChessPieces } from '~/composables/chessPieces'
-import { useChessBoard } from '~/composables/chessBoard'
-import { Position } from '~/core/types'
-import { useGamePlayStore } from '~/stores/game-play'
+const props = defineProps<{
+  board: IBoard
+  status: GameStatus
+  isBlackPov: boolean
+  mePlaysBlack: boolean
+  lastMove?: IMove
+}>()
 
 const gamePlayStore = useGamePlayStore()
 
-const { board, status, isBlackPov, mePlaysBlack, lastMove } =
-  storeToRefs(gamePlayStore)
 const { chessPiece } = useChessPieces()
 const { handleSquareClick, isSelected } = useChessBoard()
 
 watch(
-  () => mePlaysBlack.value,
+  () => props.mePlaysBlack,
   (mePlaysBlack) => {
     if (
-      (mePlaysBlack && !isBlackPov.value) ||
-      (!mePlaysBlack && isBlackPov.value)
+      (mePlaysBlack && !props.isBlackPov) ||
+      (!mePlaysBlack && props.isBlackPov)
     ) {
       gamePlayStore.switchPoV()
     }
@@ -48,9 +51,9 @@ const squareColor = (y: number, x: number) => {
   if (isSelected(x, y)) {
     return 'bg-blue-400'
   } else if (
-    lastMove.value &&
-    lastMove.value.endPosition.x === x &&
-    lastMove.value.endPosition.y === y
+    props.lastMove &&
+    props.lastMove.endPosition.x === x &&
+    props.lastMove.endPosition.y === y
   ) {
     return 'bg-amber-300 border border-white'
   }

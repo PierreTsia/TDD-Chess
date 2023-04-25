@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { useGamePlayStore } from '~/stores/game-play'
 
-const gamePlayStore = useGamePlayStore()
-const { start, undo, redo, switchPoV } = gamePlayStore
+import { useChessGameStore } from '~/stores/chess-game'
+
+const chessGameStore = useChessGameStore()
+const { start, undo, redo, switchPoV } = chessGameStore
 const { isBlackPov, status, lastMove, lastCancelledMove } =
-  storeToRefs(gamePlayStore)
+  storeToRefs(chessGameStore)
 </script>
 
 <template>

@@ -1,16 +1,16 @@
 import { storeToRefs } from 'pinia'
 import { Move } from '~/core/moves/move'
-import { useGameEventsStore } from '~/stores/game-events'
-import { useGamePlayStore } from '~/stores/game-play'
+import { useChessGameStore } from '~/stores/chess-game'
+
 import type { IMove, IPiece, Position } from '~/core/types'
 
 export const useChessBoard = () => {
-  const gamePlayStore = useGamePlayStore()
-  const gameEventsStore = useGameEventsStore()
-  const { isMultiPlayer } = storeToRefs(gameEventsStore)
 
-  const { me, isBlackPov, board, currentPlayer, gameEngine } =
-    storeToRefs(gamePlayStore)
+  const chessGameStore = useChessGameStore()
+
+
+  const {isBlackPov, board, currentPlayer, gameEngine } =
+    storeToRefs(chessGameStore)
 
   const onGoingMove = ref<{ from: Position | null }>({
     from: null,
@@ -54,14 +54,14 @@ export const useChessBoard = () => {
       )
 
       if (currentPlayer.value.makeMove(move, gameEngine.value)) {
-        gamePlayStore.playSound(gameEngine.value.moveHistory.getLastMove()!)
+        chessGameStore.playSound(gameEngine.value.moveHistory.getLastMove()!)
       }
 
       onGoingMove.value = { from: null }
     }
   }
 
-  const multiplayerSquareClick = ({ x, y }: Position) => {
+  /* const multiplayerSquareClick = ({ x, y }: Position) => {
     if (!me.value) {
       return
     }
@@ -89,11 +89,8 @@ export const useChessBoard = () => {
       me.value.makeMove(move, gameEngine.value)
       onGoingMove.value = { from: null }
     }
-  }
+  } */
   const handleSquareClick = ({ x, y }: Position) => {
-    if (isMultiPlayer.value) {
-      return multiplayerSquareClick({ x, y })
-    }
     return freeSquareClick({ x, y })
   }
 
