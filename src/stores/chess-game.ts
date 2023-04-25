@@ -1,15 +1,18 @@
 import { defineStore } from 'pinia'
+import type { ComputedRef } from 'vue'
+import { PIECES_WEIGHT } from '~/core/constants'
 import { Game } from '~/core/game/game'
 import { Player } from '~/core/player/player'
-import type { IGame, IMove, IPlayer } from '~/core/types'
+import type { Color, IGame , IMove, IPlayer, PieceType } from '~/core/types'
+type CapturedMaterial = Record<Color, Record<PieceType, number>>
 
 export const useChessGameStore = defineStore('chessGame', () => {
-  const playgroundPlayers = ref<[IPlayer, IPlayer]>([
+  const players = ref<[IPlayer, IPlayer]>([
     new Player('white', true, 'Deep Blue', '2'),
     new Player('black', true, 'Gary Kasparov', '3'),
   ])
 
-  const gameEngine = ref<IGame>(new Game(playgroundPlayers.value))
+  const gameEngine = ref<IGame>(new Game(players.value))
   const board = computed(() => gameEngine.value.board)
   const moveHistory = computed<Array<IMove>>(
     () => gameEngine.value.moveHistory.moves
@@ -28,28 +31,44 @@ export const useChessGameStore = defineStore('chessGame', () => {
   )
 
   const initSoloGame = () => {
-    gameEngine.value = new Game(playgroundPlayers.value)
+    gameEngine.value = new Game(players.value)
   }
 
-  const playSound = (move: IMove): void => {
-    const moveAudioFile =
-      move.specialMoveType === 'castling'
-        ? 'castle'
-        : move.capturedPiece
-        ? 'capture'
-        : 'move-self'
 
-    const audio = new Audio(`/sounds/${moveAudioFile}.mp3`)
+  const capturedMaterial: ComputedRef<CapturedMaterial> = computed(() =>
+    (gameEngine.value?.capturedPieces ?? []).reduce(
+      (acc, piece) => {
+        if (!acc[piece.color][piece.type]) {
+          acc[piece.color][piece.type] = 1
+        } else {
+          acc[piece.color][piece.type]++
+        }
+        return acc
+      },
+      {
+        white: {},
+        black: {},
+      } as CapturedMaterial
+    )
+  )
 
-    audio.play().then(() => {
-      // eslint-disable-next-line no-console
-      console.log('audio played')
+  const materialScore = computed(() => {
+    const colors: [Color, Color] = ['white', 'black']
+    const [white, black] = colors.flatMap((color: Color) => {
+      return Object.entries(capturedMaterial.value[color]).reduce(
+        (acc, [pieceType, count]) =>
+          acc + PIECES_WEIGHT[pieceType as PieceType] * count,
+        0
+      )
     })
-  }
 
-  const switchPoV = () => {
-    isBlackPov.value = !isBlackPov.value
-  }
+    return {
+      white,
+      black,
+    }
+  })
+
+
   const start = () => {
     gameEngine.value.initializeGame()
   }
@@ -58,6 +77,7 @@ export const useChessGameStore = defineStore('chessGame', () => {
   const redo = () => gameEngine.value.redoMove()
 
   return {
+    players,
     gameEngine,
     board,
     moveHistory,
@@ -68,11 +88,10 @@ export const useChessGameStore = defineStore('chessGame', () => {
     lastMove,
     lastCancelledMove,
     isGameOver,
+    materialScore,
     initSoloGame,
-    playSound,
     start,
     undo,
     redo,
-    switchPoV,
   }
 })

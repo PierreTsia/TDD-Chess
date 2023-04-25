@@ -1,9 +1,9 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { defineStore } from 'pinia'
-import type { PresenceRef} from '~/services/api';
+import type { PresenceRef } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { useChatStore } from '~/stores/chat'
-import { useGamePlayStore } from '~/stores/game-play'
+import { useMultiplayerChessGameStore } from '~/stores/multiplayer-chess-game'
 
 import type {
   ChatMessage,
@@ -13,7 +13,8 @@ import type {
 
 export const useGameEventsStore = defineStore('gameEvents', () => {
   const chatStore = useChatStore()
-  const gamePlayStore = useGamePlayStore()
+
+  const multiPlayerGameStore = useMultiplayerChessGameStore()
   const onlineUsers = ref<PresenceRef[]>([])
 
   const gameId = ref<string | null>(null)
@@ -30,11 +31,9 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
     })
   }
 
-  const unsubscribeFromPresence = (gameId: string, userId:string) => {
+  const unsubscribeFromPresence = (gameId: string, userId: string) => {
     api.unsubscribeFromPlayersPresence(gameId, userId)
   }
-
-
 
   const isMultiPlayer = computed(() => !!gameId.value)
 
@@ -47,13 +46,13 @@ export const useGameEventsStore = defineStore('gameEvents', () => {
   const handleGameUpdate = async (
     payload: RealtimePostgresChangesPayload<OnlineGame>
   ) => {
-    await gamePlayStore.handleGameUpdate(payload)
+    await multiPlayerGameStore.handleGameUpdate(payload)
   }
 
   const handleGameStateUpdate = async (
     payload: RealtimePostgresChangesPayload<GameState>
   ) => {
-    await gamePlayStore.handleGameStateUpdate(payload)
+    await multiPlayerGameStore.handleGameStateUpdate(payload)
   }
 
   const subscribeToGameEvents = () => {

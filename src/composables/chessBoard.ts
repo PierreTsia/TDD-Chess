@@ -3,14 +3,19 @@ import { Move } from '~/core/moves/move'
 import { useChessGameStore } from '~/stores/chess-game'
 
 import type { IMove, IPiece, Position } from '~/core/types'
+import { useMultiplayerChessGameStore } from '~/stores/multiplayer-chess-game'
 
+const isBlackPov = ref<boolean>(false)
 export const useChessBoard = () => {
-
   const chessGameStore = useChessGameStore()
+  const multiPlayerGameStore = useMultiplayerChessGameStore()
+  const { me } = storeToRefs(multiPlayerGameStore)
 
+  const switchPoV = () => {
+    isBlackPov.value = !isBlackPov.value
+  }
 
-  const {isBlackPov, board, currentPlayer, gameEngine } =
-    storeToRefs(chessGameStore)
+  const { board, currentPlayer, gameEngine } = storeToRefs(chessGameStore)
 
   const onGoingMove = ref<{ from: Position | null }>({
     from: null,
@@ -30,6 +35,22 @@ export const useChessBoard = () => {
     }
     return null
   })
+
+  const playSound = (move: IMove): void => {
+    const moveAudioFile =
+      move.specialMoveType === 'castling'
+        ? 'castle'
+        : move.capturedPiece
+        ? 'capture'
+        : 'move-self'
+
+    const audio = new Audio(`/sounds/${moveAudioFile}.mp3`)
+
+    audio.play().then(() => {
+      // eslint-disable-next-line no-console
+      console.log('audio played')
+    })
+  }
 
   const isSelected = (x: number, y: number) =>
     selectedSquare.value &&
@@ -54,14 +75,14 @@ export const useChessBoard = () => {
       )
 
       if (currentPlayer.value.makeMove(move, gameEngine.value)) {
-        chessGameStore.playSound(gameEngine.value.moveHistory.getLastMove()!)
+        playSound(gameEngine.value.moveHistory.getLastMove()!)
       }
 
       onGoingMove.value = { from: null }
     }
   }
 
-  /* const multiplayerSquareClick = ({ x, y }: Position) => {
+  const multiplayerSquareClick = ({ x, y }: Position) => {
     if (!me.value) {
       return
     }
@@ -89,12 +110,16 @@ export const useChessBoard = () => {
       me.value.makeMove(move, gameEngine.value)
       onGoingMove.value = { from: null }
     }
-  } */
-  const handleSquareClick = ({ x, y }: Position) => {
-    return freeSquareClick({ x, y })
+  }
+  const handleSquareClick = ({ x, y }: Position, isMulti = false) => {
+    return isMulti
+      ? multiplayerSquareClick({ x, y })
+      : freeSquareClick({ x, y })
   }
 
   return {
+    switchPoV,
+    playSound,
     isBlackPov,
     onGoingMove,
     isSelected,

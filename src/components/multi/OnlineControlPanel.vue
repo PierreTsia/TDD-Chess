@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { useGamePlayStore } from '~/stores/game-play'
 
-const gamePlayStore = useGamePlayStore()
-const { switchPoV, resignGame } = gamePlayStore
-const { isBlackPov, isGameOver } = storeToRefs(gamePlayStore)
+import { useMultiplayerChessGameStore } from '~/stores/multiplayer-chess-game'
+import { useChessBoard } from '~/composables/chessBoard'
 
-
+const multiplayerChessGameStore = useMultiplayerChessGameStore()
+const { switchPoV, isBlackPov } = useChessBoard()
+const { resignGame } = multiplayerChessGameStore
+const { isGameOver } = storeToRefs(multiplayerChessGameStore)
 </script>
 
 <template>
@@ -34,21 +35,8 @@ const { isBlackPov, isGameOver } = storeToRefs(gamePlayStore)
             </o-button>
           </div>
 
-          <div class="w-full flex flex-row justify-center items-center gap-4">
-            <!--            <o-button :disabled="!lastMove" type="success" @click="undo">
-              <o-icon
-                name="i-solar:square-double-alt-arrow-left-outline"
-                class="!text-white" />
-            </o-button>
-            <o-button
-              :disabled="!lastCancelledMove"
-              type="success"
-              @click="redo">
-              <o-icon
-                name="i-solar:square-double-alt-arrow-right-linear"
-                class="!text-white" />
-            </o-button> -->
-          </div>
+          <div
+            class="w-full flex flex-row justify-center items-center gap-4"></div>
         </div>
       </template>
     </o-card>

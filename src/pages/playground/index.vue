@@ -3,7 +3,16 @@ import { storeToRefs } from 'pinia'
 import { useChessGameStore } from '~/stores/chess-game'
 const chessGameStore = useChessGameStore()
 
-const { board, status, isBlackPov, lastMove } = storeToRefs(chessGameStore)
+const {
+  board,
+  status,
+  isBlackPov,
+  lastMove,
+  players,
+  currentPlayer,
+  materialScore,
+  winner,
+} = storeToRefs(chessGameStore)
 onMounted(() => {
   chessGameStore.initSoloGame()
 })
@@ -21,7 +30,13 @@ onMounted(() => {
           :me-plays-black="false"
           :status="status" />
         <div flex flex-col gap-3>
-          <ScoreBoard />
+          <ScoreBoard
+            :status="status"
+            :players="players"
+            :material-score="materialScore"
+            :winner="winner"
+            :online-users="[]"
+            :current-player="currentPlayer" />
           <ControlPanel />
         </div>
       </client-only>

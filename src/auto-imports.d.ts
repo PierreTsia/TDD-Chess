@@ -134,6 +134,7 @@ declare global {
   const useCached: typeof import('@vueuse/core')['useCached']
   const useChatStore: typeof import('./stores/chat')['useChatStore']
   const useChessBoard: typeof import('./composables/chessBoard')['useChessBoard']
+  const useChessGameStore: typeof import('./stores/chess-game')['useChessGameStore']
   const useChessPieces: typeof import('./composables/chessPieces')['useChessPieces']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
@@ -176,7 +177,6 @@ declare global {
   const useFps: typeof import('@vueuse/core')['useFps']
   const useFullscreen: typeof import('@vueuse/core')['useFullscreen']
   const useGameEventsStore: typeof import('./stores/game-events')['useGameEventsStore']
-  const useGamePlayStore: typeof import('./stores/game-play')['useGamePlayStore']
   const useGamepad: typeof import('@vueuse/core')['useGamepad']
   const useGeolocation: typeof import('@vueuse/core')['useGeolocation']
   const useHead: typeof import('@vueuse/head')['useHead']
@@ -201,6 +201,7 @@ declare global {
   const useMouse: typeof import('@vueuse/core')['useMouse']
   const useMouseInElement: typeof import('@vueuse/core')['useMouseInElement']
   const useMousePressed: typeof import('@vueuse/core')['useMousePressed']
+  const useMultiplayerChessGameStore: typeof import('./stores/multiplayer-chess-game')['useMultiplayerChessGameStore']
   const useMutationObserver: typeof import('@vueuse/core')['useMutationObserver']
   const useNavigatorLanguage: typeof import('@vueuse/core')['useNavigatorLanguage']
   const useNetwork: typeof import('@vueuse/core')['useNetwork']
@@ -429,6 +430,7 @@ declare module 'vue' {
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
     readonly useChatStore: UnwrapRef<typeof import('./stores/chat')['useChatStore']>
     readonly useChessBoard: UnwrapRef<typeof import('./composables/chessBoard')['useChessBoard']>
+    readonly useChessGameStore: UnwrapRef<typeof import('./stores/chess-game')['useChessGameStore']>
     readonly useChessPieces: UnwrapRef<typeof import('./composables/chessPieces')['useChessPieces']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
@@ -471,7 +473,6 @@ declare module 'vue' {
     readonly useFps: UnwrapRef<typeof import('@vueuse/core')['useFps']>
     readonly useFullscreen: UnwrapRef<typeof import('@vueuse/core')['useFullscreen']>
     readonly useGameEventsStore: UnwrapRef<typeof import('./stores/game-events')['useGameEventsStore']>
-    readonly useGamePlayStore: UnwrapRef<typeof import('./stores/game-play')['useGamePlayStore']>
     readonly useGamepad: UnwrapRef<typeof import('@vueuse/core')['useGamepad']>
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
     readonly useHead: UnwrapRef<typeof import('@vueuse/head')['useHead']>
@@ -496,6 +497,7 @@ declare module 'vue' {
     readonly useMouse: UnwrapRef<typeof import('@vueuse/core')['useMouse']>
     readonly useMouseInElement: UnwrapRef<typeof import('@vueuse/core')['useMouseInElement']>
     readonly useMousePressed: UnwrapRef<typeof import('@vueuse/core')['useMousePressed']>
+    readonly useMultiplayerChessGameStore: UnwrapRef<typeof import('./stores/multiplayer-chess-game')['useMultiplayerChessGameStore']>
     readonly useMutationObserver: UnwrapRef<typeof import('@vueuse/core')['useMutationObserver']>
     readonly useNavigatorLanguage: UnwrapRef<typeof import('@vueuse/core')['useNavigatorLanguage']>
     readonly useNetwork: UnwrapRef<typeof import('@vueuse/core')['useNetwork']>

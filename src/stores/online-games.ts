@@ -1,7 +1,7 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import type { OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGame, OnlinePlayer, PresenceRef } from '~/services/api'
+import type { MultiplayerGameData, OnlinePlayer, PresenceRef } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { useUserStore } from '~/stores/user'
 
@@ -11,8 +11,8 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   const userStore = useUserStore()
   const { user } = storeToRefs(userStore)
 
-  const onlineGames = ref<MultiplayerGame[]>([])
-  const currentGame = ref<MultiplayerGame | null>(null)
+  const onlineGames = ref<MultiplayerGameData[]>([])
+  const currentGame = ref<MultiplayerGameData | null>(null)
   const registeredPlayers = ref<OnlinePlayer[]>([])
   const connectedPlayersIds = ref<string[]>([])
 
@@ -68,7 +68,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
       case 'UPDATE':
         onlineGames.value = onlineGames.value.map((game) => {
           if (game.id === newRecord.id) {
-            return { ...game, ...newRecord } as MultiplayerGame
+            return { ...game, ...newRecord } as MultiplayerGameData
           }
           return game
         })

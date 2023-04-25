@@ -1,20 +1,23 @@
 <script lang="ts" setup>
-import { Position } from '~/core/types';
+import { Position } from '~/core/types'
 import type { GameStatus, IBoard, IMove } from '~/core/types'
 import { useBreakPoints } from '~/composables/breakPoints'
 import { useChessPieces } from '~/composables/chessPieces'
-const props = defineProps<{
+import { useChessBoard } from '~/composables/chessBoard'
+
+const props = withDefaults(defineProps<{
   board: IBoard
   status: GameStatus
   isBlackPov: boolean
   mePlaysBlack: boolean
   lastMove?: IMove
-}>()
-
-const gamePlayStore = useGamePlayStore()
+  isMultiplayer: boolean,
+}>(), {
+  isMultiplayer: false,
+})
 
 const { chessPiece } = useChessPieces()
-const { handleSquareClick, isSelected } = useChessBoard()
+const { handleSquareClick, isSelected, switchPoV, isBlackPov } = useChessBoard()
 
 watch(
   () => props.mePlaysBlack,
@@ -23,7 +26,7 @@ watch(
       (mePlaysBlack && !props.isBlackPov) ||
       (!mePlaysBlack && props.isBlackPov)
     ) {
-      gamePlayStore.switchPoV()
+      switchPoV()
     }
   },
   {
@@ -89,7 +92,7 @@ const squareColor = (y: number, x: number) => {
           :class="[squareColor(y, x), squareSize]"
           class="flex justify-center items-center chess-square"
           :data-test-id="`square-${y}-${x}`"
-          @click="handleSquareClick({ y, x } as Position)">
+          @click="handleSquareClick({ y, x } as Position, isMultiplayer)">
           <span
             v-if="chessPiece({ x, y } as Position, board)"
             :class="squareSize"

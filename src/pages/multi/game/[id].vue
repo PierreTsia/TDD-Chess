@@ -9,19 +9,34 @@ import supabase from '~/modules/supabase'
 import { useUserStore } from '~/stores/user'
 import { useChatStore } from '~/stores/chat'
 import { useOnlineGamesStore } from '~/stores/online-games'
-import { useGamePlayStore } from '~/stores/game-play'
+import { useMultiplayerChessGameStore } from '~/stores/multiplayer-chess-game'
 import { useGameEventsStore } from '~/stores/game-events'
+import { useChessBoard } from '~/composables/chessBoard'
 
 const route = useRoute()
 const router = useRouter()
 
 const userStore = useUserStore()
 const onlineGamesStore = useOnlineGamesStore()
-const gamePlayStore = useGamePlayStore()
+const multiplayerChessGameStore = useMultiplayerChessGameStore()
 const gameEventsStore = useGameEventsStore()
 
+const { onlineUsers } = storeToRefs(gameEventsStore)
+
+const { isBlackPov } = useChessBoard()
+
 const chatStore = useChatStore()
-const { moveHistory } = storeToRefs(gamePlayStore)
+const {
+  moveHistory,
+  board,
+  status,
+  lastMove,
+  mePlaysBlack,
+  materialScore,
+  currentPlayer,
+  onlinePlayers,
+  winner,
+} = storeToRefs(multiplayerChessGameStore)
 const { user } = storeToRefs(userStore)
 const { currentGame } = storeToRefs(onlineGamesStore)
 
@@ -55,7 +70,7 @@ watch(
     if (gameId && userId) {
       await onlineGamesStore.setCurrentGame(gameId as string)
       await chatStore.fetchChatMessages(gameId as string)
-      await gamePlayStore.initOnlineGame(gameId as string)
+      await multiplayerChessGameStore.initOnlineGame(gameId as string)
       gameEventsStore.setGameId(gameId as string)
       gameEventsStore.subscribeToGameEvents()
       gameEventsStore.subscribeToPresence(gameId as string, userId as string)
@@ -74,21 +89,33 @@ watch(
       v-if="!isLoading && currentGame"
       class="flex flex-col gap-y-4 xl:flex-row flex-wrap w-full max-w-[1600px] mx-auto px-0 !xl:px-10 mt-4 min-h-[calc(100vh-250px)]">
       <div class="flex flex-col items-center gap-y-4 !xl:w-3/12 !w-full">
-        <ScoreBoard />
+        <ScoreBoard
+          :material-score="materialScore"
+          :current-player="currentPlayer"
+          :players="onlinePlayers"
+          :status="status"
+          :online-users="onlineUsers"
+          :winner="winner" />
         <OnlineControlPanel />
         <MoveHistory
           class="max-h-[400px] !w-[400px]"
           :moves="moveHistory as Array<IMove>" />
       </div>
       <div class="flex flex-col !w-full !xl:w-6/12">
-        <ChessBoard />
+        <ChessBoard
+          :board="board"
+          :status="status"
+          :last-move="lastMove"
+          :is-black-pov="isBlackPov"
+          :me-plays-black="mePlaysBlack"
+          :is-multiplayer="true" />
       </div>
       <div class="flex flex-col items-center !w-full !xl:w-3/12">
         <GameChat class="!max-w-[500px] max-h-[640px]" />
       </div>
     </div>
     <div v-else>
-      <!--      <o-empty>No game found with id {{ route.params.id }}</o-empty> -->
+      <o-empty>No game found with id {{ route.params.id }}</o-empty>
     </div>
   </div>
 </template>

@@ -33,13 +33,13 @@ export type SubscriptionCallBack<T extends { [key: string]: any }> = (
 
 export type PresenceSubscriptionCallBack = (onlineUsers: PresenceRef[]) => void
 
-export type MultiplayerGame = OnlineGame & {
+export type MultiplayerGameData = OnlineGame & {
   white_player: OnlinePlayer
   black_player: OnlinePlayer
 }
 
 export type MultiplayerGameState = GameState & {
-  game: MultiplayerGame
+  game: MultiplayerGameData
 }
 
 export interface OnlinePlayer {
@@ -78,8 +78,8 @@ export interface SubscriptionService {
 }
 
 export interface CrudService {
-  getGame(gameId: string): Promise<MultiplayerGame | null>
-  getGames(userId: string): Promise<MultiplayerGame[]>
+  getGame(gameId: string): Promise<MultiplayerGameData | null>
+  getGames(userId: string): Promise<MultiplayerGameData[]>
   getUsers(): Promise<OnlinePlayer[]>
   getGameState(gameId: string): Promise<MultiplayerGameState | null>
   createGameState(gameId: string, board: Json): Promise<GameState>
@@ -140,7 +140,7 @@ export class SupabaseService
     }
   }
 
-  async getGame(gameId: string): Promise<MultiplayerGame | null> {
+  async getGame(gameId: string): Promise<MultiplayerGameData | null> {
     const { data } = await supabase
       .from('games')
       .select(
@@ -162,7 +162,7 @@ export class SupabaseService
       .eq('id', gameId)
 
     if (data) {
-      return data[0] as MultiplayerGame
+      return data[0] as MultiplayerGameData
     }
     return null
   }
@@ -180,7 +180,7 @@ export class SupabaseService
     return data![0]
   }
 
-  async getGames(userId: string): Promise<MultiplayerGame[]> {
+  async getGames(userId: string): Promise<MultiplayerGameData[]> {
     const { data } = await supabase
       .from('games')
       .select(
@@ -202,7 +202,7 @@ export class SupabaseService
       .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
       .order('created_at', { ascending: false })
 
-    return (data ?? []) as MultiplayerGame[]
+    return (data ?? []) as MultiplayerGameData[]
   }
 
   async getGameState(gameId: string): Promise<MultiplayerGameState | null> {

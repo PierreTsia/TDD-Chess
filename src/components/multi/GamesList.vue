@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { useOnlineGamesStore } from '~/stores/online-games'
-import { MultiplayerGame } from '~/services/api'
+import { MultiplayerGameData } from '~/services/api'
 
 const props = defineProps<{
   userId: string
@@ -33,7 +33,7 @@ onMounted(async () => {
       <o-text size="sm" font="thin" class="w-1/4">
         {{
           formatDistanceToNowStrict(
-            new Date((game as MultiplayerGame).created_at)
+              new Date((game as MultiplayerGameData).created_at)
           )
         }}
         ago
@@ -43,12 +43,12 @@ onMounted(async () => {
         font="thin"
         class="w-1/4 flex justify-end mr-2"
         :class="{
-        '!text-teal-500': (game as MultiplayerGame).white_player.id === userId,
+        '!text-teal-500': (game as MultiplayerGameData).white_player.id === userId,
       }">
         {{
-          (game as MultiplayerGame).white_player.id === userId
-            ? 'You'
-            : (game as MultiplayerGame).white_player.username
+          (game as MultiplayerGameData).white_player.id === userId
+              ? 'You'
+              : (game as MultiplayerGameData).white_player.username
         }}
         <o-icon class="ml-1 w-4" name="i-tabler:chess-filled" />
       </o-text>
@@ -57,13 +57,13 @@ onMounted(async () => {
         font="thin"
         class="w-1/4 flex justify-start"
         :class="{
-        '!text-teal-500': (game as MultiplayerGame).black_player.id === userId,
+        '!text-teal-500': (game as MultiplayerGameData).black_player.id === userId,
       }">
         <o-icon class="mr-1 w-4" name="i-tabler:chess" />
         {{
-          (game as MultiplayerGame).black_player.id === userId
-            ? 'You'
-            : (game as MultiplayerGame).black_player.username
+          (game as MultiplayerGameData).black_player.id === userId
+              ? 'You'
+              : (game as MultiplayerGameData).black_player.username
         }}
       </o-text>
 

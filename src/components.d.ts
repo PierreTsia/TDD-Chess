@@ -36,7 +36,6 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScoreBoard: typeof import('./components/chess/ScoreBoard.vue')['default']
-    ScoreScoreBoard: typeof import('./components/chess/ScoreBoard.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']

@@ -1,24 +1,26 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import type { Color, IPlayer, PieceType } from '~/core/types'
-import { useGameEventsStore } from '~/stores/game-events'
-import { useGamePlayStore } from '~/stores/game-play'
+import type { Color, GameStatus, IPlayer, PieceType } from '~/core/types'
+import type { PresenceRef } from '~/services/api'
 
-const gamePlayStore = useGamePlayStore()
-const { materialScore, players, winner, status, currentPlayer } =
-  storeToRefs(gamePlayStore)
+const props = defineProps<{
+  players: [IPlayer, IPlayer]
+  materialScore: { white: number; black: number }
+  winner: IPlayer | null
+  status: GameStatus
+  currentPlayer: IPlayer
+  onlineUsers: PresenceRef[]
+}>()
 
-const gameEventsStore = useGameEventsStore()
-const { onlineUsers } = storeToRefs(gameEventsStore)
+
 
 const presenceColor = (player: IPlayer) => {
-  const isOnline = onlineUsers.value.find(({ user }) => user === player.id)
+  const isOnline = props.onlineUsers.find(({ user }) => user === player.id)
   return isOnline ? 'bg-green-500' : 'bg-yellow-500'
 }
 
 const opponentMaterialScore = (color: 'white' | 'black') => {
   const opponentColor = color === 'white' ? 'black' : 'white'
-  return materialScore.value[opponentColor]
+  return props.materialScore[opponentColor]
 }
 
 const { t } = useI18n()
@@ -29,7 +31,7 @@ const getIcon = (color: Color, pieceType?: PieceType) => {
 }
 
 const isNotOver = computed(
-  () => !['not_started', 'checkmate', 'stalemate'].includes(status.value)
+  () => !['not_started', 'checkmate', 'stalemate'].includes(props.status)
 )
 
 const getTagType = (status: string) => {
