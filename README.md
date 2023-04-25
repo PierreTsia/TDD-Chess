@@ -1,4 +1,4 @@
-  <h1 align="center"><img src="./public/favicon.svg"  alt="chess"> Chess Game web app built with :</h1>
+<h1 align="center">  Chess Game web app built with :</h1>
 
 <p align='center'>
 <img src="./public/typescript.svg"  alt="ts">

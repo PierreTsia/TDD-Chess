@@ -1,11 +1,12 @@
 <script setup lang="ts">
-// https://github.com/vueuse/head
-// you can use this to manipulate the document head in any components,
-// they will be rendered correctly in the html results with vite-ssg
 useHead({
-  title: 'Tdd Chess in Typescript',
+  title: 'Online Chess Game',
   meta: [
-    { name: 'description', content: 'Opinionated Vite Starter Template' },
+    {
+      name: 'description',
+      content:
+        'Written in Typescript, built with Vue, powered by Supabase and hosted by Netlify',
+    },
     {
       name: 'theme-color',
       content: computed(() => (isDark.value ? '#00aba9' : '#ffffff')),
@@ -16,7 +17,7 @@ useHead({
     {
       rel: 'icon',
       type: 'image/svg+xml',
-      href: '/favicon.svg',
+      href: '/favicon2.svg',
     },
   ],
 })

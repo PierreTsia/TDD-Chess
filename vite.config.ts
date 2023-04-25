@@ -102,7 +102,7 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-pwa
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'safari-pinned-tab.svg'],
+      includeAssets: ['favicon2.svg', 'safari-pinned-tab.svg'],
       manifest: {
         name: 'Tdd Chess',
         short_name: 'Tdd Chess',
