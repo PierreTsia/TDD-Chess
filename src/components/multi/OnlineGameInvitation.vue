@@ -49,7 +49,7 @@ const isUserHost = computed(() => {
       }">
       <o-icon class="mr-1 w-4" name="i-tabler:chess" />
       {{
-        invitation.black_player.id === user.id
+        invitation.black_player.id === user?.id
           ? 'You'
           : invitation.black_player.username
       }}

@@ -7,7 +7,6 @@ defineProps<{
   userId: string
 }>()
 
-const router = useRouter()
 
 const onlineGamesStore = useOnlineGamesStore()
 const { gameInvites, sortedInvites } = storeToRefs(onlineGamesStore)
