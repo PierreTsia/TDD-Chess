@@ -115,7 +115,7 @@ watch(
       </div>
     </div>
     <div v-else>
-      <o-empty>No game found with id {{ route.params.id }}</o-empty>
+      <h1>NO GAME</h1>
     </div>
   </div>
 </template>

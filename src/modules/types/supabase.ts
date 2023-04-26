@@ -14,6 +14,10 @@ export type GameStateUpdate = Database['public']['Tables']['game_states']['Updat
 
 export type GameInsert = Database['public']['Tables']['games']['Insert']
 
+export type GameInviteInsert = Database['public']['Tables']['game_invites']['Insert']
+
+export type GameInviteData = Database['public']['Tables']['game_invites']['Row']
+
 export type Json =
   | string
   | number
@@ -107,6 +111,30 @@ export interface Database {
           updated_at?: string
           white_player_id?: string | null
           winner_id?: string | null
+        }
+      }
+      game_invites: {
+        Row: {
+          id: number
+          white_player_id: string
+          black_player_id: string
+          game_id: string | null
+          created_at: string
+          valid_until: string
+        }
+        Insert: {
+          white_player_id: string
+          black_player_id: string
+          game_id?: string | null
+          created_at?: string
+          valid_until?: string
+        }
+        Update: {
+          white_player_id?: string
+          black_player_id?: string
+          game_id?: string | null
+          created_at?: string
+          valid_until?: string
         }
       }
       users: {

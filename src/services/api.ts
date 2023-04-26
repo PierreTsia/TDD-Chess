@@ -8,6 +8,8 @@ import supabase from '~/modules/supabase'
 import type {
   ChatMessage,
   GameInsert,
+  GameInviteData,
+  GameInviteInsert,
   GameState,
   GameStateUpdate,
   GameUpdate,
@@ -87,6 +89,8 @@ export interface CrudService {
   postChatMessage(payload: PostChatPayload): Promise<void>
   createGame(payload: GameInsert): Promise<OnlineGame['id']>
   updateGame(payload: GameUpdate): Promise<OnlineGame>
+  createGameInvite(payload: GameInviteInsert): Promise<GameInviteData>
+  getGameInvites(userId: string): Promise<GameInviteData[]>
 }
 
 export interface MultiplayerService {
@@ -104,6 +108,48 @@ export class SupabaseService
   private POSTGRES_CHANGES = 'postgres_changes' as const
   private gamePlayersPresenceChannel!: RealtimeChannel
   private onlineUsersPresenceChannel!: RealtimeChannel
+
+  async createGameInvite(payload: GameInviteInsert): Promise<GameInviteData> {
+    const { data, error } = await supabase
+      .from('game_invites')
+      .insert(payload)
+      .select()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0]
+  }
+
+  async getGameInvites(userId: string): Promise<GameInviteData[]> {
+    const { data } = await supabase
+      .from('game_invites')
+      .select(
+        `
+      *,
+      game: game_id (
+        *,
+        white_player: white_player_id (
+          username,
+          id,
+          email
+        ),
+        black_player: black_player_id (
+          username,
+          id,
+          email
+        )
+      )
+    `
+      )
+      .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
+      .order('created_at', { ascending: false })
+
+    if (data) {
+      return data as GameInviteData[]
+    }
+    return []
+  }
 
   async createGame(payload: GameInsert): Promise<OnlineGame['id']> {
     const { data, error } = await supabase

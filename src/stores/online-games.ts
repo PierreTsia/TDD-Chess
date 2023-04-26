@@ -1,7 +1,11 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import type { OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGameData, OnlinePlayer, PresenceRef } from '~/services/api'
+import type { GameInviteData, OnlineGame } from '~/modules/types/supabase'
+import type {
+  MultiplayerGameData,
+  OnlinePlayer,
+  PresenceRef,
+} from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { useUserStore } from '~/stores/user'
 
@@ -12,6 +16,8 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   const { user } = storeToRefs(userStore)
 
   const onlineGames = ref<MultiplayerGameData[]>([])
+  const gameInvites = ref<GameInviteData[]>([])
+
   const currentGame = ref<MultiplayerGameData | null>(null)
   const registeredPlayers = ref<OnlinePlayer[]>([])
   const connectedPlayersIds = ref<string[]>([])
@@ -35,6 +41,10 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
 
   const fetchOnlinePlayers = async () => {
     registeredPlayers.value = await api.getUsers()
+  }
+
+  const fetchGameInvites = async () => {
+    gameInvites.value = await api.getGameInvites(user.value?.id as string)
   }
 
   const setCurrentGame = async (gameId: string) => {
@@ -112,6 +122,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     onlineUsers,
     connectedPlayersIds,
     fetchOnlinePlayers,
+    fetchGameInvites,
     registeredPlayers,
     availableOpponents,
     setCurrentGame,
