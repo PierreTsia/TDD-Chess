@@ -4,7 +4,7 @@ import { formatDistanceToNowStrict } from 'date-fns'
 import { useOnlineGamesStore } from '~/stores/online-games'
 import { MultiplayerGameInviteData } from '~/services/api'
 
-const props = defineProps<{
+defineProps<{
   userId: string
 }>()
 
@@ -14,8 +14,8 @@ const onlineGamesStore = useOnlineGamesStore()
 const { gameInvites } = storeToRefs(onlineGamesStore)
 
 onMounted(async () => {
-await onlineGamesStore.fetchGameInvites()
-  await onlineGamesStore.fetchOnlineGames(props.userId)
+  await onlineGamesStore.fetchGameInvites()
+  onlineGamesStore.subscribeToInvitations()
 })
 </script>
 
@@ -71,7 +71,7 @@ await onlineGamesStore.fetchGameInvites()
       <o-button
         size="sm"
         class="w-1/4"
-        @click="router.push(`multi/game/${game.id}`)">
+        @click="router.push(`multi/game/${invite.game_id}`)">
         Join
       </o-button>
     </div>

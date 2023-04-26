@@ -60,6 +60,10 @@ export type GameChatMessage = ChatMessage & {
 
 export interface SubscriptionService {
   subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
+  subscribeToGameInvitesFeed(
+    userId: string,
+    callBack: SubscriptionCallBack<GameInviteData>
+  ): void
   subscribeToGameEvents(
     gameId: string,
     callbacks: [
@@ -97,6 +101,7 @@ export interface CrudService {
     payload: GameInviteInsert
   ): Promise<MultiplayerGameInviteData>
   getGameInvites(userId: string): Promise<GameInviteData[]>
+  getGameInviteById(id: string): Promise<MultiplayerGameInviteData | null>
 }
 
 export interface MultiplayerService {
@@ -164,6 +169,34 @@ export class SupabaseService
       return data as MultiplayerGameInviteData[]
     }
     return []
+  }
+
+  async getGameInviteById(
+    id: string
+  ): Promise<MultiplayerGameInviteData | null> {
+    const { data, error } = await supabase
+      .from('game_invites')
+      .select(
+        `
+      *,
+      white_player: white_player_id (
+          username,
+          id,
+          email
+        ),
+        black_player: black_player_id (
+          username,
+          id,
+          email
+        )
+      `
+      )
+      .eq('id', id)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as MultiplayerGameInviteData
   }
 
   async createGame(payload: GameInsert): Promise<OnlineGame['id']> {
@@ -430,6 +463,29 @@ export class SupabaseService
       .subscribe((payload) => {
         // eslint-disable-next-line no-console
         console.log('Subscribe to Online Games:', payload)
+      })
+  }
+
+  subscribeToGameInvitesFeed(
+    userId: string,
+    callBack: SubscriptionCallBack<GameInviteData>
+  ) {
+    supabase
+      .channel('schema-db-changes')
+      .on(
+        this.POSTGRES_CHANGES,
+        {
+          event: '*',
+          schema: 'public',
+          table: 'game_invites',
+        },
+        (payload: RealtimePostgresChangesPayload<GameInviteData>) => {
+          callBack(payload)
+        }
+      )
+      .subscribe((payload) => {
+        // eslint-disable-next-line no-console
+        console.log('Subscribe to gameInvites:', payload)
       })
   }
 

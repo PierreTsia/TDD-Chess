@@ -43,8 +43,25 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     registeredPlayers.value = await api.getUsers()
   }
 
+  const subscribeToInvitations = () => {
+    api.subscribeToGameInvitesFeed(
+      user.value?.id as string,
+      async (payload) => {
+        const { eventType, new: newRecord, old: oldRecord } = payload
+        if (eventType === 'INSERT') {
+          const invite = await api.getGameInviteById(newRecord.id)
+          gameInvites.value.unshift(invite!)
+        } else if (eventType === 'DELETE') {
+          gameInvites.value = gameInvites.value.filter(
+            (invite) => invite.id !== oldRecord.id
+          )
+        }
+      }
+    )
+  }
   const fetchGameInvites = async () => {
     gameInvites.value = await api.getGameInvites(user.value?.id as string)
+    subscribeToInvitations()
   }
 
   const challengeToPlay = async (opponentId: string) => {
@@ -52,6 +69,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
       return
     }
     await api.createGameInvite({
+      host_id: user.value.id,
       white_player_id: user.value.id,
       black_player_id: opponentId,
     })
@@ -142,6 +160,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     currentGame,
     gameInvites,
     challengeToPlay,
+    subscribeToInvitations,
   }
 })
 
