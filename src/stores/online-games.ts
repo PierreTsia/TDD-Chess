@@ -1,12 +1,11 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import partition from 'lodash/partition'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import type { OnlineGame } from '~/modules/types/supabase'
+import type { GameInviteData, OnlineGame } from '~/modules/types/supabase'
 import type {
   MultiplayerGameData,
   MultiplayerGameInviteData,
   OnlinePlayer,
-  PresenceRef,
 } from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { useUserStore } from '~/stores/user'
@@ -49,32 +48,76 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     registeredPlayers.value = await api.getUsers()
   }
 
-  const subscribeToInvitations = () => {
-    api.subscribeToGameInvitesFeed(
-      user.value?.id as string,
-      async (payload) => {
-        const { eventType, new: newRecord, old: oldRecord } = payload
-        if (eventType === 'INSERT') {
-          const invite = await api.getGameInviteById(newRecord.id)
-          gameInvites.value.unshift(invite!)
-        } else if (eventType === 'DELETE') {
-          gameInvites.value = gameInvites.value.filter(
-            (invite) => invite.id !== oldRecord.id
-          )
-        } else if (eventType === 'UPDATE') {
-          const existingInviteIndex = gameInvites.value.findIndex(
-            (invite) => invite.id === newRecord.id
-          )
-          if (existingInviteIndex !== -1) {
-            const newInvite = {
-              ...gameInvites.value[existingInviteIndex],
-              ...newRecord,
-            }
-            gameInvites.value.splice(existingInviteIndex, 1, newInvite)
+  const handleGameUpdate = async (
+    payload: RealtimePostgresChangesPayload<OnlineGame>
+  ) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+
+    switch (eventType) {
+      case 'INSERT':
+        await setGameById(newRecord.id)
+        break
+      case 'UPDATE':
+        onlineGames.value = onlineGames.value.map((game) => {
+          if (game.id === newRecord.id) {
+            return { ...game, ...newRecord } as MultiplayerGameData
           }
-        }
-      }
+          return game
+        })
+        break
+      case 'DELETE':
+        onlineGames.value = onlineGames.value.filter(
+          (game) => game.id !== oldRecord.id
+        )
+        break
+      default:
+        break
+    }
+  }
+
+  const addNewInvitation = async (inviteId: string) => {
+    const invite = await api.getGameInviteById(inviteId)
+    gameInvites.value.unshift(invite!)
+  }
+
+  const updateInvitation = (newRecord: GameInviteData) => {
+    const existingInviteIndex = gameInvites.value.findIndex(
+      (invite) => invite.id === newRecord.id
     )
+    if (existingInviteIndex !== -1) {
+      const newInvite = {
+        ...gameInvites.value[existingInviteIndex],
+        ...newRecord,
+      } as MultiplayerGameInviteData
+      gameInvites.value.splice(existingInviteIndex, 1, newInvite)
+    }
+  }
+
+  const handleGameInvitationsChange = async (
+    payload: RealtimePostgresChangesPayload<GameInviteData>
+  ) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+
+    switch (eventType) {
+      case 'INSERT':
+        await addNewInvitation(newRecord.id)
+        break
+      case 'DELETE':
+        gameInvites.value = gameInvites.value.filter(
+          (invite) => invite.id !== oldRecord.id
+        )
+        break
+      case 'UPDATE':
+        updateInvitation(newRecord)
+        break
+    }
+  }
+
+  const subscribeToInvitations = () => {
+    api.subscribeToGameInvitesFeed(user.value?.id as string, [
+      handleGameInvitationsChange,
+      handleGameUpdate,
+    ])
   }
   const fetchGameInvites = async () => {
     gameInvites.value = await api.getGameInvites(user.value?.id as string)
@@ -126,55 +169,12 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     return gameId
   }
 
-  const handleGameUpdate = async (
-    payload: RealtimePostgresChangesPayload<OnlineGame>
-  ) => {
-    const { eventType, new: newRecord, old: oldRecord } = payload
-
-    switch (eventType) {
-      case 'INSERT':
-        await setGameById(newRecord.id)
-        break
-      case 'UPDATE':
-        onlineGames.value = onlineGames.value.map((game) => {
-          if (game.id === newRecord.id) {
-            return { ...game, ...newRecord } as MultiplayerGameData
-          }
-          return game
-        })
-        break
-      case 'DELETE':
-        onlineGames.value = onlineGames.value.filter(
-          (game) => game.id !== oldRecord.id
-        )
-        break
-      default:
-        break
-    }
-  }
-
-  const subscribeToOnlineGames = async () => {
-    api.subscribeToGamesFeed(handleGameUpdate)
-  }
-
-  const subscribeToOnlinePlayers = async () => {
-    api.subscribeToUsersPresence(
-      user.value?.id as string,
-      (usersRef: PresenceRef[]) => {
-        connectedPlayersIds.value = usersRef.map(({ user }) => user)
-      }
-    )
-  }
-
   const isOnline = (userId: string) => {
     return connectedPlayersIds.value.includes(userId)
   }
 
   const fetchOnlineGames = async (userId: string) => {
     onlineGames.value = await api.getGames(userId)
-
-    await subscribeToOnlineGames()
-    await subscribeToOnlinePlayers()
   }
 
   return {

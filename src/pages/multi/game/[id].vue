@@ -114,7 +114,7 @@ watch(
         <GameChat class="!max-w-[500px] max-h-[640px]" />
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="!isLoading">
       <h1>NO GAME</h1>
     </div>
   </div>

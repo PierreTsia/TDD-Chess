@@ -2,14 +2,12 @@
 import { storeToRefs } from 'pinia'
 import OnlineGameInvitation from '~/components/multi/OnlineGameInvitation.vue'
 import { useOnlineGamesStore } from '~/stores/online-games'
-
-defineProps<{
-  userId: string
-}>()
-
+import { useUserStore } from '~/stores/user'
 
 const onlineGamesStore = useOnlineGamesStore()
+const userStore = useUserStore()
 const { gameInvites, sortedInvites } = storeToRefs(onlineGamesStore)
+const { user } = storeToRefs(userStore)
 
 const myInvitations = computed(() => sortedInvites.value[0])
 const otherPlayersInvitations = computed(() => sortedInvites.value[1])
@@ -17,6 +15,7 @@ const otherPlayersInvitations = computed(() => sortedInvites.value[1])
 onMounted(async () => {
   await onlineGamesStore.fetchGameInvites()
   onlineGamesStore.subscribeToInvitations()
+  await onlineGamesStore.fetchOnlineGames(user.value?.id as string)
 })
 </script>
 
@@ -28,15 +27,15 @@ onMounted(async () => {
       </o-text>
     </template>
 
-    <div class="flex flex-col">
-      <span class="w-full">My Invites</span>
+    <div v-if="myInvitations.length" class="flex flex-col">
+      <span class="w-full my-2">My Invites</span>
       <OnlineGameInvitation
         v-for="invitation in myInvitations"
         :key="invitation.id"
         :invitation="invitation" />
     </div>
 
-    <div class="flex flex-col">
+    <div v-if="otherPlayersInvitations.length" class="flex flex-col">
       <span class="w-full">Challenges from other users</span>
 
       <OnlineGameInvitation

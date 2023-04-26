@@ -72,9 +72,10 @@ const acceptInvitation = async () => {
       <o-button
         v-if="!isUserHost"
         size="xs"
+        type="success"
         class="!w-[50px]"
         @click="acceptInvitation">
-        {{ 'Accept' }}
+        {{ gameIsCreated ? 'Join' : 'Accept' }}
       </o-button>
       <template v-else>
         <o-text v-if="!gameIsCreated" size="xs">
@@ -82,6 +83,7 @@ const acceptInvitation = async () => {
         </o-text>
         <o-button
           v-else
+          type="success"
           size="xs"
           class="!w-[50px]"
           @click="router.push(`multi/game/${invitation.game_id}`)">

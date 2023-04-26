@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import LoginCard from '~/components/auth/LoginCard.vue'
 import UserCard from '~/components/auth/UserCard.vue'
+import GamesList from '~/components/multi/GamesList.vue'
 import OnlineGameInvitationsList from '~/components/multi/OnlineGameInvitationsList.vue'
 import PlayersList from '~/components/multi/PlayersList.vue'
 import supabase from '~/modules/supabase'
@@ -32,7 +33,8 @@ onBeforeMount(async () => {
       <div v-else class="flex flex-col items-center w-[100vw] px-4">
         <UserCard />
         <PlayersList />
-        <OnlineGameInvitationsList :user-id="user?.id" />
+        <OnlineGameInvitationsList  />
+        <GamesList  />
       </div>
     </div>
   </div>

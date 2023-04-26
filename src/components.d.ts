@@ -17,6 +17,8 @@ declare module '@vue/runtime-core' {
     ChessBoard: typeof import('./components/chess/board/ChessBoard.vue')['default']
     ControlPanel: typeof import('./components/chess/ControlPanel.vue')['default']
     GameChat: typeof import('./components/multi/GameChat.vue')['default']
+    GamesList: typeof import('./components/multi/GamesList.vue')['default']
+    GameSummary: typeof import('./components/multi/GameSummary.vue')['default']
     KingBlack: typeof import('./components/chess/pieces/Black/KingBlack.vue')['default']
     KingWhite: typeof import('./components/chess/pieces/White/KingWhite.vue')['default']
     KnightBlack: typeof import('./components/chess/pieces/Black/KnightBlack.vue')['default']

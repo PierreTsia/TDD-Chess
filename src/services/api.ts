@@ -63,7 +63,10 @@ export interface SubscriptionService {
   subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
   subscribeToGameInvitesFeed(
     userId: string,
-    callBack: SubscriptionCallBack<GameInviteData>
+    callBacks: [
+      SubscriptionCallBack<GameInviteData>,
+      SubscriptionCallBack<OnlineGame>
+    ]
   ): void
   subscribeToGameEvents(
     gameId: string,
@@ -184,6 +187,7 @@ export class SupabaseService
       `
       )
       .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
+      .is('game_id', null)
       .order('created_at', { ascending: false })
 
     if (data) {
@@ -315,6 +319,7 @@ export class SupabaseService
     `
       )
       .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
+      .in('status', ['not_started', 'ongoing', 'check'])
       .order('created_at', { ascending: false })
 
     return (data ?? []) as MultiplayerGameData[]
@@ -489,7 +494,10 @@ export class SupabaseService
 
   subscribeToGameInvitesFeed(
     userId: string,
-    callBack: SubscriptionCallBack<GameInviteData>
+    callBacks: [
+      SubscriptionCallBack<GameInviteData>,
+      SubscriptionCallBack<OnlineGame>
+    ]
   ) {
     supabase
       .channel('schema-db-changes')
@@ -501,9 +509,21 @@ export class SupabaseService
           table: 'game_invites',
         },
         (payload: RealtimePostgresChangesPayload<GameInviteData>) => {
-          callBack(payload)
+          callBacks[0](payload)
         }
       )
+      .on(
+        this.POSTGRES_CHANGES,
+        {
+          event: '*',
+          schema: 'public',
+          table: 'games',
+        },
+        (payload: RealtimePostgresChangesPayload<OnlineGame>) => {
+          callBacks[1](payload)
+        }
+      )
+
       .subscribe((payload) => {
         // eslint-disable-next-line no-console
         console.log('Subscribe to gameInvites:', payload)
