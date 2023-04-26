@@ -47,6 +47,16 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     gameInvites.value = await api.getGameInvites(user.value?.id as string)
   }
 
+  const challengeToPlay = async (opponentId: string) => {
+    if (!user.value?.id) {
+      return
+    }
+    await api.createGameInvite({
+      white_player_id: user.value.id,
+      black_player_id: opponentId,
+    })
+  }
+
   const setCurrentGame = async (gameId: string) => {
     currentGame.value = await api.getGame(gameId)
   }
@@ -130,6 +140,8 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     createGame,
     onlineGames,
     currentGame,
+    gameInvites,
+    challengeToPlay,
   }
 })
 

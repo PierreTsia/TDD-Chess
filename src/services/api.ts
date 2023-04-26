@@ -23,6 +23,11 @@ interface PostChatPayload {
   userId: string
 }
 
+interface PlayerProperties {
+  white_player: OnlinePlayer
+  black_player: OnlinePlayer
+}
+
 export interface PresenceRef {
   presence_ref: string
   user: string
@@ -35,10 +40,9 @@ export type SubscriptionCallBack<T extends { [key: string]: any }> = (
 
 export type PresenceSubscriptionCallBack = (onlineUsers: PresenceRef[]) => void
 
-export type MultiplayerGameData = OnlineGame & {
-  white_player: OnlinePlayer
-  black_player: OnlinePlayer
-}
+export type MultiplayerGameData = OnlineGame & PlayerProperties
+
+export type MultiplayerGameInviteData = GameInviteData & PlayerProperties
 
 export type MultiplayerGameState = GameState & {
   game: MultiplayerGameData
@@ -89,7 +93,9 @@ export interface CrudService {
   postChatMessage(payload: PostChatPayload): Promise<void>
   createGame(payload: GameInsert): Promise<OnlineGame['id']>
   updateGame(payload: GameUpdate): Promise<OnlineGame>
-  createGameInvite(payload: GameInviteInsert): Promise<GameInviteData>
+  createGameInvite(
+    payload: GameInviteInsert
+  ): Promise<MultiplayerGameInviteData>
   getGameInvites(userId: string): Promise<GameInviteData[]>
 }
 
@@ -109,27 +115,13 @@ export class SupabaseService
   private gamePlayersPresenceChannel!: RealtimeChannel
   private onlineUsersPresenceChannel!: RealtimeChannel
 
-  async createGameInvite(payload: GameInviteInsert): Promise<GameInviteData> {
-    const { data, error } = await supabase
-      .from('game_invites')
-      .insert(payload)
-      .select()
-
-    if (error) {
-      throw new Error(error.message)
-    }
-    return data![0]
-  }
-
-  async getGameInvites(userId: string): Promise<GameInviteData[]> {
-    const { data } = await supabase
-      .from('game_invites')
-      .select(
-        `
+  async createGameInvite(
+    payload: GameInviteInsert
+  ): Promise<MultiplayerGameInviteData> {
+    const { data, error } = await supabase.from('game_invites').insert(payload)
+      .select(`
       *,
-      game: game_id (
-        *,
-        white_player: white_player_id (
+      white_player: white_player_id (
           username,
           id,
           email
@@ -139,14 +131,37 @@ export class SupabaseService
           id,
           email
         )
-      )
-    `
+      `)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as MultiplayerGameInviteData
+  }
+
+  async getGameInvites(userId: string): Promise<MultiplayerGameInviteData[]> {
+    const { data } = await supabase
+      .from('game_invites')
+      .select(
+        `
+      *,
+      white_player: white_player_id (
+          username,
+          id,
+          email
+        ),
+        black_player: black_player_id (
+          username,
+          id,
+          email
+        )
+      `
       )
       .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
       .order('created_at', { ascending: false })
 
     if (data) {
-      return data as GameInviteData[]
+      return data as MultiplayerGameInviteData[]
     }
     return []
   }
