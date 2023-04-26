@@ -1,8 +1,10 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import partition from 'lodash/partition'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import type { GameInviteData, OnlineGame } from '~/modules/types/supabase'
+import type { OnlineGame } from '~/modules/types/supabase'
 import type {
   MultiplayerGameData,
+  MultiplayerGameInviteData,
   OnlinePlayer,
   PresenceRef,
 } from '~/services/api'
@@ -16,7 +18,11 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   const { user } = storeToRefs(userStore)
 
   const onlineGames = ref<MultiplayerGameData[]>([])
-  const gameInvites = ref<GameInviteData[]>([])
+  const gameInvites = ref<MultiplayerGameInviteData[]>([])
+
+  const sortedInvites = computed(() =>
+    partition(gameInvites.value, (invite) => invite?.host_id === user.value?.id)
+  )
 
   const currentGame = ref<MultiplayerGameData | null>(null)
   const registeredPlayers = ref<OnlinePlayer[]>([])
@@ -68,6 +74,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     if (!user.value?.id) {
       return
     }
+
     await api.createGameInvite({
       host_id: user.value.id,
       white_player_id: user.value.id,
@@ -146,6 +153,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   }
 
   return {
+    sortedInvites,
     isOnline,
     onlineUsers,
     connectedPlayersIds,
