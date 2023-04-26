@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia'
 import { useOnlineGamesStore } from '~/stores/online-games'
 
-const router = useRouter()
 
 const onlineGamesStore = useOnlineGamesStore()
 const { availableOpponents } = storeToRefs(onlineGamesStore)
@@ -25,13 +24,12 @@ const handlePlayerClick = (id: string) => {
   setSelectPlayerId(newSelectedPlayerId)
 }
 
-const handleCreateGame = () => {
+const handleChallengePlayer = () => {
   if (!selectedPlayerId.value) {
     return
   }
-  onlineGamesStore.createGame(selectedPlayerId.value, (gameId: string) =>
-    router.push(`/multi/game/${gameId}`)
-  )
+
+  onlineGamesStore.challengeToPlay(selectedPlayerId.value)
   setSelectPlayerId(null)
 }
 
@@ -77,7 +75,7 @@ onMounted(async () => {
         :disabled="!selectedPlayerId"
         type="success"
         class="w-[300px]"
-        @click="handleCreateGame">
+        @click="handleChallengePlayer">
         {{
           !selectedPlayerId
             ? 'Select a player to start a game'

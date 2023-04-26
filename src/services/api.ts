@@ -8,6 +8,9 @@ import supabase from '~/modules/supabase'
 import type {
   ChatMessage,
   GameInsert,
+  GameInviteData,
+  GameInviteInsert,
+  GameInviteUpdate,
   GameState,
   GameStateUpdate,
   GameUpdate,
@@ -19,6 +22,11 @@ interface PostChatPayload {
   gameId: string
   content: string
   userId: string
+}
+
+interface PlayerProperties {
+  white_player: OnlinePlayer
+  black_player: OnlinePlayer
 }
 
 export interface PresenceRef {
@@ -33,10 +41,9 @@ export type SubscriptionCallBack<T extends { [key: string]: any }> = (
 
 export type PresenceSubscriptionCallBack = (onlineUsers: PresenceRef[]) => void
 
-export type MultiplayerGameData = OnlineGame & {
-  white_player: OnlinePlayer
-  black_player: OnlinePlayer
-}
+export type MultiplayerGameData = OnlineGame & PlayerProperties
+
+export type MultiplayerGameInviteData = GameInviteData & PlayerProperties
 
 export type MultiplayerGameState = GameState & {
   game: MultiplayerGameData
@@ -54,6 +61,13 @@ export type GameChatMessage = ChatMessage & {
 
 export interface SubscriptionService {
   subscribeToGamesFeed(callBack: SubscriptionCallBack<OnlineGame>): void
+  subscribeToGameInvitesFeed(
+    userId: string,
+    callBacks: [
+      SubscriptionCallBack<GameInviteData>,
+      SubscriptionCallBack<OnlineGame>
+    ]
+  ): void
   subscribeToGameEvents(
     gameId: string,
     callbacks: [
@@ -87,6 +101,15 @@ export interface CrudService {
   postChatMessage(payload: PostChatPayload): Promise<void>
   createGame(payload: GameInsert): Promise<OnlineGame['id']>
   updateGame(payload: GameUpdate): Promise<OnlineGame>
+  createGameInvite(
+    payload: GameInviteInsert
+  ): Promise<MultiplayerGameInviteData>
+  updateGameInvite(
+    inviteId: string,
+    payload: GameStateUpdate
+  ): Promise<GameInviteData>
+  getGameInvites(userId: string): Promise<GameInviteData[]>
+  getGameInviteById(id: string): Promise<MultiplayerGameInviteData | null>
 }
 
 export interface MultiplayerService {
@@ -104,6 +127,102 @@ export class SupabaseService
   private POSTGRES_CHANGES = 'postgres_changes' as const
   private gamePlayersPresenceChannel!: RealtimeChannel
   private onlineUsersPresenceChannel!: RealtimeChannel
+
+  async createGameInvite(
+    payload: GameInviteInsert
+  ): Promise<MultiplayerGameInviteData> {
+    const { data, error } = await supabase.from('game_invites').insert(payload)
+      .select(`
+      *,
+      white_player: white_player_id (
+          username,
+          id,
+          email
+        ),
+        black_player: black_player_id (
+          username,
+          id,
+          email
+        )
+      `)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as MultiplayerGameInviteData
+  }
+
+  async updateGameInvite(
+    inviteId: string,
+    payload: GameInviteUpdate
+  ): Promise<GameInviteData> {
+    const { data, error } = await supabase
+      .from('game_invites')
+      .update(payload)
+      .eq('id', inviteId)
+      .select()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as GameInviteData
+  }
+
+  async getGameInvites(userId: string): Promise<MultiplayerGameInviteData[]> {
+    const { data } = await supabase
+      .from('game_invites')
+      .select(
+        `
+      *,
+      white_player: white_player_id (
+          username,
+          id,
+          email
+        ),
+        black_player: black_player_id (
+          username,
+          id,
+          email
+        )
+      `
+      )
+      .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
+      .is('game_id', null)
+      .order('created_at', { ascending: false })
+
+    if (data) {
+      return data as MultiplayerGameInviteData[]
+    }
+    return []
+  }
+
+  async getGameInviteById(
+    id: string
+  ): Promise<MultiplayerGameInviteData | null> {
+    const { data, error } = await supabase
+      .from('game_invites')
+      .select(
+        `
+      *,
+      white_player: white_player_id (
+          username,
+          id,
+          email
+        ),
+        black_player: black_player_id (
+          username,
+          id,
+          email
+        )
+      `
+      )
+      .eq('id', id)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as MultiplayerGameInviteData
+  }
 
   async createGame(payload: GameInsert): Promise<OnlineGame['id']> {
     const { data, error } = await supabase
@@ -200,6 +319,7 @@ export class SupabaseService
     `
       )
       .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`)
+      .in('status', ['not_started', 'ongoing', 'check'])
       .order('created_at', { ascending: false })
 
     return (data ?? []) as MultiplayerGameData[]
@@ -369,6 +489,44 @@ export class SupabaseService
       .subscribe((payload) => {
         // eslint-disable-next-line no-console
         console.log('Subscribe to Online Games:', payload)
+      })
+  }
+
+  subscribeToGameInvitesFeed(
+    userId: string,
+    callBacks: [
+      SubscriptionCallBack<GameInviteData>,
+      SubscriptionCallBack<OnlineGame>
+    ]
+  ) {
+    supabase
+      .channel('schema-db-changes')
+      .on(
+        this.POSTGRES_CHANGES,
+        {
+          event: '*',
+          schema: 'public',
+          table: 'game_invites',
+        },
+        (payload: RealtimePostgresChangesPayload<GameInviteData>) => {
+          callBacks[0](payload)
+        }
+      )
+      .on(
+        this.POSTGRES_CHANGES,
+        {
+          event: '*',
+          schema: 'public',
+          table: 'games',
+        },
+        (payload: RealtimePostgresChangesPayload<OnlineGame>) => {
+          callBacks[1](payload)
+        }
+      )
+
+      .subscribe((payload) => {
+        // eslint-disable-next-line no-console
+        console.log('Subscribe to gameInvites:', payload)
       })
   }
 

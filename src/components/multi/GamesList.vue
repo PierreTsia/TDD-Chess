@@ -1,20 +1,17 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { formatDistanceToNowStrict } from 'date-fns'
+import GameSummary from '~/components/multi/GameSummary.vue'
 import { useOnlineGamesStore } from '~/stores/online-games'
-import { MultiplayerGameData } from '~/services/api'
+import { useUserStore } from '~/stores/user'
 
-const props = defineProps<{
-  userId: string
-}>()
-
-const router = useRouter()
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 
 const onlineGamesStore = useOnlineGamesStore()
 const { onlineGames } = storeToRefs(onlineGamesStore)
 
 onMounted(async () => {
-  await onlineGamesStore.fetchOnlineGames(props.userId)
+  await onlineGamesStore.fetchOnlineGames(user.value?.id as string)
 })
 </script>
 
@@ -26,53 +23,6 @@ onMounted(async () => {
       </o-text>
     </template>
 
-    <div
-      v-for="game in onlineGames"
-      :key="game.id"
-      class="flex items-center justify-evenly w-full mb-4">
-      <o-text size="sm" font="thin" class="w-1/4">
-        {{
-          formatDistanceToNowStrict(
-              new Date((game as MultiplayerGameData).created_at)
-          )
-        }}
-        ago
-      </o-text>
-      <o-text
-        size="sm"
-        font="thin"
-        class="w-1/4 flex justify-end mr-2"
-        :class="{
-        '!text-teal-500': (game as MultiplayerGameData).white_player.id === userId,
-      }">
-        {{
-          (game as MultiplayerGameData).white_player.id === userId
-              ? 'You'
-              : (game as MultiplayerGameData).white_player.username
-        }}
-        <o-icon class="ml-1 w-4" name="i-tabler:chess-filled" />
-      </o-text>
-      <o-text
-        size="sm"
-        font="thin"
-        class="w-1/4 flex justify-start"
-        :class="{
-        '!text-teal-500': (game as MultiplayerGameData).black_player.id === userId,
-      }">
-        <o-icon class="mr-1 w-4" name="i-tabler:chess" />
-        {{
-          (game as MultiplayerGameData).black_player.id === userId
-              ? 'You'
-              : (game as MultiplayerGameData).black_player.username
-        }}
-      </o-text>
-
-      <o-button
-        size="sm"
-        class="w-1/4"
-        @click="router.push(`multi/game/${game.id}`)">
-        Join
-      </o-button>
-    </div>
+    <GameSummary v-for="game in onlineGames" :key="game.id" :game="game" />
   </o-card>
 </template>

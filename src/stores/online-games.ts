@@ -1,7 +1,12 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import partition from 'lodash/partition'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import type { OnlineGame } from '~/modules/types/supabase'
-import type { MultiplayerGameData, OnlinePlayer, PresenceRef } from '~/services/api'
+import type { GameInviteData, OnlineGame } from '~/modules/types/supabase'
+import type {
+  MultiplayerGameData,
+  MultiplayerGameInviteData,
+  OnlinePlayer,
+} from '~/services/api'
 import { SupabaseService } from '~/services/api'
 import { useUserStore } from '~/stores/user'
 
@@ -12,6 +17,12 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
   const { user } = storeToRefs(userStore)
 
   const onlineGames = ref<MultiplayerGameData[]>([])
+  const gameInvites = ref<MultiplayerGameInviteData[]>([])
+
+  const sortedInvites = computed(() =>
+    partition(gameInvites.value, (invite) => invite?.host_id === user.value?.id)
+  )
+
   const currentGame = ref<MultiplayerGameData | null>(null)
   const registeredPlayers = ref<OnlinePlayer[]>([])
   const connectedPlayersIds = ref<string[]>([])
@@ -35,25 +46,6 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
 
   const fetchOnlinePlayers = async () => {
     registeredPlayers.value = await api.getUsers()
-  }
-
-  const setCurrentGame = async (gameId: string) => {
-    currentGame.value = await api.getGame(gameId)
-  }
-
-  const createGame = async (
-    opponentId: string,
-    callBack?: (id: string) => void
-  ) => {
-    const gameId = await api.createGame({
-      white_player_id: user.value?.id,
-      black_player_id: opponentId,
-      status: 'not_started',
-    })
-
-    if (callBack) {
-      callBack(gameId)
-    }
   }
 
   const handleGameUpdate = async (
@@ -83,17 +75,98 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     }
   }
 
-  const subscribeToOnlineGames = async () => {
-    api.subscribeToGamesFeed(handleGameUpdate)
+  const addNewInvitation = async (inviteId: string) => {
+    const invite = await api.getGameInviteById(inviteId)
+    gameInvites.value.unshift(invite!)
   }
 
-  const subscribeToOnlinePlayers = async () => {
-    api.subscribeToUsersPresence(
-      user.value?.id as string,
-      (usersRef: PresenceRef[]) => {
-        connectedPlayersIds.value = usersRef.map(({ user }) => user)
-      }
+  const updateInvitation = (newRecord: GameInviteData) => {
+    const existingInviteIndex = gameInvites.value.findIndex(
+      (invite) => invite.id === newRecord.id
     )
+    if (existingInviteIndex !== -1) {
+      const newInvite = {
+        ...gameInvites.value[existingInviteIndex],
+        ...newRecord,
+      } as MultiplayerGameInviteData
+      gameInvites.value.splice(existingInviteIndex, 1, newInvite)
+    }
+  }
+
+  const handleGameInvitationsChange = async (
+    payload: RealtimePostgresChangesPayload<GameInviteData>
+  ) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+
+    switch (eventType) {
+      case 'INSERT':
+        await addNewInvitation(newRecord.id)
+        break
+      case 'DELETE':
+        gameInvites.value = gameInvites.value.filter(
+          (invite) => invite.id !== oldRecord.id
+        )
+        break
+      case 'UPDATE':
+        updateInvitation(newRecord)
+        break
+    }
+  }
+
+  const subscribeToInvitations = () => {
+    api.subscribeToGameInvitesFeed(user.value?.id as string, [
+      handleGameInvitationsChange,
+      handleGameUpdate,
+    ])
+  }
+  const fetchGameInvites = async () => {
+    gameInvites.value = await api.getGameInvites(user.value?.id as string)
+    subscribeToInvitations()
+  }
+
+  const challengeToPlay = async (opponentId: string) => {
+    if (!user.value?.id) {
+      return
+    }
+
+    await api.createGameInvite({
+      host_id: user.value.id,
+      white_player_id: user.value.id,
+      black_player_id: opponentId,
+    })
+  }
+
+  const setCurrentGame = async (gameId: string) => {
+    currentGame.value = await api.getGame(gameId)
+  }
+
+  const createGame = async (
+    opponentId: string,
+    callBack?: (id: string) => void
+  ) => {
+    const gameId = await api.createGame({
+      white_player_id: user.value?.id,
+      black_player_id: opponentId,
+      status: 'not_started',
+    })
+
+    if (callBack) {
+      callBack(gameId)
+    }
+  }
+
+  const createGameFromInvitation = async (
+    invitation: MultiplayerGameInviteData
+  ) => {
+    const gameId = await api.createGame({
+      white_player_id: invitation.white_player_id,
+      black_player_id: invitation.black_player_id,
+      status: 'not_started',
+    })
+
+    await api.updateGameInvite(invitation.id, { game_id: gameId })
+
+    return gameId
   }
 
   const isOnline = (userId: string) => {
@@ -102,16 +175,15 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
 
   const fetchOnlineGames = async (userId: string) => {
     onlineGames.value = await api.getGames(userId)
-
-    await subscribeToOnlineGames()
-    await subscribeToOnlinePlayers()
   }
 
   return {
+    sortedInvites,
     isOnline,
     onlineUsers,
     connectedPlayersIds,
     fetchOnlinePlayers,
+    fetchGameInvites,
     registeredPlayers,
     availableOpponents,
     setCurrentGame,
@@ -119,6 +191,10 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     createGame,
     onlineGames,
     currentGame,
+    gameInvites,
+    challengeToPlay,
+    subscribeToInvitations,
+    createGameFromInvitation,
   }
 })
 
