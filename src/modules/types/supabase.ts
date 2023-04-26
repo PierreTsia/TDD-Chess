@@ -20,6 +20,8 @@ export type GameInviteInsert =
 
 export type GameInviteData = Database['public']['Tables']['game_invites']['Row']
 
+export type GameInviteUpdate = Database['public']['Tables']['game_invites']['Update']
+
 export type Json =
   | string
   | number

@@ -10,6 +10,7 @@ import type {
   GameInsert,
   GameInviteData,
   GameInviteInsert,
+  GameInviteUpdate,
   GameState,
   GameStateUpdate,
   GameUpdate,
@@ -100,6 +101,10 @@ export interface CrudService {
   createGameInvite(
     payload: GameInviteInsert
   ): Promise<MultiplayerGameInviteData>
+  updateGameInvite(
+    inviteId: string,
+    payload: GameStateUpdate
+  ): Promise<GameInviteData>
   getGameInvites(userId: string): Promise<GameInviteData[]>
   getGameInviteById(id: string): Promise<MultiplayerGameInviteData | null>
 }
@@ -142,6 +147,22 @@ export class SupabaseService
       throw new Error(error.message)
     }
     return data![0] as MultiplayerGameInviteData
+  }
+
+  async updateGameInvite(
+    inviteId: string,
+    payload: GameInviteUpdate
+  ): Promise<GameInviteData> {
+    const { data, error } = await supabase
+      .from('game_invites')
+      .update(payload)
+      .eq('id', inviteId)
+      .select()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as GameInviteData
   }
 
   async getGameInvites(userId: string): Promise<MultiplayerGameInviteData[]> {

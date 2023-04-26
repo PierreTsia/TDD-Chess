@@ -24,7 +24,7 @@ const handlePlayerClick = (id: string) => {
   setSelectPlayerId(newSelectedPlayerId)
 }
 
-const handleCreateGame = () => {
+const handleChallengePlayer = () => {
   if (!selectedPlayerId.value) {
     return
   }
@@ -75,7 +75,7 @@ onMounted(async () => {
         :disabled="!selectedPlayerId"
         type="success"
         class="w-[300px]"
-        @click="handleCreateGame">
+        @click="handleChallengePlayer">
         {{
           !selectedPlayerId
             ? 'Select a player to start a game'

@@ -61,6 +61,17 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
           gameInvites.value = gameInvites.value.filter(
             (invite) => invite.id !== oldRecord.id
           )
+        } else if (eventType === 'UPDATE') {
+          const existingInviteIndex = gameInvites.value.findIndex(
+            (invite) => invite.id === newRecord.id
+          )
+          if (existingInviteIndex !== -1) {
+            const newInvite = {
+              ...gameInvites.value[existingInviteIndex],
+              ...newRecord,
+            }
+            gameInvites.value.splice(existingInviteIndex, 1, newInvite)
+          }
         }
       }
     )
@@ -99,6 +110,20 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     if (callBack) {
       callBack(gameId)
     }
+  }
+
+  const createGameFromInvitation = async (
+    invitation: MultiplayerGameInviteData
+  ) => {
+    const gameId = await api.createGame({
+      white_player_id: invitation.white_player_id,
+      black_player_id: invitation.black_player_id,
+      status: 'not_started',
+    })
+
+    await api.updateGameInvite(invitation.id, { game_id: gameId })
+
+    return gameId
   }
 
   const handleGameUpdate = async (
@@ -169,6 +194,7 @@ export const useOnlineGamesStore = defineStore('onlineGames', () => {
     gameInvites,
     challengeToPlay,
     subscribeToInvitations,
+    createGameFromInvitation,
   }
 })
 
