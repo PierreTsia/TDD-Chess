@@ -16,9 +16,10 @@ Deployed with <b><a href="https://www.netlify.com/">Netlify</a></b> <sup><em>(fr
 
 <br>
 
-<p align="center">
-<img src="./public/screenshot.png" width="3358" alt="screenshot">
-</p>
+<div align="center" style="{ display: flex; justify-items: center; align-items: center}">
+<img src="./public/screenshot.png" width="400" alt="screenshot">
+<img src="./public/screenshot2.png" width="200" alt="screenshot2">
+</div>
 
 <p align='center'>
 <a href="https://fastidious-swan-5709df.netlify.app/">Live Demo</a>
@@ -210,6 +211,43 @@ CREATE POLICY chat_messages_delete
 -- Enable RLS on the `chat_messages` table:
 
 ALTER TABLE chat_messages FORCE ROW LEVEL SECURITY;
+
+-- view for player statistics
+DROP VIEW IF EXISTS player_statistics;
+
+CREATE OR REPLACE VIEW player_statistics AS
+SELECT
+  player_id,
+  COUNT(*) AS total_games,
+  COUNT(*) FILTER (WHERE win) AS wins,
+  COUNT(*) FILTER (WHERE NOT win AND winner_id IS NOT NULL) AS losses,
+  COUNT(*) FILTER (WHERE win AND white_player) AS wins_as_white,
+  COUNT(*) FILTER (WHERE win AND NOT white_player) AS wins_as_black
+FROM
+  (
+    SELECT
+      white_player_id AS player_id,
+      winner_id = white_player_id AS win,
+      true AS white_player,
+      winner_id
+    FROM
+      games
+    WHERE
+      white_player_id IS NOT NULL
+    UNION ALL
+    SELECT
+      black_player_id AS player_id,
+      winner_id = black_player_id AS win,
+      false AS white_player,
+      winner_id
+    FROM
+      games
+    WHERE
+      black_player_id IS NOT NULL
+  ) AS game_results
+GROUP BY
+  player_id;
+
 
 ```
 
