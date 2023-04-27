@@ -16,6 +16,7 @@ import type {
   GameUpdate,
   Json,
   OnlineGame,
+  PlayerStatistics,
 } from '~/modules/types/supabase'
 
 interface PostChatPayload {
@@ -91,6 +92,10 @@ export interface SubscriptionService {
   unsubscribeFromUsersPresence(): void
 }
 
+export interface AnalyticsService {
+  getPlayerAnalytics(userId: string): Promise<PlayerStatistics>
+}
+
 export interface CrudService {
   getGame(gameId: string): Promise<MultiplayerGameData | null>
   getGames(userId: string): Promise<MultiplayerGameData[]>
@@ -122,11 +127,27 @@ export interface MultiplayerService {
 }
 
 export class SupabaseService
-  implements CrudService, MultiplayerService, SubscriptionService
+  implements
+    CrudService,
+    MultiplayerService,
+    SubscriptionService,
+    AnalyticsService
 {
   private POSTGRES_CHANGES = 'postgres_changes' as const
   private gamePlayersPresenceChannel!: RealtimeChannel
   private onlineUsersPresenceChannel!: RealtimeChannel
+
+  async getPlayerAnalytics(userId: string): Promise<PlayerStatistics> {
+    const { data, error } = await supabase
+      .from('player_statistics')
+      .select()
+      .eq('player_id', userId)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return data![0] as PlayerStatistics
+  }
 
   async createGameInvite(
     payload: GameInviteInsert

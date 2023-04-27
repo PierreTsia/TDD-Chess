@@ -5,12 +5,18 @@ import UserCard from '~/components/auth/UserCard.vue'
 import GamesList from '~/components/multi/GamesList.vue'
 import OnlineGameInvitationsList from '~/components/multi/OnlineGameInvitationsList.vue'
 import PlayersList from '~/components/multi/PlayersList.vue'
+import Statistics from '~/components/multi/Statistics.vue'
 import supabase from '~/modules/supabase'
+
+
 import { useUserStore } from '~/stores/user'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 const isLoading = ref(false)
+
+
+
 
 onBeforeMount(async () => {
   isLoading.value = true
@@ -19,6 +25,7 @@ onBeforeMount(async () => {
 
     if (data?.session?.user?.id) {
       await userStore.getUserFromId(data.session.user.id)
+
     }
   }
   isLoading.value = false
@@ -32,9 +39,10 @@ onBeforeMount(async () => {
       <LoginCard v-if="!user" />
       <div v-else class="flex flex-col items-center w-[100vw] px-4">
         <UserCard />
+        <Statistics  />
         <PlayersList />
-        <OnlineGameInvitationsList  />
-        <GamesList  />
+        <OnlineGameInvitationsList />
+        <GamesList />
       </div>
     </div>
   </div>
