@@ -20,7 +20,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <o-card class="!max-w-[800px] mt-10 min-h-[200px] rounded">
+  <o-card class="!max-w-[800px] mt-10 min-h-[100px] rounded">
     <template #header>
       <o-text size="xl" font="bold" class="w-full !text-teal-500"
         >Invitations ({{ gameInvites.length }})
