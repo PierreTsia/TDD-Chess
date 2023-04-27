@@ -1,40 +1,43 @@
 <script lang="ts" setup>
-import type { PlayerStatistics } from '~/modules/types/supabase'
+import { storeToRefs } from 'pinia'
+import { useOnlineGamesStore } from '~/stores/online-games'
 
-const props = defineProps<{
-  stats: PlayerStatistics
-}>()
+const onlineGamesStore = useOnlineGamesStore()
+const { statistics } = storeToRefs(onlineGamesStore)
+
+onBeforeMount(async () => {
+  await onlineGamesStore.fetchUserStatistics()
+})
 
 const percentageOfWins = computed<number>(() => {
-  if (!props.stats) {
+  if (!statistics.value) {
     return 0
   }
   return +(
-    (props.stats.wins! / props.stats.total_games!) *
+    (statistics.value.wins! / statistics.value.total_games!) *
     100
   ).toFixed(1)
 })
 
 const percentageOfWinsAsWhite = computed<number>(() => {
-  if (!props.stats) {
+  if (!statistics.value) {
     return 0
   }
   return +(
-    (props.stats.wins_as_white! / props.stats.wins!) *
+    (statistics.value.wins_as_white! / statistics.value.wins!) *
     100
   ).toFixed(1)
 })
 
 const percentageOfWinsAsBlack = computed<number>(() => {
-  if (!props.stats) {
+  if (!statistics.value) {
     return 0
   }
   return +(
-    (props.stats.wins_as_black! / props.stats.wins!) *
+    (statistics.value.wins_as_black! / statistics.value.wins!) *
     100
   ).toFixed(1)
 })
-
 </script>
 
 <template>
@@ -47,7 +50,9 @@ const percentageOfWinsAsBlack = computed<number>(() => {
 
     <div class="flex flex-col gap-y-2">
       <o-text size="sm" class="w-full text-left"
-        >Win ratio ({{ stats?.wins }}/{{ stats?.total_games }})</o-text
+        >Win ratio ({{ statistics?.wins }}/{{
+          statistics?.total_games
+        }})</o-text
       >
       <o-progress
         :percentage="percentageOfWins"
@@ -56,8 +61,8 @@ const percentageOfWinsAsBlack = computed<number>(() => {
         :bg-color="percentageOfWins > 50 ? 'success' : 'warning'"
         striped />
       <o-text size="sm" class="w-full text-left"
-        >Win as white ({{ stats?.wins_as_white }}/{{
-          stats?.wins
+        >Win as white ({{ statistics?.wins_as_white }}/{{
+          statistics?.wins
         }})</o-text
       >
       <o-progress
@@ -67,8 +72,8 @@ const percentageOfWinsAsBlack = computed<number>(() => {
         :bg-color="percentageOfWinsAsWhite > 50 ? 'success' : 'warning'"
         striped />
       <o-text size="sm" class="w-full text-left"
-        >Win as Black ({{ stats?.wins_as_black }}/{{
-          stats?.wins
+        >Win as Black ({{ statistics?.wins_as_black }}/{{
+          statistics?.wins
         }})</o-text
       >
       <o-progress

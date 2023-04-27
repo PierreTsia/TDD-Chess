@@ -7,15 +7,16 @@ import OnlineGameInvitationsList from '~/components/multi/OnlineGameInvitationsL
 import PlayersList from '~/components/multi/PlayersList.vue'
 import Statistics from '~/components/multi/Statistics.vue'
 import supabase from '~/modules/supabase'
-import { PlayerStatistics } from '~/modules/types/supabase'
-import { SupabaseService } from '~/services/api'
+
+
 import { useUserStore } from '~/stores/user'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 const isLoading = ref(false)
 
-const stats = ref<PlayerStatistics | null>(null)
+
+
 
 onBeforeMount(async () => {
   isLoading.value = true
@@ -24,8 +25,7 @@ onBeforeMount(async () => {
 
     if (data?.session?.user?.id) {
       await userStore.getUserFromId(data.session.user.id)
-      const api = new SupabaseService()
-      stats.value = await api.getPlayerAnalytics(data.session.user.id)
+
     }
   }
   isLoading.value = false
@@ -39,7 +39,7 @@ onBeforeMount(async () => {
       <LoginCard v-if="!user" />
       <div v-else class="flex flex-col items-center w-[100vw] px-4">
         <UserCard />
-        <Statistics v-if="stats" :stats="stats as PlayerStatistics" />
+        <Statistics  />
         <PlayersList />
         <OnlineGameInvitationsList />
         <GamesList />
