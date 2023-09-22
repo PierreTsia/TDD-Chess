@@ -1,14 +1,13 @@
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { onKeyStroke } from '@vueuse/core'
 
-export const useBreakPoints = () => {
-  const breakpoints = useBreakpoints(breakpointsTailwind)
-  const mobile = breakpoints.smaller('md')
-  const desktop = breakpoints.greaterOrEqual('lg')
-  const tablet = computed(() => !mobile.value && !desktop.value)
+export const useKeyboardShortCuts = () => {
+  const onEnterKey = (callback: () => void) =>
+        onKeyStroke('Enter', (e) => {
+      e.preventDefault()
+      callback()
+    })
 
   return {
-    mobile,
-    desktop,
-    tablet,
+    onEnterKey,
   }
 }
