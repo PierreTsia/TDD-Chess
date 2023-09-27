@@ -1,13 +1,17 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import type { Ref } from 'vue'
 import uniqBy from 'lodash/uniqBy'
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import {acceptHMRUpdate, defineStore, storeToRefs} from 'pinia'
 import type { ChatMessage } from '~/modules/types/supabase'
 import type { GameChatMessage } from '~/services/api'
 import { SupabaseService } from '~/services/api'
+import {useUserStore} from "~/stores/user";
 
 export const useChatStore = defineStore('chat', () => {
   const api = new SupabaseService()
+  const userStore = useUserStore()
+
+  const { user } = storeToRefs(userStore)
 
   const messageFeed: Ref<Record<string, GameChatMessage[]>> = ref({})
   const unreadMessagesCount: Ref<Record<string, number>> = ref({})
@@ -33,8 +37,10 @@ export const useChatStore = defineStore('chat', () => {
       ...newMessage,
       user: chatUser!,
     })
-    unreadMessagesCount.value[gameId] =
-      (unreadMessagesCount.value[gameId] || 0) + 1
+    if (user.value?.id !== newMessage.user_id) {
+      unreadMessagesCount.value[gameId] =
+          (unreadMessagesCount.value[gameId] || 0) + 1
+    }
   }
 
   const readMessages = (gameId: string) => {
