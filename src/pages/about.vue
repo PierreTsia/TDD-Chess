@@ -3,7 +3,8 @@ import { SQL_COMMANDS } from '~/pages/SQL_COMMANDS'
 </script>
 
 <template>
-  <div class="flex flex-col space-y-6 max-w-[900px] mx-auto bg-gray-100 dark:bg-opacity-10 rounded p-4">
+  <div
+    class="flex flex-col space-y-6 max-w-[900px] mx-auto bg-gray-100 dark:bg-opacity-10 rounded p-4">
     <!-- Title section -->
     <h2 class="text-4xl font-bold">About</h2>
 
@@ -28,7 +29,7 @@ import { SQL_COMMANDS } from '~/pages/SQL_COMMANDS'
       <div class="flex items-center space-x-2.5">
         <o-text
           class="inline-flex items-center bold capitalize space-x-2 text-xl">
-          <img src="supabase.svg" alt="supabase" class="w-8 h-8" />
+          <o-icon class="ml-1 w-8 h-8" name="i-logos-supabase-icon" />
           <span>Supabase</span>
         </o-text>
       </div>
@@ -77,9 +78,10 @@ import { SQL_COMMANDS } from '~/pages/SQL_COMMANDS'
       <div class="flex items-center space-x-2.5">
         <o-text
           class="inline-flex items-center bold capitalize space-x-2 text-xl">
-          <img src="typescript.svg" alt="typescript" class="w-8 h-8" />
-          <img src="vue.svg" alt="vuejs" class="w-8 h-8" />
-          <img src="vite.svg" alt="vite" class="w-8 h-8" />
+          <o-icon class="ml-1 w-8 h-8" name="i-logos-typescript-icon" />
+          <o-icon class="ml-1 w-8 h-8" name="i-logos-vue" />
+          <o-icon class="ml-1 w-8 h-8" name="i-logos-vitejs" />
+
           <span>Development</span>
         </o-text>
       </div>
@@ -107,9 +109,9 @@ import { SQL_COMMANDS } from '~/pages/SQL_COMMANDS'
       <div class="flex items-center space-x-2.5">
         <o-text
           class="inline-flex items-center bold capitalize space-x-2 text-xl">
-          <img src="netlify.svg" alt="netlify" class="w-8 h-8" />
-          <img v-if="isDark" src="github-mark-white.svg" alt="github" class="w-8 h-8" />
-          <img v-else src="github-mark.svg" alt="github" class="w-8 h-8" />
+          <o-icon class="ml-1 w-8 h-8" name="i-skill-icons-netlify-dark" />
+          <o-icon class="ml-1 w-8 h-8" name="i-carbon-logo-github" />
+
           <span>Deploy</span>
         </o-text>
       </div>
