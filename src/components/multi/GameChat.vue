@@ -13,6 +13,7 @@ const { currentGame } = storeToRefs(onlineGamesStore)
 const { user } = storeToRefs(userStore)
 
 const chatInput = ref(null)
+const route = useRoute()
 
 const chatIsVisible = useElementVisibility(chatInput)
 
@@ -29,8 +30,24 @@ const scrollToBottom = () => {
 onMounted(() => {
   if (!chatIsVisible.value) {
     scrollToBottom()
+  } else {
+    chatStore.readMessages(route.params.id as string)
   }
 })
+
+watch(
+  chatIsVisible,
+  (isVisible, wasVisible) => {
+    if (isVisible && !wasVisible) {
+      chatStore.readMessages(route.params.id as string)
+    } else {
+      scrollToBottom()
+    }
+  },
+  {
+    immediate: true,
+  }
+)
 
 watch(
   gameMessages,
