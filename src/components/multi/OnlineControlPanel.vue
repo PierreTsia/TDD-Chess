@@ -11,7 +11,7 @@ const { isGameOver } = storeToRefs(multiplayerChessGameStore)
 </script>
 
 <template>
-  <div class="w-[400px]">
+  <div class="w-full max-w-[400px]">
     <o-card>
       <template #default>
         <div
@@ -19,7 +19,7 @@ const { isGameOver } = storeToRefs(multiplayerChessGameStore)
           <div class="w-full flex flex-row justify-center items-center">
             <o-button
               data-test-id="start-button"
-              type="success"
+              type="error"
               my-6
               mr-2
               :disabled="isGameOver"

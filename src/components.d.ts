@@ -24,6 +24,7 @@ declare module '@vue/runtime-core' {
     KnightBlack: typeof import('./components/chess/pieces/Black/KnightBlack.vue')['default']
     KnightWhite: typeof import('./components/chess/pieces/White/KnightWhite.vue')['default']
     LoginCard: typeof import('./components/auth/LoginCard.vue')['default']
+    MobileActionBar: typeof import('./components/MobileActionBar.vue')['default']
     MoveHistory: typeof import('./components/chess/MoveHistory.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     OnlineControlPanel: typeof import('./components/multi/OnlineControlPanel.vue')['default']

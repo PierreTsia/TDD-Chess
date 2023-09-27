@@ -21,22 +21,16 @@ const scrollToBottom = () => {
     const lastMessageEl = document.getElementById('chatInput')
 
     if (lastMessageEl) {
-      lastMessageEl.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      lastMessageEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   })
 }
 
-watch(
-  chatIsVisible,
-  (isVisible) => {
-    if (!isVisible) {
-      scrollToBottom()
-    }
-  },
-  {
-    immediate: true,
+onMounted(() => {
+  if (!chatIsVisible.value) {
+    scrollToBottom()
   }
-)
+})
 
 watch(
   gameMessages,
@@ -61,8 +55,7 @@ const handleSendMessage = async (content: string) => {
   <o-card
     class="min-h-[400px] flex flex-col justify-between relative !overflow-auto relative z-1">
     <template #header>
-      <div
-        class="flex flex-col justify-center items-center w-full">
+      <div class="flex flex-col justify-center items-center w-full">
         <o-text size="xl" font="bold">Game Chat</o-text>
         <o-text size="sm" class="!text-teal-500">
           {{ gameMessages?.length }} messages from
