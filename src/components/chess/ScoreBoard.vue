@@ -49,7 +49,7 @@ const getTagType = (status: string) => {
 </script>
 
 <template>
-  <div class="w-[400px]">
+  <div class="w-full max-w-[480px]">
     <o-card>
       <template #header>
         <div class="flex justify-center items-center w-full gap-4">
@@ -64,7 +64,7 @@ const getTagType = (status: string) => {
         <ul
           class="w-full flex flex-wrap justify-center items-center px-10 gap-y-1">
           <li v-show="isNotOver" class="w-full flex start gap-x-6">
-            <o-text size="sm" type="success">Playing :</o-text>
+            <o-text size="sm" type="secondary">Playing :</o-text>
             <o-text size="sm" class="flex items-center">
               <o-icon class="mr-1 w-4" :name="getIcon(currentPlayer.color)" />{{
                 currentPlayer?.name
@@ -72,7 +72,7 @@ const getTagType = (status: string) => {
             </o-text>
           </li>
           <li class="w-full flex justify-start gap-x-6">
-            <o-text size="sm" type="success">Game Status :</o-text>
+            <o-text size="sm" type="secondary">Game Status :</o-text>
             <o-tag v-if="winner" type="secondary" size="xs" light>
               {{ winner?.name }} won !
             </o-tag>
@@ -82,7 +82,7 @@ const getTagType = (status: string) => {
             </o-tag>
           </li>
           <li class="w-full flex justify-start gap-x-6">
-            <o-text size="sm" type="success">Material Score :</o-text>
+            <o-text size="sm" type="secondary">Material Score :</o-text>
             <span
               v-for="p in players"
               :key="`materialScore-${p.color}`"
