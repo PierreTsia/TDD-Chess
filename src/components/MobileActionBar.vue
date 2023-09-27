@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import type { Panel } from '~/types';
+import { storeToRefs } from 'pinia'
+import type { Panel } from '~/types'
 import { PANELS } from '~/types'
+import { useChatStore } from '~/stores/chat'
 
 defineProps<{
   activePanel: Panel
@@ -9,6 +11,12 @@ defineProps<{
 defineEmits<{
   (event: 'onPanelClick', panel: Panel): void
 }>()
+
+const route = useRoute()
+const chatStore = useChatStore()
+const gameId = computed(() => route.params.id)
+
+const { unreadMessagesCount } = storeToRefs(chatStore)
 
 const panelIcon: Record<Panel, string> = {
   history: 'i-tdesign-history',
@@ -25,8 +33,8 @@ const panelIcon: Record<Panel, string> = {
         v-for="(p, i) in PANELS"
         :key="i"
         class="-mb-px mr-2 last:mr-0 flex-auto text-center cursor-pointer">
-        <a
-          class="text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal"
+        <button
+          class="text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal relative"
           :class="{
             'text-white outline-2 outline-solid outline-white bg-purple-400':
               activePanel === p && isDark,
@@ -37,8 +45,13 @@ const panelIcon: Record<Panel, string> = {
           }"
           @click="$emit('onPanelClick', p)">
           <o-icon cursor-pointer :name="panelIcon[p]" />
+          <span
+            v-if="p === 'chat' && unreadMessagesCount[gameId]"
+            class="bg-red-600 h-5 w-5 rounded-full absolute -right-2 -top-1 flex justify-center items-center text-white font-bold"
+            >{{ unreadMessagesCount[gameId] }}</span
+          >
           {{ p[0].toUpperCase() + p.slice(1) }}
-        </a>
+        </button>
       </li>
     </ul>
   </div>
