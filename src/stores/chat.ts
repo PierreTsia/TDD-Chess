@@ -10,6 +10,7 @@ export const useChatStore = defineStore('chat', () => {
   const api = new SupabaseService()
 
   const messageFeed: Ref<Record<string, GameChatMessage[]>> = ref({})
+  const unreadMessagesCount: Ref<Record<string, number>> = ref({})
 
   const activeGameId = ref<string | null>(null)
 
@@ -32,6 +33,12 @@ export const useChatStore = defineStore('chat', () => {
       ...newMessage,
       user: chatUser!,
     })
+    unreadMessagesCount.value[gameId] =
+      (unreadMessagesCount.value[gameId] || 0) + 1
+  }
+
+  const readMessages = (gameId: string) => {
+    unreadMessagesCount.value[gameId] = 0
   }
 
   const handleChatMessageUpdate = async (
@@ -88,6 +95,8 @@ export const useChatStore = defineStore('chat', () => {
     setActiveGameId,
     sendMessage,
     messageFeed,
+    unreadMessagesCount,
+    readMessages,
     chatUsers,
     fetchChatMessages,
     gameMessages,
