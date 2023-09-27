@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import type { Panel } from '~/types';
+import { PANELS } from '~/types'
+
 defineProps<{
   activePanel: Panel
 }>()
@@ -6,8 +9,6 @@ defineProps<{
 defineEmits<{
   (event: 'onPanelClick', panel: Panel): void
 }>()
-const PANELS = ['history', 'game', 'chat'] as const
-export type Panel = (typeof PANELS)[number]
 
 const panelIcon: Record<Panel, string> = {
   history: 'i-tdesign-history',

@@ -7,7 +7,7 @@ import { useOnlineGamesStore } from '~/stores/online-games'
 import { useMultiplayerChessGameStore } from '~/stores/multiplayer-chess-game'
 import { useGameEventsStore } from '~/stores/game-events'
 import { useChessBoard } from '~/composables/chessBoard'
-import type { Panel } from '~/components/MobileActionBar.vue'
+import type { Panel } from '~/types'
 import MobileActionBar from '~/components/MobileActionBar.vue'
 
 const route = useRoute()
