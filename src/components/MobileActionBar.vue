@@ -14,7 +14,7 @@ defineEmits<{
 
 const route = useRoute()
 const chatStore = useChatStore()
-const gameId = computed(() => route.params.id)
+const gameId = computed(() => route.params.id as string)
 
 const { unreadMessagesCount } = storeToRefs(chatStore)
 
