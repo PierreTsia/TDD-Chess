@@ -1,22 +1,4 @@
----
-title: About
----
-
-
-
-## Usage
-
-### <div  style="width: 100px; display:inline-flex; gap:10px"> <img src="supabase.svg"  alt="supabase" width="200" height="100">Supabase</div>
-
-
-1. Create a new project on [Supabase](https://supabase.io/).
-2. Copy the `.env.example` file to `.env` and fill in the values. (see supabase documentation for more info on how to get the values for your project)
-3. Set up the required tables and policies either using supabase GUI or by running the following command on supabase query editor:
-
-<details>
-  <summary>see sql commands</summary>
-
-```sql
+export const SQL_COMMANDS = `
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   username TEXT UNIQUE NOT NULL,
@@ -59,7 +41,7 @@ CREATE POLICY games_delete
   ON games FOR DELETE
   USING (FALSE);
 
--- EnableRLS on the `games` table:
+-- EnableRLS on the \`games\` table:
 ALTER TABLE games FORCE ROW LEVEL SECURITY;
 
 
@@ -171,7 +153,7 @@ CREATE POLICY chat_messages_delete
   ON chat_messages FOR DELETE
   USING (FALSE);
 
--- Enable RLS on the `chat_messages` table:
+-- Enable RLS on the \`chat_messages\` table:
 
 ALTER TABLE chat_messages FORCE ROW LEVEL SECURITY;
 
@@ -210,39 +192,4 @@ FROM
   ) AS game_results
 GROUP BY
   player_id;
-
-
-```
-
-</details>
-
-4. Enable supabase realtime functionalities : <code>database->replications->supabase_realtime </code> : select the above created tables
-
-###  <div  style="width: 100px; display:inline-flex; gap:10px"> <img src="typescript.svg"  alt="typescript" width="200" height="100"> <img src="vue.svg"  alt="vue" width="200" height="100"> Development</div>
-
-Just run and visit http://localhost:3333
-
-```bash
-pnpm run dev
-```
-
-### <div  style="width: 100px; display:inline-flex; gap:10px"> <img src="vite.svg"  alt="vite" width="200" height="100">Build</div>
-
-To build the App, run
-
-```bash
-pnpm run build
-```
-
-And you will see the generated file in `dist` that ready to be served.
-
-
-### <div  style="width: 100px;  display:inline-flex; gap:10px"> <img src="netlify.svg"  alt="netlify" width="200" height="100">Deploy</div>
-
-1. Create a new project on [Netlify](https://www.netlify.com/)
-2. Get your netlify <code>NETLIFY_AUTH_TOKEN</code> and <code>NETLIFY_SITE_ID</code> [from your netlify account settings](https://docs.netlify.com/cli/get-started/#obtain-a-token-in-the-netlify-ui)
-3. Add the above variables to [your github repository secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
-4. Add supabase variables defined in your local `.env` file to your github repository secrets
-5. Finally add those same supabase variables [to your netlify environment variables](https://docs.netlify.com/configure-builds/environment-variables/)
-
-The action defined in <code>/.github/workflows/ci.yml</code> will run on every push to the main branch,<br/> run <code>lint</code>, <code>typecheck</code>, <code>test:unit</code> and <code>test:e2e</code> and will build and deploy the app to netlify 🚀 if all tests pass ✅.
+`
