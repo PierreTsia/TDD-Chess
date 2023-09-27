@@ -89,6 +89,7 @@ watch(
   <div
     class="flex flex-col w-100vw min-h-calc(100vh-120px) xl:60vw mx-auto pt-2 pb-[120px] !xl:pb-10">
     <MobileActionBar
+      class="flex !xl:hidden"
       :active-panel="activePanel"
       @on-panel-click="setActivePanel" />
     <div class="">
@@ -117,7 +118,7 @@ watch(
               :is-black-pov="isBlackPov"
               :me-plays-black="mePlaysBlack"
               :is-multiplayer="true" />
-            <OnlineControlPanel class="flex !xl:hidden" />
+            <OnlineControlPanel class="flex !xl:hidden mx-auto" />
           </div>
 
           <GameChat v-if="activePanel === 'chat'" class="!max-w-[640px]" />
