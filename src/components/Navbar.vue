@@ -16,7 +16,7 @@ const toggleLocales = async () => {
   <nav class="">
     <div class="container mx-auto py-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-gray-50">
-        <img src="pwa-512x512.png" class="w-[90px] h-[90px rounded-full">
+       <o-icon name="i-fa6-solid-chess" class="w-[54px] h-[54px] !text-teal-400"/>
       </h1>
       <div class="flex space-x-10">
         <div class="flex items-center space-x-2">
