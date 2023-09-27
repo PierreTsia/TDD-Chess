@@ -1,12 +1,21 @@
 <script lang="ts" setup>
+import { useKeyboardShortCuts } from '~/composables/kbShortcuts'
+
 const emit = defineEmits<{
   (e: 'onSendMessage', content: string): void
 }>()
+
+const { onEnterKey } = useKeyboardShortCuts()
 const messageContent = ref('')
 const send = () => {
+  if (!messageContent.value) {
+    return
+  }
   emit('onSendMessage', messageContent.value)
   messageContent.value = ''
 }
+
+onEnterKey(send)
 </script>
 
 <template>
