@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import MoveHistory from '~/components/chess/MoveHistory.vue'
-import ScoreBoard from '~/components/chess/ScoreBoard.vue'
-import GameChat from '~/components/multi/GameChat.vue'
-import OnlineControlPanel from '~/components/multi/OnlineControlPanel.vue'
-import { IMove } from '~/core/types'
 import supabase from '~/modules/supabase'
 import { useUserStore } from '~/stores/user'
 import { useChatStore } from '~/stores/chat'
@@ -84,15 +79,15 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col w-100vw xl:60vw mx-auto py-10">
-    <div
+  <div class="flex flex-col w-100vw min-h-90vh xl:60vw mx-auto py-10">
+<!--    <div
       v-if="!isLoading && currentGame"
       class="flex flex-col gap-y-4 xl:flex-row flex-wrap w-full max-w-[1600px] mx-auto px-0 !xl:px-10 mt-4 min-h-[calc(100vh-250px)]">
       <div class="flex flex-col items-center gap-y-4 !xl:w-3/12 !w-full">
         <ScoreBoard
           :material-score="materialScore"
           :current-player="currentPlayer"
-          :players="onlinePlayers"
+          :players="onlinePlayers as [IPlayer, IPlayer]"
           :status="status"
           :online-users="onlineUsers"
           :winner="winner" />
@@ -103,9 +98,9 @@ watch(
       </div>
       <div class="flex flex-col !w-full !xl:w-6/12">
         <ChessBoard
-          :board="board"
+          :board="board as IBoard"
           :status="status"
-          :last-move="lastMove"
+          :last-move="lastMove as IMove"
           :is-black-pov="isBlackPov"
           :me-plays-black="mePlaysBlack"
           :is-multiplayer="true" />
@@ -113,9 +108,9 @@ watch(
       <div class="flex flex-col items-center !w-full !xl:w-3/12">
         <GameChat class="!max-w-[500px] max-h-[640px]" />
       </div>
-    </div>
-    <div v-else-if="!isLoading">
+    </div> -->
+<!--    <div v-else-if="!isLoading">
       <h1>NO GAME</h1>
-    </div>
+    </div> -->
   </div>
 </template>

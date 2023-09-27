@@ -2,77 +2,247 @@
 title: About
 ---
 
-# Chess Engine in TypeScript
 
-## Overview
-
-This project is a Chess engine implemented in TypeScript, which began as a personal challenge to be accomplished during my free time. The primary goal of the project was to practice Test-Driven Development (TDD) on a more advanced level than the usual bowling or fizzbuzz katas. After completing the initial implementation, I decided to take it a step further and explore the feasibility of turning the engine into a multiplayer game.
-
-## Features
-
-- Chess engine implemented in TypeScript with a focus on clean, well-structured code.
-- Test-Driven Development approach, ensuring high-quality code and ease of maintenance.
-- Multiplayer functionality added to enable engaging gameplay with friends and family.
-- Full set of chess rules, including castling, en passant, and pawn promotion.
-
-## Installation
-
-1. Ensure you have Node.js and npm installed on your machine. You can download and install them from [here](https://nodejs.org/en/download/).
-
-2. Clone the repository:
-
-```
-git clone https://github.com/your-username/chess-engine-typescript.git
-```
-
-3. Navigate to the project directory:
-
-```
-cd chess-engine-typescript
-```
-
-4. Install the required dependencies:
-
-```
-npm install
-```
-
-5. Compile the TypeScript code:
-
-```
-npm run build
-```
 
 ## Usage
 
-1. To start the server and launch the game in your browser, run the following command:
+### <div  style="width: 100px; display:inline-flex; gap:10px"> <img src="supabase.svg"  alt="supabase" width="200" height="100">Supabase</div>
+
+
+1. Create a new project on [Supabase](https://supabase.io/).
+2. Copy the `.env.example` file to `.env` and fill in the values. (see supabase documentation for more info on how to get the values for your project)
+3. Set up the required tables and policies either using supabase GUI or by running the following command on supabase query editor:
+
+<details>
+  <summary>see sql commands</summary>
+
+```sql
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+
+
+CREATE TABLE games (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  white_player_id UUID REFERENCES users(id),
+  black_player_id UUID REFERENCES users(id),
+  status TEXT NOT NULL,
+  winner_id UUID REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- RLS Policies for the 'games' table
+
+-- Allow users to create new games
+CREATE POLICY games_insert
+  ON games FOR INSERT
+  WITH CHECK (auth.uid() = white_player_id OR auth.uid() = black_player_id);
+
+-- Allow users to view games they are participating in
+CREATE POLICY games_select
+  ON games FOR SELECT
+  USING (auth.uid() = white_player_id OR auth.uid() = black_player_id);
+
+-- Allow users to update games they are participating in
+CREATE POLICY games_update
+  ON games FOR UPDATE
+  USING (auth.uid() = white_player_id OR auth.uid() = black_player_id);
+
+-- Prevent users from deleting games
+CREATE POLICY games_delete
+  ON games FOR DELETE
+  USING (FALSE);
+
+-- EnableRLS on the `games` table:
+ALTER TABLE games FORCE ROW LEVEL SECURITY;
+
+
+CREATE TABLE game_states (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  game_id UUID REFERENCES games(id),
+  board JSONB NOT NULL,
+  move_history JSONB NOT NULL,
+  captured_pieces JSONB NOT NULL,
+  current_player_id UUID REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE POLICY game_states_insert
+  ON game_states FOR INSERT
+  WITH CHECK (
+    auth.uid() IN (
+      SELECT white_player_id
+      FROM games
+      WHERE game_id = games.id
+      UNION
+      SELECT black_player_id
+      FROM games
+      WHERE game_id = games.id
+    )
+  );
+
+CREATE POLICY game_states_select
+  ON game_states FOR SELECT
+  USING (
+    auth.uid() IN (
+      SELECT white_player_id
+      FROM games
+      WHERE game_id = games.id
+      UNION SELECT black_player_id
+      FROM games
+      WHERE game_id = games.id
+    )
+  );
+
+CREATE POLICY game_states_update
+  ON game_states FOR UPDATE
+  USING (
+    auth.uid() IN (
+      SELECT white_player_id
+      FROM games
+      WHERE game_id = games.id
+      UNION
+      SELECT black_player_id
+      FROM games
+      WHERE game_id = games.id
+    )
+  );
+
+CREATE POLICY game_states_delete
+  ON game_states FOR DELETE
+  USING (FALSE);
+
+ALTER TABLE game_states FORCE ROW LEVEL SECURITY;
+
+CREATE TABLE chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  game_id UUID REFERENCES games(id),
+  user_id UUID REFERENCES users(id),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+
+
+-- Allow users to send chat messages in games they are participating in
+CREATE POLICY chat_messages_insert
+  ON chat_messages FOR INSERT
+  WITH CHECK (
+    auth.uid() IN (
+      SELECT white_player_id
+      FROM games
+      WHERE game_id = games.id
+      UNION
+      SELECT black_player_id
+      FROM games
+      WHERE game_id = games.id
+    )
+  );
+
+-- Allow users to view chat messages in games they are participating in
+CREATE POLICY chat_messages_select
+  ON chat_messages FOR SELECT
+  USING (
+    auth.uid() IN (
+      SELECT white_player_id
+      FROM games
+      WHERE game_id = games.id
+      UNION
+      SELECT black_player_id
+      FROM games
+      WHERE game_id = games.id
+    )
+  );
+
+-- Preventusers from updating chat messages
+CREATE POLICY chat_messages_update
+  ON chat_messages FOR UPDATE
+  USING (FALSE);
+
+-- Prevent users from deleting chat messages
+CREATE POLICY chat_messages_delete
+  ON chat_messages FOR DELETE
+  USING (FALSE);
+
+-- Enable RLS on the `chat_messages` table:
+
+ALTER TABLE chat_messages FORCE ROW LEVEL SECURITY;
+
+-- view for player statistics
+DROP VIEW IF EXISTS player_statistics;
+
+CREATE OR REPLACE VIEW player_statistics AS
+SELECT
+  player_id,
+  COUNT(*) AS total_games,
+  COUNT(*) FILTER (WHERE win) AS wins,
+  COUNT(*) FILTER (WHERE NOT win AND winner_id IS NOT NULL) AS losses,
+  COUNT(*) FILTER (WHERE win AND white_player) AS wins_as_white,
+  COUNT(*) FILTER (WHERE win AND NOT white_player) AS wins_as_black
+FROM
+  (
+    SELECT
+      white_player_id AS player_id,
+      winner_id = white_player_id AS win,
+      true AS white_player,
+      winner_id
+    FROM
+      games
+    WHERE
+      white_player_id IS NOT NULL
+    UNION ALL
+    SELECT
+      black_player_id AS player_id,
+      winner_id = black_player_id AS win,
+      false AS white_player,
+      winner_id
+    FROM
+      games
+    WHERE
+      black_player_id IS NOT NULL
+  ) AS game_results
+GROUP BY
+  player_id;
+
 
 ```
-npm start
+
+</details>
+
+4. Enable supabase realtime functionalities : <code>database->replications->supabase_realtime </code> : select the above created tables
+
+###  <div  style="width: 100px; display:inline-flex; gap:10px"> <img src="typescript.svg"  alt="typescript" width="200" height="100"> <img src="vue.svg"  alt="vue" width="200" height="100"> Development</div>
+
+Just run and visit http://localhost:3333
+
+```bash
+pnpm run dev
 ```
 
-2. Open your browser and navigate to `http://localhost:3000` to start playing.
+### <div  style="width: 100px; display:inline-flex; gap:10px"> <img src="vite.svg"  alt="vite" width="200" height="100">Build</div>
 
-3. To play with another player, simply share the generated URL.
+To build the App, run
 
-## Testing
-
-1. To run the tests, execute the following command:
-
-```
-npm test
+```bash
+pnpm run build
 ```
 
-2. To check the test coverage, run:
+And you will see the generated file in `dist` that ready to be served.
 
-```
-npm run coverage
-```
 
-## Contributing
+### <div  style="width: 100px;  display:inline-flex; gap:10px"> <img src="netlify.svg"  alt="netlify" width="200" height="100">Deploy</div>
 
-Feel free to contribute to this project by submitting a pull request or opening an issue. All contributions are welcomed!
+1. Create a new project on [Netlify](https://www.netlify.com/)
+2. Get your netlify <code>NETLIFY_AUTH_TOKEN</code> and <code>NETLIFY_SITE_ID</code> [from your netlify account settings](https://docs.netlify.com/cli/get-started/#obtain-a-token-in-the-netlify-ui)
+3. Add the above variables to [your github repository secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
+4. Add supabase variables defined in your local `.env` file to your github repository secrets
+5. Finally add those same supabase variables [to your netlify environment variables](https://docs.netlify.com/configure-builds/environment-variables/)
 
-## License
-
-This project is licensed under the MIT License. Please see the [LICENSE](LICENSE) file for more information.
+The action defined in <code>/.github/workflows/ci.yml</code> will run on every push to the main branch,<br/> run <code>lint</code>, <code>typecheck</code>, <code>test:unit</code> and <code>test:e2e</code> and will build and deploy the app to netlify 🚀 if all tests pass ✅.

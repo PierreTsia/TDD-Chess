@@ -25,6 +25,7 @@ declare module '@vue/runtime-core' {
     KnightWhite: typeof import('./components/chess/pieces/White/KnightWhite.vue')['default']
     LoginCard: typeof import('./components/auth/LoginCard.vue')['default']
     MoveHistory: typeof import('./components/chess/MoveHistory.vue')['default']
+    Navbar: typeof import('./components/Navbar.vue')['default']
     OnlineControlPanel: typeof import('./components/multi/OnlineControlPanel.vue')['default']
     OnlineGameInvitation: typeof import('./components/multi/OnlineGameInvitation.vue')['default']
     OnlineGameInvitationsList: typeof import('./components/multi/OnlineGameInvitationsList.vue')['default']
