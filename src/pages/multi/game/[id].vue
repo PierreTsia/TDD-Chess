@@ -106,7 +106,7 @@ watch(
             :winner="winner" />
           <OnlineControlPanel class="hidden !xl:flex" />
           <MoveHistory
-            class="hidden xl:flex max-h-[400px] !w-[400px]"
+            class="hidden !xl:flex max-h-[400px] !w-[400px]"
             :moves="moveHistory" />
         </div>
         <div class="flex flex-col items-center !w-full !xl:w-6/12 xl: gap-y-4">
